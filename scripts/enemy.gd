@@ -2,6 +2,9 @@ class_name ValeEnemy
 extends CharacterBody3D
 
 signal combat_message(message: String)
+signal respawned
+
+enum RespawnPolicy { REGULAR, UNTIL_QUEST_CREDIT }
 
 const PURSUIT_UPDATE_INTERVAL := 0.2
 @export var stats: ValeCombatStats
@@ -10,6 +13,8 @@ const PURSUIT_UPDATE_INTERVAL := 0.2
 @export var aggro_range := 5.0
 @export var leash_range := 10.0
 @export var speed := 4.0
+@export var respawn_policy := RespawnPolicy.REGULAR
+@export_range(0.0, 600.0, 0.1, "or_greater", "suffix:s") var respawn_delay := 30.0
 @onready var health: ValeHealth = $Health
 @onready var visual: Node3D = $Visual
 @onready var agent: NavigationAgent3D = $NavigationAgent3D
@@ -23,6 +28,8 @@ var spawn_position: Vector3
 var hit_tween: Tween
 var body_material: StandardMaterial3D
 var resting_color: Color
+var defeat_rewards_claimed := false
+var _respawn_remaining := -1.0
 
 func _ready() -> void:
 	add_to_group(&"combat_enemies")
@@ -55,6 +62,7 @@ func _can_pursue(target: Node3D) -> bool:
 
 func _physics_process(delta: float) -> void:
 	if not is_alive():
+		_update_respawn(delta)
 		return
 	velocity.x = 0.0
 	velocity.z = 0.0
@@ -172,8 +180,25 @@ func _die() -> void:
 	visual.rotation.z = 1.4
 	body_material.albedo_color = resting_color.darkened(0.5)
 	$Nameplate.text = "%s · DEFEATED" % stats.display_name.to_upper()
+	if respawn_policy == RespawnPolicy.REGULAR:
+		schedule_respawn()
+
+func schedule_respawn() -> void:
+	_respawn_remaining = respawn_delay
+
+func _update_respawn(delta: float) -> void:
+	if _respawn_remaining < 0.0:
+		return
+	_respawn_remaining = maxf(0.0, _respawn_remaining - delta)
+	if _respawn_remaining > 0.0 or not is_instance_valid(aggro_target):
+		return
+	if spawn_position.distance_to(aggro_target.global_position) <= leash_range:
+		return
+	reset_combat()
+	respawned.emit()
 
 func reset_combat() -> void:
+	_respawn_remaining = -1.0
 	_cancel_attack()
 	opponent = null
 	returning = false
