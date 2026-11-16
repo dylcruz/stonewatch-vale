@@ -2,9 +2,10 @@ name: Godot CI/CD
 
 on:
   pull_request:
-    branches: [main]
+    branches: [dev, main]
+    types: [opened, synchronize, reopened, edited]
   push:
-    branches: [main]
+    branches: [dev, main]
   workflow_dispatch:
 
 permissions:
@@ -60,7 +61,9 @@ jobs:
           xvfb-run --auto-servernum --server-args='-screen 0 1280x800x24' \
             godot --path . --audio-driver Dummy --script res://tests/breadcrumb_test.gd
 
-      - name: Install Windows export template
+      - name: Export Windows x86_64
+        id: windows-export
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           release="${GODOT_VERSION}-stable"
           archive="$RUNNER_TEMP/export-templates.tpz"
@@ -71,14 +74,13 @@ jobs:
           mkdir -p "$templates"
           unzip -j "$archive" templates/windows_release_x86_64.exe -d "$templates"
 
-      - name: Export Windows x86_64
-        run: |
           mkdir -p "$RUNNER_TEMP/stonewatch-windows"
           godot --headless --path . --export-release 'Windows Desktop' \
             "$RUNNER_TEMP/stonewatch-windows/StonewatchVale.exe"
           test -s "$RUNNER_TEMP/stonewatch-windows/StonewatchVale.exe"
 
-      - name: Upload Windows playtest build
+      - name: Upload Windows release build
+        if: steps.windows-export.outcome == 'success'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: stonewatch-vale-windows-x86_64
