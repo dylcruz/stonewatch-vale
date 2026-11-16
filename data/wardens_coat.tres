@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ValeItem" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/item.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"wardens_coat"
+display_name = "Warden's Coat"
+slot = 1
+armor = 2
+coat_color = Color(0.26, 0.59, 0.49, 1)

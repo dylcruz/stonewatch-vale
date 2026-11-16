@@ -1,33 +1,41 @@
 # Stonewatch Vale
 
-A single-player 3D action RPG prototype. Movement is playtested; the current checkpoint adds the Warrior's first melee fight against one wolf in the graybox arena. See the [implementation plan](docs/stonewatch-implementation-plan.md) for later checkpoints and milestones.
+A single-player 3D action RPG prototype. Captain Mara sends the Warrior to clear Pine Road, recover supplies, and defeat the Raider Captain. See the [implementation plan](docs/stonewatch-implementation-plan.md) for later milestones.
 
 ## Run
 
 1. Use **Godot 4.7.2 Standard** (`4.7.2.stable.official.ed1daf0bf`) with the Compatibility renderer.
 2. Import `project.godot` in Godot Project Manager and allow the initial import to finish.
-3. Press **F5**. The main scene is `scenes/combat_demo.tscn`; it opens directly into the first melee checkpoint. The accepted movement-only scene remains available at `scenes/movement_demo.tscn` (open it and press **F6**).
+3. Press **F5** to start a fresh level 1 run in `scenes/stonewatch_vale.tscn`. Click Captain Mara at the watchpost for **Clear Pine Road**. After each turn-in, choose **View next quest** or speak to Mara again. Progress stays in the current run, including through defeat and recovery.
 
 ## Controls
 
 - **Left-click ground:** move along the navigation mesh. A gold ring briefly marks the accepted destination.
-- **Breadcrumb route:** gold dots show the remaining navigation path around obstacles. They disappear behind the Warrior and clear on arrival or when movement stops. Replacement clicks and held steering update the route; invalid destinations and HUD clicks preserve it. Breadcrumbs are enabled by default in both demos. A player-facing toggle can be added later.
+- **Breadcrumb route** shows the remaining path around obstacles. The gold dots disappear behind the Warrior and clear when movement stops.
 - **Hold left mouse on the world:** continuously steer toward the cursor. Release to finish moving to the last valid destination. Passing over the HUD pauses destination updates; starting a press on the HUD does not steer.
-- **Left-click the wolf:** select it, approach, and automatically swing while in melee range. The gold selection ring shows the target. Sword swings and wolf bites have a windup, and check range and blocking scenery when damage resolves.
-- **Left-click ground while fighting:** clear selection, cancel any pending sword hit, and move. The wolf can still finish its bite if you remain within reach. Holding LMB on ground also cancels combat and steers as before.
-- **R / Reset fight:** restore both actors' health, positions, and combat state, including after either dies.
-- **Test UI · keep command:** verifies UI input without changing movement or targeting. The entire HUD panel consumes clicks.
+- **Left-click an enemy:** select it, approach, and automatically swing while in melee range. The gold ring marks your target. Basic attacks check range and blocking scenery at impact.
+- **Left-click ground while fighting:** clear selection, cancel any pending sword hit, and move. Enemies give up the chase when you leave their leash range or reach the green watchpost circle.
+- **1 — Cleave:** deal 12 damage to enemies in front of the Warrior within 2.8 m. Unlocks at level 2 and has a 4-second cooldown.
+- **2 — Guard:** halve incoming damage for 1.25 seconds. A blue ring and the HUD show when Guard is active. The 6-second cooldown starts on activation.
+- **J — Quest log:** check the current objective, turn-in status, and completed quests.
+- **I — Gear:** inspect equipment, sword damage, and armor. Equip the Iron Sword and Warden’s Coat after earning them.
+- **After defeat:** wait two seconds to recover at the watchpost at full health.
+- HUD panels consume clicks and preserve the active movement command.
 - Scenery, void, and the disconnected platform reject movement clicks and preserve the current command. Close the window or press **F8** in the editor to stop.
 
-The blue capsule is the Warrior; the gray four-legged silhouette is the wolf. The Warrior has a visible sword swing, the wolf lunges its head to bite, hits flash the body, and health bars and timing text appear at the lower left. The camera follows at a fixed angle, zoom, and distance. The blue capsule's gold nose shows its facing direction. The wolf retaliates in melee but stays at its spawn in this checkpoint; Guard, roaming aggro/leash, raiders, Cleave, and the boss come after playtesting this first slice.
+Three road wolves are east of the watchpost. They award 15 XP each, and turning in the quest grants another 55 XP. At 100 XP the Warrior reaches level 2, gains 15 max HP, and can use Cleave. Equipping the Iron Sword raises basic sword damage from 8 to 12. An extra wolf northwest of the ruin gives you a target for the upgrade.
+
+For **Recover the Supplies**, take Pine Road north and follow it west around the ruin to the abandoned campsite. Click the marked crate to approach and collect it. Each raider is worth 15 XP if defeated. Returning the crate to Mara grants 55 XP.
+
+For **Break the Blockade**, take the south road west to Quarry Gate. Move out of the Raider Captain’s red circle to avoid the heavy hit or use Guard to halve it. Defeating the Captain awards 50 XP and the Warden’s Coat. Equipping it adds 2 armor. Returning to Mara grants 35 XP, which brings the required route to 240 XP, level 3, and 90 max HP.
 
 ## Edit and bake
 
-`scenes/combat_demo.tscn` inherits the accepted `scenes/movement_demo.tscn` arena, replaces the practice target with an instance of `scenes/wolf.tscn`, and adds the combat HUD. Open the base movement scene to edit the floor, enclosing walls, blocking ruin, disconnected platform, and baked navigation. The road strips and labels are visual guides. Player movement lives in `scripts/player.gd`, ray picking in `scripts/movement_demo.gd`, and camera following in `scripts/follow_camera.gd`.
+`scenes/stonewatch_vale.tscn` contains the playable watchpost, encounters, and HUD. Open its base `scenes/watchpost_arena.tscn` to edit the shared floor, walls, ruin, and baked navigation. Quest, combat, and item definitions live under `data/`. Player movement lives in `scripts/player.gd`, ray picking in `scripts/world_input.gd`, and camera following in `scripts/follow_camera.gd`.
 
-The combat layer lives in `scripts/warrior.gd`, `scripts/wolf.gd`, and `scripts/combat_demo.gd`. Shared health and melee validation live in `scripts/health.gd` and `scripts/melee.gd`. Tune HP, damage, reach, windup, and attack intervals in `data/warrior.tres` and `data/wolf.tres`. The base scene's `PathBreadcrumbs` node and `scripts/path_breadcrumbs.gd` draw the route; its `enabled` property defaults to true and provides the hook for a future visibility setting.
+Warrior abilities live in `scripts/warrior.gd`. The wolf and raiders share aggro, navigation, and basic attack timing through `scripts/enemy.gd`. The Captain inherits `scenes/raider.tscn` and enables the heavy attack in `scripts/raider.gd`. Tune HP, basic damage, reach, windup, and attack intervals in the actor resources under `data/`. Ability and pursuit settings are exported on the actor nodes. The `Watchpost` marker sets the recovery position and the center of the refuge.
 
-After changing collision geometry, select `NavigationRegion3D`, choose **Bake NavigationMesh**, and save the scene. Baking reads static colliders on physics layers 1 (ground) and 2 (obstacles), with a 0.5 m agent margin for the 0.35 m player capsule. Player collision uses layer 3; target picking also uses layer 4. The navigation mesh is saved in the scene, so launching does not require a runtime bake.
+After changing collision geometry, open `watchpost_arena.tscn`, select `NavigationRegion3D`, choose **Bake NavigationMesh**, and save. Baking reads ground and obstacle colliders on physics layers 1 and 2. Player collision uses layer 3 and target picking uses layer 4.
 
 Alternatively, with the editor closed, run:
 
@@ -39,12 +47,13 @@ Navigation uses Godot's [NavigationAgent3D path following](https://docs.godoteng
 
 ## Verification
 
-Import once before running the automated movement checks:
+Import once before running the automated checks.
 
 ```sh
 godot --headless --editor --path . --import --quit
 godot --headless --path . --script res://tests/movement_test.gd
 godot --headless --path . --script res://tests/combat_test.gd
+godot --headless --path . --script res://tests/quest_chain_test.gd
 ```
 
 Run the breadcrumb draw-buffer checks with a graphical renderer:
@@ -53,7 +62,7 @@ Run the breadcrumb draw-buffer checks with a graphical renderer:
 godot --path . --script res://tests/breadcrumb_test.gd
 ```
 
-The source-project movement and first melee playtests are complete, including user confirmation. See [movement playtest results](docs/movement-playtest.md) for the breadcrumb follow-up, the recorded label-overlap caveat, and export limitations, and the [combat checklist](docs/combat-playtest.md) for the accepted first melee checkpoint.
+See the [playtest record and follow-up](docs/playtest.md) for Windows results and the reported quest credit, enemy respawn, and quest journal behavior.
 
 ## Windows export
 

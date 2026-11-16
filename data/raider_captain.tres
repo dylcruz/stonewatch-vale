@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ValeCombatStats" format=3 uid="uid://dl6fdm07p1iyr"]
+
+[ext_resource type="Script" uid="uid://dlvy5jcy2sfqd" path="res://scripts/combat_stats.gd" id="1"]
+[ext_resource type="Resource" path="res://data/wardens_coat.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Raider Captain"
+enemy_id = &"raider_captain"
+defeat_xp = 50
+defeat_item = ExtResource("2")
+max_health = 64
+damage = 9
+melee_range = 2.1
+windup = 0.8
+attack_interval = 2.1

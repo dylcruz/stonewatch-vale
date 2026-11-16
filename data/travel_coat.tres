@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ValeItem" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/item.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"travel_coat"
+display_name = "Travel Coat"
+slot = 1

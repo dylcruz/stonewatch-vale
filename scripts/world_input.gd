@@ -14,7 +14,6 @@ var cursor_position := Vector2.ZERO
 
 func _ready() -> void:
 	player.command_changed.connect(func(message: String): status.text = message)
-	$HUD/Panel/Margin/VBox/UITest.pressed.connect(func(): status.text = "UI click received · movement command preserved")
 	marker.hide()
 	get_window().focus_exited.connect(_stop_following_cursor)
 	get_viewport().mouse_exited.connect(_stop_following_cursor)
@@ -55,13 +54,7 @@ func click_world(screen_position: Vector2, held_update: bool = false) -> bool:
 		return false
 	var collider: Node3D = hit.collider
 	if collider.is_in_group("move_targets") and not held_update:
-		var direction := player.global_position - collider.global_position
-		direction.y = 0
-		if direction.length_squared() < 0.01:
-			direction = Vector3.BACK
-		var approach := collider.global_position + direction.normalized() * 1.35
-		approach.y = 0
-		if player.request_move(approach, collider):
+		if player.request_move(collider.global_position, collider):
 			show_destination(player.destination)
 			return true
 	elif collider.is_in_group("walkable"):

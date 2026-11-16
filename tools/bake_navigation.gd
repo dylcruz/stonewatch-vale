@@ -1,11 +1,13 @@
 @tool
 extends SceneTree
 ## Run with --headless --path . --script res://tools/bake_navigation.gd
+const ARENA_SCENE := "res://scenes/watchpost_arena.tscn"
+
 func _initialize() -> void:
 	bake.call_deferred()
 
 func bake() -> void:
-	var scene := load("res://scenes/movement_demo.tscn") as PackedScene
+	var scene := load(ARENA_SCENE) as PackedScene
 	var world := scene.instantiate()
 	root.add_child(world)
 	var region := world.get_node("NavigationRegion3D") as NavigationRegion3D
@@ -17,7 +19,7 @@ func bake() -> void:
 	var packed := PackedScene.new()
 	var error := packed.pack(world)
 	if error == OK:
-		error = ResourceSaver.save(packed, "res://scenes/movement_demo.tscn")
+		error = ResourceSaver.save(packed, ARENA_SCENE)
 	print("Navigation bake: ", region.navigation_mesh.get_polygon_count(), " polygons; save error: ", error)
 	world.free()
 	await process_frame

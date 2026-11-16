@@ -1,0 +1,206 @@
+[gd_scene format=3]
+
+[sub_resource type="Environment" id="Env"]
+background_mode = 1
+background_color = Color(0.1, 0.14, 0.18, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.76, 0.84, 0.95, 1)
+ambient_light_energy = 0.7
+
+[sub_resource type="NavigationMesh" id="Nav"]
+vertices = PackedVector3Array(-2.75, 0.19999999, -3.5, 1.5, 0.19999999, -3.5, 1.75, 0.19999999, -11.75, -13.75, 0.19999999, -2, -3, 0.19999999, -1.75, -13.75, 0.19999999, -11.75, 3, 0.19999999, -3.5, 3.25, 0.19999999, -1.75, 14, 0.19999999, -2, 14, 0.19999999, -11.75, 17.5, 0.19999999, -7, 17.5, 0.19999999, -3, 20.5, 0.19999999, -3, 20.5, 0.19999999, -7, -2, 2.7, -2.5, -2, 2.7, 2.5, 2, 2.7, 2.5, 2, 2.7, -2.5, -1.75, 0.19999999, -2.25, -1.75, 0.19999999, 2.5, 2, 0.19999999, 2.5, 2, 0.19999999, -2.25, -13.75, 0.19999999, 2.25, -3, 0.19999999, 2, 3.25, 0.19999999, 1.75, 14, 0.19999999, 2, 2.75, 0.19999999, 3.75, 1.25, 0.19999999, 3.75, 1.5, 0.19999999, 12, 3.25, 0.19999999, 3.25, 14, 0.19999999, 12, -2.75, 0.19999999, 3.75, -13.75, 0.19999999, 12)
+polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(0, 4, 3), PackedInt32Array(3, 5, 0), PackedInt32Array(0, 5, 2), PackedInt32Array(6, 1, 2), PackedInt32Array(6, 8, 7), PackedInt32Array(2, 9, 6), PackedInt32Array(6, 9, 8), PackedInt32Array(13, 12, 10), PackedInt32Array(10, 12, 11), PackedInt32Array(17, 16, 14), PackedInt32Array(14, 16, 15), PackedInt32Array(21, 20, 18), PackedInt32Array(18, 20, 19), PackedInt32Array(23, 22, 4), PackedInt32Array(4, 22, 3), PackedInt32Array(7, 8, 24), PackedInt32Array(24, 8, 25), PackedInt32Array(28, 27, 26), PackedInt32Array(26, 29, 28), PackedInt32Array(28, 29, 30), PackedInt32Array(30, 29, 25), PackedInt32Array(29, 24, 25), PackedInt32Array(31, 27, 28), PackedInt32Array(31, 22, 23), PackedInt32Array(22, 31, 32), PackedInt32Array(32, 31, 28)]
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 3
+cell_height = 0.1
+agent_height = 1.8
+agent_max_climb = 0.2
+agent_max_slope = 35.0
+
+[sub_resource type="StandardMaterial3D" id="Ground"]
+albedo_color = Color(0.2, 0.29, 0.25, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+material = SubResource("Ground")
+size = Vector3(30, 0.6, 26)
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(30, 0.6, 26)
+
+[sub_resource type="StandardMaterial3D" id="Stone"]
+albedo_color = Color(0.4, 0.46, 0.48, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="BlockingRuinMesh"]
+material = SubResource("Stone")
+size = Vector3(5, 2.5, 6)
+
+[sub_resource type="BoxShape3D" id="BlockingRuinShape"]
+size = Vector3(5, 2.5, 6)
+
+[sub_resource type="BoxMesh" id="WestWallMesh"]
+material = SubResource("Stone")
+size = Vector3(0.5, 1.2, 26)
+
+[sub_resource type="BoxShape3D" id="WestWallShape"]
+size = Vector3(0.5, 1.2, 26)
+
+[sub_resource type="BoxMesh" id="EastWallMesh"]
+material = SubResource("Stone")
+size = Vector3(0.5, 1.2, 26)
+
+[sub_resource type="BoxShape3D" id="EastWallShape"]
+size = Vector3(0.5, 1.2, 26)
+
+[sub_resource type="BoxMesh" id="NorthWallMesh"]
+material = SubResource("Stone")
+size = Vector3(30, 1.2, 0.5)
+
+[sub_resource type="BoxShape3D" id="NorthWallShape"]
+size = Vector3(30, 1.2, 0.5)
+
+[sub_resource type="BoxMesh" id="SouthWallMesh"]
+material = SubResource("Stone")
+size = Vector3(30, 1.2, 0.5)
+
+[sub_resource type="BoxShape3D" id="SouthWallShape"]
+size = Vector3(30, 1.2, 0.5)
+
+[sub_resource type="BoxMesh" id="UnreachableIslandMesh"]
+material = SubResource("Stone")
+size = Vector3(4, 0.6, 5)
+
+[sub_resource type="BoxShape3D" id="UnreachableIslandShape"]
+size = Vector3(4, 0.6, 5)
+
+[sub_resource type="StandardMaterial3D" id="Road"]
+albedo_color = Color(0.39, 0.4, 0.34, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="WestPath"]
+material = SubResource("Road")
+size = Vector3(2, 0.02, 19)
+
+[sub_resource type="BoxMesh" id="EastPath"]
+material = SubResource("Road")
+size = Vector3(2, 0.02, 19)
+
+[sub_resource type="BoxMesh" id="NearPath"]
+material = SubResource("Road")
+size = Vector3(10, 0.02, 2)
+
+[sub_resource type="BoxMesh" id="FarPath"]
+material = SubResource("Road")
+size = Vector3(10, 0.02, 2)
+
+[node name="WatchpostArena" type="Node3D" unique_id=967566195]
+
+[node name="Environment" type="WorldEnvironment" parent="." unique_id=730932165]
+environment = SubResource("Env")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1250647915]
+transform = Transform3D(0.88294756, 0.3845686, -0.26927784, 0, 0.57357645, 0.81915206, 0.46947157, -0.72326833, 0.50643796, 0, 0, 0)
+light_color = Color(1, 0.91, 0.76, 1)
+light_energy = 1.4
+shadow_enabled = true
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=2056231653]
+navigation_mesh = SubResource("Nav")
+
+[node name="Floor" type="StaticBody3D" parent="NavigationRegion3D" unique_id=564264977 groups=["walkable"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, 0)
+collision_mask = 4
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Floor" unique_id=1657416031]
+mesh = SubResource("FloorMesh")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Floor" unique_id=1792546532]
+shape = SubResource("FloorShape")
+
+[node name="BlockingRuin" type="StaticBody3D" parent="NavigationRegion3D" unique_id=1589806420]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+collision_layer = 2
+collision_mask = 4
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/BlockingRuin" unique_id=91072155]
+mesh = SubResource("BlockingRuinMesh")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/BlockingRuin" unique_id=1511033322]
+shape = SubResource("BlockingRuinShape")
+
+[node name="WestWall" type="StaticBody3D" parent="NavigationRegion3D" unique_id=622203248]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.75, 0.6, 0)
+collision_layer = 2
+collision_mask = 4
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/WestWall" unique_id=1916085041]
+mesh = SubResource("WestWallMesh")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/WestWall" unique_id=538310160]
+shape = SubResource("WestWallShape")
+
+[node name="EastWall" type="StaticBody3D" parent="NavigationRegion3D" unique_id=575604911]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.75, 0.6, 0)
+collision_layer = 2
+collision_mask = 4
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/EastWall" unique_id=56297652]
+mesh = SubResource("EastWallMesh")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/EastWall" unique_id=1892803487]
+shape = SubResource("EastWallShape")
+
+[node name="NorthWall" type="StaticBody3D" parent="NavigationRegion3D" unique_id=1662327611]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -12.75)
+collision_layer = 2
+collision_mask = 4
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/NorthWall" unique_id=268732745]
+mesh = SubResource("NorthWallMesh")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/NorthWall" unique_id=64736662]
+shape = SubResource("NorthWallShape")
+
+[node name="SouthWall" type="StaticBody3D" parent="NavigationRegion3D" unique_id=489859605]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 12.75)
+collision_layer = 2
+collision_mask = 4
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/SouthWall" unique_id=23349605]
+mesh = SubResource("SouthWallMesh")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/SouthWall" unique_id=2035873827]
+shape = SubResource("SouthWallShape")
+
+[node name="UnreachableIsland" type="StaticBody3D" parent="NavigationRegion3D" unique_id=411232650 groups=["walkable"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, -0.3, -5)
+collision_mask = 4
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/UnreachableIsland" unique_id=105610166]
+mesh = SubResource("UnreachableIslandMesh")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/UnreachableIsland" unique_id=1004187954]
+shape = SubResource("UnreachableIslandShape")
+
+[node name="WestPath" type="MeshInstance3D" parent="." unique_id=1522729427]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.012, 0)
+mesh = SubResource("WestPath")
+
+[node name="EastPath" type="MeshInstance3D" parent="." unique_id=764415338]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.012, 0)
+mesh = SubResource("EastPath")
+
+[node name="NearPath" type="MeshInstance3D" parent="." unique_id=2028888201]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.012, 7)
+mesh = SubResource("NearPath")
+
+[node name="FarPath" type="MeshInstance3D" parent="." unique_id=1279138242]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.012, -7)
+mesh = SubResource("FarPath")
+
+[node name="RuinLabel" type="Label3D" parent="." unique_id=964730835]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+pixel_size = 0.012
+billboard = 1
+text = "OLD RUIN"

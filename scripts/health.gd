@@ -12,6 +12,15 @@ func reset(max_health: int) -> void:
 	current = maximum
 	changed.emit(current, maximum)
 
+func increase_maximum(max_health: int) -> void:
+	var increase := max_health - maximum
+	if increase <= 0:
+		return
+	maximum = max_health
+	if current > 0:
+		current += increase
+	changed.emit(current, maximum)
+
 func take_damage(amount: int) -> int:
 	if current <= 0:
 		return 0

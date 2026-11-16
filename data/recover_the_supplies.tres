@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ValeQuestDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/quest_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"recover_the_supplies"
+title = "Recover the Supplies"
+briefing = "Follow Pine Road north around the ruin to the abandoned campsite. Recover the marked supply crate and bring it here. Raiders guard the camp."
+objective = "Recover the supply crate at the campsite"
+return_objective = "Return to Captain Mara"
+turn_in_dialogue = "These supplies will keep the watchpost running. Well done."
+target_object = &"campsite_supplies"
+reward_xp = 55

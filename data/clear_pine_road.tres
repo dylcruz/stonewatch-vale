@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ValeQuestDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/quest_definition.gd" id="1"]
+[ext_resource type="Resource" path="res://data/iron_sword.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = &"clear_pine_road"
+title = "Clear Pine Road"
+briefing = "Wolves have spread onto Pine Road east of the watchpost. Defeat three road wolves and report back."
+objective = "Defeat road wolves"
+return_objective = "Return to Captain Mara"
+turn_in_dialogue = "Pine Road is clear. Thank you, Warrior."
+target_enemy = &"road_wolf"
+required_kills = 3
+reward_xp = 55
+reward_item = ExtResource("2")

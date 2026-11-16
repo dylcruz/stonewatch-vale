@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ValeItem" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/item.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"iron_sword"
+display_name = "Iron Sword"
+bonus_damage = 4
+blade_color = Color(0.57, 0.77, 0.94, 1)

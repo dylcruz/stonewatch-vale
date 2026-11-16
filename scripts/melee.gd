@@ -8,6 +8,9 @@ static func can_hit(attacker: Node3D, target: Node3D, reach: float) -> bool:
 	separation.y = 0.0
 	if separation.length() > reach:
 		return false
+	return has_line_of_sight(attacker, target)
+
+static func has_line_of_sight(attacker: Node3D, target: Node3D) -> bool:
 	# Scenery also blocks a swing that happens to be within melee range.
 	var query := PhysicsRayQueryParameters3D.create(attacker.global_position + Vector3.UP,
 		target.global_position + Vector3.UP, 2)

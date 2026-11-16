@@ -36,13 +36,15 @@ func click(point: Vector3) -> bool:
 	return world.click_world(world.camera.unproject_position(point))
 
 func run() -> void:
-	world = load("res://scenes/movement_demo.tscn").instantiate()
+	world = load("res://scenes/stonewatch_vale.tscn").instantiate()
 	root.add_child(world)
 	player = world.get_node("Player")
 	trail = world.get_node("PathBreadcrumbs")
+	for enemy in world.enemies:
+		enemy.set_physics_process(false)
 	await frames(5)
 	check(trail.enabled and points().is_empty(), "Breadcrumbs default to enabled and are empty while idle")
-	check(click(Vector3(0, 0, -9)), "Ground command accepts a route past the ruin")
+	check(click(Vector3(0, 0, -6.7)), "Ground command accepts a route past the ruin")
 	await frames(2)
 	var initial := points()
 	check(initial.size() > 15, "A long movement command displays breadcrumbs")
@@ -57,9 +59,6 @@ func run() -> void:
 		on_navigation = on_navigation and nav_point.distance_to(point) < 0.3
 	check(bends_around and clear_of_ruin, "Visible breadcrumbs bend around the ruin instead of crossing it")
 	check(on_navigation, "Breadcrumbs stay on the walkable navigation route")
-	if "--capture" in OS.get_cmdline_user_args() and DisplayServer.get_name() != "headless":
-		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://builds/playtest/breadcrumb-route.png")
 	await frames(30)
 	check(points().size() < initial.size(), "Passed breadcrumbs disappear as the player advances")
 	var endpoint: Vector3 = points()[0]
@@ -67,9 +66,9 @@ func run() -> void:
 	await frames(2)
 	check(not points().is_empty() and points()[0] == endpoint, "Rejected click preserves the accepted trail endpoint")
 	# Real UI dispatch must preserve the route as well as the command.
-	var button: Button = world.get_node("HUD/Panel/Margin/VBox/UITest")
+	var panel: PanelContainer = world.get_node("HUD/Panel")
 	var event := InputEventMouseButton.new()
-	event.position = button.get_global_rect().get_center()
+	event.position = panel.get_global_rect().position + Vector2(12, 12)
 	event.button_index = MOUSE_BUTTON_LEFT
 	event.pressed = true
 	root.push_input(event, true)
@@ -96,7 +95,7 @@ func run() -> void:
 	world.queue_free()
 	await process_frame
 
-	world = load("res://scenes/combat_demo.tscn").instantiate()
+	world = load("res://scenes/stonewatch_vale.tscn").instantiate()
 	root.add_child(world)
 	player = world.get_node("Player")
 	trail = world.get_node("PathBreadcrumbs")
@@ -116,12 +115,12 @@ func run() -> void:
 	player.receive_hit(999, world.wolf)
 	await frames(2)
 	check(points().is_empty(), "Player death clears the trail")
-	world.reset_fight()
+	player.reset_combat()
 	click(Vector3(7, 0, 7))
 	await frames(2)
-	world.reset_fight()
+	player.reset_combat()
 	await frames(2)
-	check(points().is_empty() and trail.enabled, "Reset clears the route and keeps breadcrumbs enabled")
+	check(points().is_empty() and trail.enabled, "Recovery clears the route and keeps breadcrumbs enabled")
 	print("Breadcrumb checks complete; assertions: ", assertions, "; failures: ", failures)
 	world.queue_free()
 	await process_frame

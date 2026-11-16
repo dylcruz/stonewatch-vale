@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ValeQuestDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/quest_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"break_the_blockade"
+title = "Break the Blockade"
+briefing = "The Raider Captain is holding the old quarry west of the watchpost. Follow the south road to Quarry Gate, defeat the Captain, and report back."
+objective = "Defeat the Raider Captain at Quarry Gate"
+return_objective = "Return to Captain Mara"
+turn_in_dialogue = "With the blockade broken, the Compact can reopen the road. You have our thanks, Warrior."
+target_enemy = &"raider_captain"
+required_kills = 1
+reward_xp = 35
