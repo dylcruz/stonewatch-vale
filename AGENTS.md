@@ -47,6 +47,8 @@ Tests extend `SceneTree`, instantiate real scenes, print assertions, and return 
 
 Use concise, imperative commit subjects, matching history: `Add first melee combat checkpoint and path breadcrumbs`. Keep commits focused on reviewable checkpoints. PRs should explain changed behavior, list validation and limitations, link relevant issues when applicable, and include screenshots for visual changes.
 
+Branch feature work from `dev` and target `dev` with feature PRs. Release a batch of integrated features through a PR from `dev` to `main`. GitHub Actions tests both branches and produces Windows executables only after tests pass on a push to `main`.
+
 ## Incremental Delivery
 
 Follow `docs/stonewatch-implementation-plan.md`. Implement one playable checkpoint at a time and pause for user playtesting before advancing. Preserve accepted movement behavior, including HUD input consumption and rejection of unreachable destinations.

@@ -64,9 +64,11 @@ godot --path . --script res://tests/breadcrumb_test.gd
 
 See the [playtest record and follow-up](docs/playtest.md) for Windows results and the reported quest credit, enemy respawn, and quest journal behavior.
 
-## Windows export
+## Development and releases
 
-Install the matching **4.7.2** export templates through **Editor → Manage Export Templates**. Add a **Windows Desktop** preset under **Project → Export**, select an x86_64 executable under the ignored `builds/` directory, and export. Repeat the playtest in the exported Windows build when one is produced; the source project is the milestone deliverable.
+Create feature branches from `dev` and open feature pull requests against `dev`. When a batch of features is ready to release, open a pull request from `dev` to `main`.
+
+GitHub Actions runs the Godot regression suites on pull requests to `dev` and `main`, pushes to either branch, and manual runs. A push to `main` exports and uploads the x86_64 Windows build after the tests pass. Download `stonewatch-vale-windows-x86_64` from that workflow run and repeat the Windows playtest in `StonewatchVale.exe`.
 
 ## Assets
 
