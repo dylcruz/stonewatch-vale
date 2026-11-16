@@ -10,7 +10,7 @@ The original three-quest F5 scene passed the launch smoke test. The terrain navi
 
 ## Current Windows checklist
 
-Press **F5** to launch the watchpost arena.
+Press **F5** to launch the watchpost arena. This checklist uses the watchpost quests as one example of leveling through the zone.
 
 - [ ] Route around the ruin. Try the disconnected platform, click the HUD, and verify both preserve the active movement command. Check held steering and breadcrumb clearance on arrival.
 - [ ] Accept Clear Pine Road, defeat three wolves, and report to Mara. Confirm 100 XP, level 2, 75 max HP, and Cleave. Equip the Iron Sword in **I** and confirm 12 sword damage.
@@ -34,7 +34,7 @@ The user reported that wolves killed before quest acceptance stayed defeated. Th
 
 ## Recurring Captain and quest XP checkpoint
 
-The Captain now follows the same exit and timer rules as regular enemies, including after a credited defeat or a completed turn-in. Wolves and raiders award 5 XP per defeat. The Captain awards 15 XP per defeat and the Warden’s Coat on the first defeat. On the required route, the three turn-ins award 210 of the 240 XP needed to reach level 3.
+The Captain now follows the same exit and timer rules as regular enemies, including after a credited defeat or a completed turn-in. Wolves and raiders award 5 XP per defeat. The Captain awards 15 XP per defeat and the Warden’s Coat on the first defeat. In the watchpost playtest, the three turn-ins award 210 of the 240 XP needed to reach level 3.
 
 **Automated on Windows with Godot 4.7.2 Standard.** Movement, combat, quest chain, and graphical breadcrumbs passed. The quest suite covers XP before acceptance, with the turn-in ready, and after completion, as well as the authored 240 XP route.
 
@@ -42,7 +42,7 @@ The Captain now follows the same exit and timer rules as regular enemies, includ
 
 - [ ] Defeat the Captain with Break the Blockade active. Check that the quest is ready to turn in and the Captain awards 15 XP. Leave Quarry Gate and wait for the 30-second timer. Return to fight him while the turn-in is ready. Verify another 15 XP, one Warden’s Coat, and the same ready objective.
 - [ ] Turn in Break the Blockade and revisit Quarry Gate after the respawn delay. Verify that the Captain is back at full health and the journal still shows the completed quest.
-- [ ] Check that a wolf and a regular raider each award 5 XP. On a fresh run with optional enemies alive, check turn-in rewards of 85, 55, and 70 XP. The required route reaches level 2 at the first turn-in and level 3 at the last.
+- [ ] Check that a wolf and a regular raider each award 5 XP. On a fresh run with optional enemies alive, check turn-in rewards of 85, 55, and 70 XP. This watchpost playtest reaches level 2 at the first turn-in and level 3 at the last.
 
 ## Quest journal follow-up
 
