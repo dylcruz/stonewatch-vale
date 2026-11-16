@@ -10,6 +10,9 @@ var kills := 0
 func _init(quest: ValeQuestDefinition) -> void:
 	definition = quest
 
+func is_in_progress() -> bool:
+	return state == State.ACTIVE or state == State.READY
+
 func record_defeat(enemy_id: StringName) -> bool:
 	if state != State.ACTIVE or enemy_id != definition.target_enemy or kills >= definition.required_kills:
 		return false

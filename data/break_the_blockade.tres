@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1")
 id = &"break_the_blockade"
+prerequisite_quests = Array[StringName]([&"clear_pine_road", &"recover_the_supplies"])
 title = "Break the Blockade"
 briefing = "The Raider Captain is holding the old quarry west of the watchpost. Follow the south road to Quarry Gate, defeat the Captain, and report back."
 objective = "Defeat the Raider Captain at Quarry Gate"

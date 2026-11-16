@@ -32,6 +32,14 @@ The user reported that wolves killed before quest acceptance stayed defeated. Th
 - [ ] Defeat a regular wolf or raider and stay near its spawn for more than 30 seconds. Verify it stays down, then leave the encounter area and check that it returns at full health. On the next defeat, leave immediately and check that it stays down until the delay elapses.
 - [ ] Defeat the Captain before accepting Break the Blockade. Confirm the first defeat grants 50 XP and the Warden’s Coat. Leave the quarry and accept Break the Blockade. Confirm the objective starts at 0 / 1. Return to Quarry Gate after the delay, defeat the Captain again, and confirm the turn-in is ready and XP and loot do not repeat. Return after the delay to verify the credited Captain stays defeated.
 
-## Quest journal follow-up
+## Concurrent quest journal checkpoint
 
-- [ ] Accept two eligible quests before either turn-in. Verify the journal shows both and that turning in one preserves the other’s progress and turn-in state.
+Mara offers Clear Pine Road and Recover the Supplies from the start. The player can accept and turn in either quest first. Break the Blockade unlocks after both turn-ins. [Issue #3](https://github.com/dylcruz/stonewatch-vale/issues/3)
+
+**Automated on Windows with Godot 4.7.2 Standard.** Movement, combat, quest chain, and graphical breadcrumbs passed. The quest suite passed 70 assertions covering independent objectives and rewards, both turn-in orders, HUD tracking during movement, and the Captain’s prerequisites. The journal and Mara’s dialogue were also checked with the Compatibility renderer.
+
+**Windows user playtest pending.**
+
+- [ ] Accept both quests before turning either in. Open **J** and verify each quest has its own objective. Use **Track** to switch the single HUD objective while a movement command is active.
+- [ ] Defeat one road wolf and recover the crate while tracking Clear Pine Road. Confirm the journal shows `1 / 3` for Clear Pine Road and **Ready to turn in** for Recover the Supplies.
+- [ ] Defeat the remaining wolves and return to Mara with both quests ready. Turn in Recover the Supplies first. Confirm the journal shows it as completed and Clear Pine Road still ready with all three kills. Turn in Clear Pine Road and verify Break the Blockade becomes available at 155 XP.

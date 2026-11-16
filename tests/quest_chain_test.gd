@@ -71,6 +71,19 @@ func talk_to_mara() -> bool:
 	await click_world(world.mara.global_position + Vector3.UP)
 	return await until(func(): return world.journal.visible and world.journal_title.text == "Captain Mara")
 
+func quest_option(label: String) -> Button:
+	for button: Button in world.quest_options.get_children():
+		if button.text == label and button.is_visible_in_tree():
+			return button
+	return null
+
+func choose_quest_option(label: String) -> bool:
+	var button := quest_option(label)
+	if not button:
+		return false
+	await click_button(button)
+	return true
+
 func equip_from_panel(item_name: String) -> bool:
 	await press_key(KEY_I)
 	for button: Button in world.gear_options.get_children():
@@ -89,27 +102,29 @@ func restart(scene_path: String) -> void:
 func check_early_wolf_at_watchpost() -> void:
 	var wolf: ValeWolf = world.get_node("Wolf")
 	var watchpost: Marker3D = world.get_node("Watchpost")
+	var pine_road: ValeQuestProgress = world.quest_chain[0]
 	wolf.respawn_delay = 4.0
 	await click_world(wolf.global_position + Vector3.UP * 0.85)
 	await until(func(): return wolf.biting, 220)
 	await press_key(KEY_2)
 	check(await until(func(): return not wolf.is_alive(), 420) and warrior.is_alive()
-		and world.quest.state == ValeQuestProgress.State.AVAILABLE and warrior.experience == 15,
+		and pine_road.state == ValeQuestProgress.State.AVAILABLE and warrior.experience == 15,
 		"The first road wolf can be defeated through gameplay before accepting Clear Pine Road")
 	check(await walk_to(watchpost.global_position) and warrior.is_in_refuge()
 		and wolf.spawn_position.distance_to(warrior.global_position) <= wolf.leash_range and not wolf.is_alive(),
 		"The Warrior can return to the refuge inside the wolf's leash before the delay elapses")
 	check(await until(func(): return wolf.is_alive(), 260) and wolf.health.current == wolf.stats.max_health
-		and world.quest.state == ValeQuestProgress.State.AVAILABLE,
+		and pine_road.state == ValeQuestProgress.State.AVAILABLE,
 		"Waiting at the watchpost lets the first wolf respawn while Clear Pine Road is still unaccepted")
 	await talk_to_mara()
 	await click_button(world.dialogue_action)
-	check(world.quest.state == ValeQuestProgress.State.ACTIVE and world.quest.kills == 0,
+	check(pine_road.state == ValeQuestProgress.State.ACTIVE and pine_road.kills == 0,
 		"Accepting Clear Pine Road after the watchpost wait still starts at zero kills")
 
 func check_regular_respawns() -> void:
 	var wolf: ValeWolf = world.get_node("Wolf")
 	var raider: ValeRaider = world.get_node("CampRaider")
+	var pine_road: ValeQuestProgress = world.quest_chain[0]
 	wolf.respawn_delay = 0.2
 	raider.respawn_delay = 0.6
 	var respawns := [0, 0]
@@ -134,16 +149,16 @@ func check_regular_respawns() -> void:
 			and enemy.opponent == null and not enemy.attacking and not enemy.returning
 			and enemy.attack_cooldown == 0.0 and not enemy.get_node("SelectionRing").visible,
 			"%s returns to its authored spawn with full health and reset AI" % enemy.stats.display_name)
-	check(warrior.experience == 30 and world.quest.kills == 0,
+	check(warrior.experience == 30 and pine_road.kills == 0,
 		"Pre-quest regular defeats grant XP without storing kill credit")
 	await talk_to_mara()
 	await click_button(world.dialogue_action)
-	check(world.quest.state == ValeQuestProgress.State.ACTIVE and world.quest.kills == 0,
+	check(pine_road.state == ValeQuestProgress.State.ACTIVE and pine_road.kills == 0,
 		"Accepting Clear Pine Road starts at zero after a pre-quest wolf defeat")
 	warrior.global_position = Vector3(-5, 0.02, 7)
 	wolf.receive_hit(999, warrior)
 	raider.receive_hit(999, warrior)
-	check(world.quest.kills == 1 and warrior.experience == 60,
+	check(pine_road.kills == 1 and warrior.experience == 60,
 		"The respawned wolf credits the active objective and both regular defeats grant XP again")
 	check(await until(func(): return wolf.is_alive() and raider.is_alive(), 50) and respawns == [2, 2],
 		"Each repeated defeat restores its existing placement exactly once")
@@ -169,7 +184,7 @@ func check_early_captain() -> void:
 		world.get_node(wolf_path).receive_hit(999, warrior)
 	await talk_to_mara()
 	await click_button(world.dialogue_action)
-	await click_button(world.dialogue_action)
+	await choose_quest_option("View Recover the Supplies")
 	await click_button(world.dialogue_action)
 	warrior.global_position = crate.global_position + Vector3(0, 0, 1)
 	await frames(2)
@@ -178,7 +193,7 @@ func check_early_captain() -> void:
 	await frames(2)
 	await talk_to_mara()
 	await click_button(world.dialogue_action)
-	await click_button(world.dialogue_action)
+	await choose_quest_option("View Break the Blockade")
 	await click_button(world.dialogue_action)
 	check(blockade.state == ValeQuestProgress.State.ACTIVE and blockade.kills == 0
 		and not captain.is_alive() and not marker.visible and world.objective_label.text.contains("0 / 1"),
@@ -201,11 +216,82 @@ func check_early_captain() -> void:
 	check(blockade.state == ValeQuestProgress.State.COMPLETED and warrior.experience == 240,
 		"The early-defeat route can turn in Break the Blockade and reach level 3")
 
+func check_concurrent_turn_ins() -> void:
+	var pine_road: ValeQuestProgress = world.quest_chain[0]
+	var supplies: ValeQuestProgress = world.quest_chain[1]
+	var blockade: ValeQuestProgress = world.quest_chain[2]
+	var crate: ValeInteractable = world.get_node("SupplyCrate")
+	await talk_to_mara()
+	check(await choose_quest_option("View Recover the Supplies") and world.dialogue_quest == supplies
+		and world.dialogue_action.text == "Accept quest" and quest_option("View Break the Blockade") == null,
+		"Mara offers supplies before Clear Pine Road and keeps Break the Blockade locked")
+	await click_button(world.dialogue_action)
+	await talk_to_mara()
+	await click_button(world.dialogue_action)
+	check(supplies.state == ValeQuestProgress.State.ACTIVE and pine_road.state == ValeQuestProgress.State.ACTIVE
+		and world.tracked_quest == supplies and crate.objective_marker.visible,
+		"Accepting both quests retains the first tracked quest and enables the supply marker")
+
+	await click_world(Vector3(8, 0, 6.8))
+	var destination := warrior.destination
+	await press_key(KEY_J)
+	check(world.journal_body.text.contains("Recover the Supplies · In progress · Tracked")
+		and world.journal_body.text.contains("Clear Pine Road · In progress") and world.journal_body.text.contains("0 / 3"),
+		"The journal shows both active quests with their own objectives")
+	check(await choose_quest_option("Track Clear Pine Road") and world.tracked_quest == pine_road
+		and world.objective_label.text.contains("0 / 3") and warrior.moving and warrior.destination == destination,
+		"Tracking Clear Pine Road changes the HUD while preserving the active movement command")
+	world.get_node("Wolf").receive_hit(999, warrior)
+	check(pine_road.kills == 1 and supplies.state == ValeQuestProgress.State.ACTIVE,
+		"A wolf defeat advances the road objective independently")
+
+	warrior.clear_combat_target()
+	warrior.global_position = crate.global_position + Vector3(0, 0, 1)
+	await frames(2)
+	crate.interacted.emit()
+	check(supplies.state == ValeQuestProgress.State.READY and pine_road.state == ValeQuestProgress.State.ACTIVE
+		and pine_road.kills == 1 and world.journal_body.text.contains("Recover the Supplies · Ready to turn in")
+		and world.objective_label.text.contains("1 / 3") and not crate.visible,
+		"Collecting supplies readies the untracked quest and leaves wolf progress on the HUD")
+	world.get_node("WolfSecond").receive_hit(999, warrior)
+	world.get_node("WolfThird").receive_hit(999, warrior)
+	check(world.journal_body.text.count("Ready to turn in") == 2 and world.quest_marker.text == "?",
+		"The journal and Mara indicate that both quests are ready")
+	check(await choose_quest_option("Track Recover the Supplies") and world.objective_label.text.begins_with("Recover the Supplies")
+		and await choose_quest_option("Track Clear Pine Road") and world.objective_label.text.begins_with("Clear Pine Road"),
+		"The HUD identifies the tracked quest even when both require a turn-in at Mara")
+
+	warrior.reset_combat()
+	await frames(2)
+	await press_key(KEY_J)
+	await talk_to_mara()
+	check(await choose_quest_option("View Recover the Supplies") and world.dialogue_quest == supplies
+		and world.dialogue_action.text == "Turn in quest" and quest_option("View Break the Blockade") == null,
+		"Mara lets the player choose which ready quest to turn in first")
+	await click_button(world.dialogue_action)
+	check(supplies.state == ValeQuestProgress.State.COMPLETED and pine_road.state == ValeQuestProgress.State.READY
+		and pine_road.kills == 3 and warrior.experience == 100 and not warrior.owned_items.has(&"iron_sword")
+		and quest_option("View Break the Blockade") == null,
+		"Turning in supplies pays only its reward and keeps Clear Pine Road ready with all three kills")
+	await press_key(KEY_J)
+	check(world.journal_body.text.contains("Recover the Supplies · Completed")
+		and world.journal_body.text.contains("Clear Pine Road · Ready to turn in · Tracked"),
+		"The same journal shows a completed quest and the other quest's preserved turn-in state")
+	await press_key(KEY_J)
+	await talk_to_mara()
+	await click_button(world.dialogue_action)
+	check(pine_road.state == ValeQuestProgress.State.COMPLETED and blockade.state == ValeQuestProgress.State.AVAILABLE
+		and warrior.experience == 155 and warrior.owned_items.has(&"iron_sword")
+		and quest_option("View Break the Blockade") != null,
+		"Break the Blockade becomes eligible after both turn-ins in reverse order")
+
 func run() -> void:
 	var main_scene: String = ProjectSettings.get_setting("application/run/main_scene")
 	await start(main_scene)
 	await check_early_wolf_at_watchpost()
 	await restart(main_scene)
+	var pine_road: ValeQuestProgress = world.quest_chain[0]
+	var supplies: ValeQuestProgress = world.quest_chain[1]
 	var blockade: ValeQuestProgress = world.quest_chain[2]
 	var captain: ValeRaider = world.get_node("RaiderCaptain")
 	var boss_marker: Label3D = captain.get_node("QuestMarker")
@@ -213,7 +299,7 @@ func run() -> void:
 	var camp_raider: ValeRaider = world.get_node("CampRaider")
 	var other_raider: ValeRaider = world.get_node("CampRaiderSecond")
 	var optional_wolf: ValeWolf = world.get_node("WolfNorthwest")
-	check(world.quest_chain.size() == 3 and world.quest.definition.id == &"clear_pine_road"
+	check(world.quest_chain.size() == 3 and pine_road.definition.id == &"clear_pine_road"
 		and blockade.definition.id == &"break_the_blockade" and warrior.level == 1 and not boss_marker.visible,
 		"F5 starts the three-quest chain at level 1")
 
@@ -229,6 +315,11 @@ func run() -> void:
 	check(world.journal_body.text.begins_with("Clear Pine Road") and world.dialogue_action.text == "Accept quest",
 		"Mara opens the first quest offer")
 	await click_button(world.dialogue_action)
+	check(await talk_to_mara() and world.dialogue_quest == supplies and world.dialogue_action.text == "Accept quest",
+		"Mara offers Recover the Supplies while Clear Pine Road is active")
+	await click_button(world.dialogue_action)
+	check(crate.objective_marker.visible and world.tracked_quest == pine_road,
+		"Accepting Recover the Supplies marks the crate while the HUD tracks Clear Pine Road")
 	await press_key(KEY_J)
 	check(world.journal_body.text.contains("0 / 3"), "The active quest log shows the wolf objective")
 	await press_key(KEY_J)
@@ -241,10 +332,10 @@ func run() -> void:
 	await walk_to(Vector3(8, 0, 6.8))
 	await talk_to_mara()
 	await click_button(world.dialogue_action)
-	check(warrior.level == 2 and warrior.experience == 100, "Clear Pine Road unlocks level 2 in the full chain")
-	await click_button(world.dialogue_action)
-	await click_button(world.dialogue_action)
-	check(crate.objective_marker.visible, "Accepting Recover the Supplies marks the crate")
+	check(warrior.level == 2 and warrior.experience == 100 and pine_road.state == ValeQuestProgress.State.COMPLETED,
+		"Clear Pine Road unlocks level 2 in the full chain")
+	check(supplies.state == ValeQuestProgress.State.ACTIVE and world.tracked_quest == supplies and crate.objective_marker.visible,
+		"Turning in Clear Pine Road switches the HUD to the remaining active quest")
 	check(await equip_from_panel("Iron Sword") and warrior.sword_damage() == 12, "The Iron Sword equips before the later quests")
 
 	await walk_to(Vector3(8, 0, 6.8))
@@ -254,19 +345,19 @@ func run() -> void:
 	check(await until(func(): return not crate.visible) and crate.collision_layer == 0 and warrior.experience == 100,
 		"The crate can be collected without defeating its guards")
 	await click_world(crate_pick)
-	check(world.quest.state == ValeQuestProgress.State.READY and warrior.experience == 100,
+	check(supplies.state == ValeQuestProgress.State.READY and warrior.experience == 100,
 		"A repeated click cannot collect again or grant XP")
 	await walk_to(Vector3(8, 0, -7.5))
 	await walk_to(Vector3(8, 0, 6.8))
 	warrior.receive_hit(999, null)
-	check(await until(func(): return warrior.is_alive(), 150) and world.quest.state == ValeQuestProgress.State.READY
+	check(await until(func(): return warrior.is_alive(), 150) and supplies.state == ValeQuestProgress.State.READY
 		and not crate.visible and warrior.sword_damage() == 12, "Recovery preserves cargo, quest readiness, and equipment")
 	await talk_to_mara()
 	await click_button(world.dialogue_action)
-	check(warrior.experience == 155 and world.quest == blockade and blockade.state == ValeQuestProgress.State.AVAILABLE,
+	check(warrior.experience == 155 and quest_option("View Break the Blockade") != null,
 		"The supplies turn-in offers Break the Blockade at 155 XP")
-	await click_button(world.dialogue_action)
-	check(world.journal_body.text.begins_with("Break the Blockade"), "Mara gives the directions to Quarry Gate")
+	check(await choose_quest_option("View Break the Blockade") and world.journal_body.text.begins_with("Break the Blockade"),
+		"Mara gives the directions to Quarry Gate")
 	await click_button(world.dialogue_action)
 	check(blockade.state == ValeQuestProgress.State.ACTIVE and boss_marker.visible
 		and world.objective_label.text.contains("Quarry Gate"), "Accepting the quest marks the Captain and the quarry objective")
@@ -344,6 +435,8 @@ func run() -> void:
 	await check_regular_respawns()
 	await restart(main_scene)
 	await check_early_captain()
+	await restart(main_scene)
+	await check_concurrent_turn_ins()
 
 	print("Quest chain checks complete; assertions: ", assertions, "; failures: ", failures)
 	world.queue_free()
