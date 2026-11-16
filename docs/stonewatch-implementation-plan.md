@@ -37,7 +37,7 @@ Use the main road, signs, and distinct landmarks to guide players from the fence
 
 ## Controls and combat
 
-- **Left-click ground** to move. Draw a short-lived destination marker and route the player around obstacles on the navigation mesh. Ignore a click that produces no valid destination and keep the character on walkable terrain.
+- **Left-click ground** to move, or hold the left mouse button to follow the cursor. Releasing keeps the last valid destination. Draw a short-lived destination marker and route the player around obstacles on the navigation mesh. Ignore a click that produces no valid destination and keep the character on walkable terrain.
 - **Left-click an enemy** to select it, move toward it, and begin basic melee swings once in range. A ground click cancels pursuit and auto-attacks. Melee hits require range when they resolve. Clicking an NPC or quest object moves within interaction range and opens dialogue or performs the interaction. UI clicks are consumed by the UI.
 - **1 — Cleave.** Unlock at level 2. Hit nearby enemies in front of the Warrior and show a short cooldown. **2 — Guard.** Available from the start. Briefly reduce incoming damage and show active and cooldown states. Give both abilities readable feedback and expose their key bindings in the HUD.
 - **I — Gear.** Open a small panel showing owned items, the equipped weapon and armor, and their effects on attack and defense. Equip rewards explicitly. **J — Quest log.** Show the current objective, progress, and turn-in state. Give the player a compact active objective in the HUD as well.
@@ -53,6 +53,10 @@ Use the main road, signs, and distinct landmarks to guide players from the fence
 5. **Save, playtest, and package.** Provide New Game and Continue with one local save slot. Store level/XP, active and completed quest state, earned gear, and equipment under `user://`. Autosave when quests advance, rewards are granted, or equipment changes. Continue at the watchpost. Resolve kill credit, quest progress, XP, and any associated item together before saving that event so reloading cannot split or duplicate the reward. Treat a defeated quest boss as defeated on reload after its credit is saved. Run the checklist below and document how to launch the project and edit the zone.
 
 Keep movement and combat code reusable. Store enemy stats, item stats, quest definitions, and the player identity in simple Godot Resources or equivalent project data. Use stable IDs in saves. Keep faction, race, and class independent so a future class can be shared across playable races. Per-zone spawn positions and anchors belong to the zone. A small amount of shared code and data is sufficient for this build.
+
+## Milestone status
+
+The **click-to-move / prove movement first** milestone is implemented and its source-project playtest is complete, including Windows rendering and user-confirmed physical-mouse testing. `scenes/movement_demo.tscn` contains a fixed-angle following camera, ray-picked movement, saved baked navigation, a blocking ruin, a disconnected destination, a selectable practice target, destination feedback, and a HUD input-consumption check. See [movement playtest results](movement-playtest.md) and the [README](../README.md) for verification, the recorded label-overlap caveat, export limitations, and editing instructions. Target approach is demonstrated without combat; the complete fight is the next milestone. The full-prototype checklist below remains for later integration.
 
 ## Definition of done
 
