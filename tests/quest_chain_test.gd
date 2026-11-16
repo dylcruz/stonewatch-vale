@@ -81,9 +81,131 @@ func equip_from_panel(item_name: String) -> bool:
 	await press_key(KEY_I)
 	return false
 
+func restart(scene_path: String) -> void:
+	world.queue_free()
+	await process_frame
+	await start(scene_path)
+
+func check_early_wolf_at_watchpost() -> void:
+	var wolf: ValeWolf = world.get_node("Wolf")
+	var watchpost: Marker3D = world.get_node("Watchpost")
+	wolf.respawn_delay = 4.0
+	await click_world(wolf.global_position + Vector3.UP * 0.85)
+	await until(func(): return wolf.biting, 220)
+	await press_key(KEY_2)
+	check(await until(func(): return not wolf.is_alive(), 420) and warrior.is_alive()
+		and world.quest.state == ValeQuestProgress.State.AVAILABLE and warrior.experience == 15,
+		"The first road wolf can be defeated through gameplay before accepting Clear Pine Road")
+	check(await walk_to(watchpost.global_position) and warrior.is_in_refuge()
+		and wolf.spawn_position.distance_to(warrior.global_position) <= wolf.leash_range and not wolf.is_alive(),
+		"The Warrior can return to the refuge inside the wolf's leash before the delay elapses")
+	check(await until(func(): return wolf.is_alive(), 260) and wolf.health.current == wolf.stats.max_health
+		and world.quest.state == ValeQuestProgress.State.AVAILABLE,
+		"Waiting at the watchpost lets the first wolf respawn while Clear Pine Road is still unaccepted")
+	await talk_to_mara()
+	await click_button(world.dialogue_action)
+	check(world.quest.state == ValeQuestProgress.State.ACTIVE and world.quest.kills == 0,
+		"Accepting Clear Pine Road after the watchpost wait still starts at zero kills")
+
+func check_regular_respawns() -> void:
+	var wolf: ValeWolf = world.get_node("Wolf")
+	var raider: ValeRaider = world.get_node("CampRaider")
+	wolf.respawn_delay = 0.2
+	raider.respawn_delay = 0.6
+	var respawns := [0, 0]
+	wolf.respawned.connect(func(): respawns[0] += 1)
+	raider.respawned.connect(func(): respawns[1] += 1)
+	warrior.global_position = wolf.spawn_position + Vector3(0, 0, 2)
+	wolf.global_position += Vector3(0, 0, 1)
+	raider.global_position += Vector3(0.5, 0, 0)
+	wolf.receive_hit(999, warrior)
+	raider.receive_hit(999, warrior)
+	await frames(20)
+	check(not wolf.is_alive() and wolf.collision_layer == 0,
+		"A road wolf stays defeated past the delay while the Warrior is within its leash")
+	check(not raider.is_alive() and raider.collision_layer == 0,
+		"Leaving a camp raider's leash before its delay still requires the full delay")
+	warrior.global_position = Vector3(-5, 0.02, 7)
+	check(await until(func(): return wolf.is_alive() and raider.is_alive(), 40),
+		"Both regular enemies return once the Warrior is outside and the delay has elapsed")
+	for enemy: ValeEnemy in [wolf, raider]:
+		check(enemy.global_position.distance_to(enemy.spawn_position) < 0.1
+			and enemy.health.current == enemy.stats.max_health and enemy.collision_layer == 8
+			and enemy.opponent == null and not enemy.attacking and not enemy.returning
+			and enemy.attack_cooldown == 0.0 and not enemy.get_node("SelectionRing").visible,
+			"%s returns to its authored spawn with full health and reset AI" % enemy.stats.display_name)
+	check(warrior.experience == 30 and world.quest.kills == 0,
+		"Pre-quest regular defeats grant XP without storing kill credit")
+	await talk_to_mara()
+	await click_button(world.dialogue_action)
+	check(world.quest.state == ValeQuestProgress.State.ACTIVE and world.quest.kills == 0,
+		"Accepting Clear Pine Road starts at zero after a pre-quest wolf defeat")
+	warrior.global_position = Vector3(-5, 0.02, 7)
+	wolf.receive_hit(999, warrior)
+	raider.receive_hit(999, warrior)
+	check(world.quest.kills == 1 and warrior.experience == 60,
+		"The respawned wolf credits the active objective and both regular defeats grant XP again")
+	check(await until(func(): return wolf.is_alive() and raider.is_alive(), 50) and respawns == [2, 2],
+		"Each repeated defeat restores its existing placement exactly once")
+
+func check_early_captain() -> void:
+	var captain: ValeRaider = world.get_node("RaiderCaptain")
+	var blockade: ValeQuestProgress = world.quest_chain[2]
+	var marker: Label3D = captain.get_node("QuestMarker")
+	var crate: ValeInteractable = world.get_node("SupplyCrate")
+	captain.respawn_delay = 4.0
+	warrior.global_position = captain.spawn_position + Vector3(0, 0, 2)
+	captain.receive_hit(999, warrior)
+	check(blockade.state == ValeQuestProgress.State.AVAILABLE and blockade.kills == 0
+		and warrior.experience == 50 and warrior.owned_items.has(&"wardens_coat") and world.loot_notice.visible,
+		"An early Captain defeat grants 50 XP and the coat without banking quest credit")
+	world.loot_notice.hide()
+	warrior.reset_combat()
+	await frames(2)
+
+	await talk_to_mara()
+	await click_button(world.dialogue_action)
+	for wolf_path in ["Wolf", "WolfSecond", "WolfThird"]:
+		world.get_node(wolf_path).receive_hit(999, warrior)
+	await talk_to_mara()
+	await click_button(world.dialogue_action)
+	await click_button(world.dialogue_action)
+	await click_button(world.dialogue_action)
+	warrior.global_position = crate.global_position + Vector3(0, 0, 1)
+	await frames(2)
+	crate.interacted.emit()
+	warrior.reset_combat()
+	await frames(2)
+	await talk_to_mara()
+	await click_button(world.dialogue_action)
+	await click_button(world.dialogue_action)
+	await click_button(world.dialogue_action)
+	check(blockade.state == ValeQuestProgress.State.ACTIVE and blockade.kills == 0
+		and not captain.is_alive() and not marker.visible and world.objective_label.text.contains("0 / 1"),
+		"Accepting Break the Blockade after an early defeat leaves the objective open")
+	check(await until(func(): return captain.is_alive(), 260) and marker.visible
+		and captain.global_position.distance_to(captain.spawn_position) < 0.1
+		and captain.health.current == captain.stats.max_health and not captain.telegraph.visible
+		and captain.heavy_cooldown_remaining == 0.0,
+		"The Captain returns to Quarry Gate with full health, reset attacks, and the active quest marker")
+	captain.respawn_delay = 0.2
+	captain.receive_hit(999, warrior)
+	check(blockade.state == ValeQuestProgress.State.READY and blockade.kills == 1 and not marker.visible
+		and warrior.experience == 205 and warrior.owned_items.size() == 4 and not world.loot_notice.visible,
+		"The rematch credits the quest once without awarding more kill XP or loot")
+	await frames(20)
+	check(not captain.is_alive() and captain.collision_layer == 0,
+		"A credited Captain defeat ends the encounter even after the respawn delay")
+	await talk_to_mara()
+	await click_button(world.dialogue_action)
+	check(blockade.state == ValeQuestProgress.State.COMPLETED and warrior.experience == 240,
+		"The early-defeat route can turn in Break the Blockade and reach level 3")
+
 func run() -> void:
 	var main_scene: String = ProjectSettings.get_setting("application/run/main_scene")
 	await start(main_scene)
+	await check_early_wolf_at_watchpost()
+	await restart(main_scene)
 	var blockade: ValeQuestProgress = world.quest_chain[2]
 	var captain: ValeRaider = world.get_node("RaiderCaptain")
 	var boss_marker: Label3D = captain.get_node("QuestMarker")
@@ -217,6 +339,11 @@ func run() -> void:
 		and warrior.health.current == hp_before_bite - 4, "The equipped coat reduces a live wolf bite from 6 to 4 damage")
 	optional_wolf.receive_hit(999, warrior)
 	check(warrior.level == 3 and warrior.experience == 240, "More kill XP respects the prototype cap")
+
+	await restart(main_scene)
+	await check_regular_respawns()
+	await restart(main_scene)
+	await check_early_captain()
 
 	print("Quest chain checks complete; assertions: ", assertions, "; failures: ", failures)
 	world.queue_free()

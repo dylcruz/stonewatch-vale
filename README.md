@@ -27,7 +27,9 @@ Three road wolves are east of the watchpost. They award 15 XP each, and turning 
 
 For **Recover the Supplies**, take Pine Road north and follow it west around the ruin to the abandoned campsite. Click the marked crate to approach and collect it. Each raider is worth 15 XP if defeated. Returning the crate to Mara grants 55 XP.
 
-For **Break the Blockade**, take the south road west to Quarry Gate. Move out of the Raider Captain’s red circle to avoid the heavy hit or use Guard to halve it. Defeating the Captain awards 50 XP and the Warden’s Coat. Equipping it adds 2 armor. Returning to Mara grants 35 XP, which brings the required route to 240 XP, level 3, and 90 max HP.
+For **Break the Blockade**, take the south road west to Quarry Gate. Move out of the Raider Captain’s red circle to avoid the heavy hit or use Guard to halve it. The first Captain defeat awards 50 XP and the Warden’s Coat. Equipping it adds 2 armor. Returning to Mara grants 35 XP, which brings the required route to 240 XP, level 3, and 90 max HP.
+
+Kill objectives count defeats while their quest is active. Regular wolves and raiders can respawn 30 seconds after defeat. To let them return, move beyond their leash radius or wait in the green watchpost refuge. If you defeat the Captain before accepting Break the Blockade, leave Quarry Gate and return after the delay to fight him for quest credit.
 
 ## Edit and bake
 
@@ -62,7 +64,7 @@ Run the breadcrumb draw-buffer checks with a graphical renderer:
 godot --path . --script res://tests/breadcrumb_test.gd
 ```
 
-See the [playtest record and follow-up](docs/playtest.md) for Windows results and the reported quest credit, enemy respawn, and quest journal behavior.
+See the [playtest record](docs/playtest.md) for Windows results and the quest credit and respawn checklist.
 
 ## Development and releases
 

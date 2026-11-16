@@ -28,7 +28,8 @@ func _ready() -> void:
 	for follow_up in follow_up_quests:
 		quest_chain.append(ValeQuestProgress.new(follow_up))
 	for enemy in enemies:
-		enemy.health.died.connect(_record_defeat.bind(enemy.stats), CONNECT_ONE_SHOT)
+		enemy.health.died.connect(_record_defeat.bind(enemy))
+		enemy.respawned.connect(_refresh_enemy_marker.bind(enemy))
 	for child in get_children():
 		if child is ValeInteractable and child.objective_id != &"":
 			quest_objects.append(child)
@@ -56,13 +57,23 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	get_viewport().set_input_as_handled()
 
-func _record_defeat(stats: ValeCombatStats) -> void:
-	player.award_experience(stats.defeat_xp)
+func _record_defeat(enemy: ValeEnemy) -> void:
+	var stats := enemy.stats
+	var credited := false
 	for progress in quest_chain:
-		progress.record_defeat(stats.enemy_id)
-	if player.grant_item(stats.defeat_item):
-		loot_notice.text = "%s added to Gear (I)" % stats.defeat_item.display_name
-		loot_notice.show()
+		if progress.record_defeat(stats.enemy_id):
+			credited = true
+	var grant_rewards := true
+	if enemy.respawn_policy == ValeEnemy.RespawnPolicy.UNTIL_QUEST_CREDIT:
+		if not credited:
+			enemy.schedule_respawn()
+		grant_rewards = not enemy.defeat_rewards_claimed
+		enemy.defeat_rewards_claimed = true
+	if grant_rewards:
+		player.award_experience(stats.defeat_xp)
+		if player.grant_item(stats.defeat_item):
+			loot_notice.text = "%s added to Gear (I)" % stats.defeat_item.display_name
+			loot_notice.show()
 	_refresh_progress()
 
 func _use_quest_object(object: ValeInteractable) -> void:
@@ -119,10 +130,7 @@ func _refresh_progress() -> void:
 		object.set_objective_hint(quest.state == ValeQuestProgress.State.ACTIVE
 			and quest.definition.target_object == object.objective_id)
 	for enemy in enemies:
-		var marker := enemy.get_node_or_null("QuestMarker") as Label3D
-		if marker:
-			marker.visible = quest.state == ValeQuestProgress.State.ACTIVE and enemy.is_alive() \
-				and quest.definition.target_enemy == enemy.stats.enemy_id
+		_refresh_enemy_marker(enemy)
 	match quest.state:
 		ValeQuestProgress.State.AVAILABLE:
 			quest_marker.text = "!"
@@ -131,6 +139,12 @@ func _refresh_progress() -> void:
 		_:
 			quest_marker.text = ""
 	_refresh_panel()
+
+func _refresh_enemy_marker(enemy: ValeEnemy) -> void:
+	var marker := enemy.get_node_or_null("QuestMarker") as Label3D
+	if marker:
+		marker.visible = quest.state == ValeQuestProgress.State.ACTIVE and enemy.is_alive() \
+			and quest.definition.target_enemy == enemy.stats.enemy_id
 
 func _toggle_panel(mode: JournalView) -> void:
 	if panel_mode == mode:

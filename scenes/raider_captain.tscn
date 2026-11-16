@@ -24,6 +24,7 @@ height = 2.2
 [node name="RaiderCaptain" instance=ExtResource("1")]
 stats = ExtResource("2")
 aggro_range = 5.0
+respawn_policy = 1
 heavy_damage = 20
 
 [node name="CollisionShape3D" parent="."]
