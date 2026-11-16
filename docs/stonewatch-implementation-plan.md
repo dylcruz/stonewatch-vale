@@ -9,8 +9,8 @@ The watchpost graybox supports click-to-move, breadcrumbs, combat, death recover
 ### Quest credit, respawns, and journal
 
 - [ ] Count kill objectives only while their quest is active. Verify that defeating the Raider Captain before accepting Break the Blockade leaves the objective open.
-- [ ] Respawn regular enemies after a configurable delay once the player leaves the area. Let the Captain respawn after an early defeat so the active quest can still be completed.
-- [ ] Keep the Captain’s kill XP and Warden’s Coat one-time across respawns.
+- [ ] Respawn regular enemies and the Captain after a configurable delay once the player leaves the area. Apply the rule to the Captain before, during, and after Break the Blockade.
+- [ ] Award XP for every defeat up to the current level cap. Keep the Warden’s Coat one-time and put most of the required route’s XP in quest turn-ins.
 - [ ] Let players accept multiple eligible quests before turning any of them in. Show their objectives, progress, and turn-in states independently in the journal and keep a compact tracked objective in the HUD.
 
 ### Author and integrate the vale
@@ -27,7 +27,7 @@ The watchpost graybox supports click-to-move, breadcrumbs, combat, death recover
 - [ ] Add New Game and Continue with one local save slot under `user://`. Continue at the watchpost.
 - [ ] Persist level, XP, active and completed quests, owned and equipped gear, and relevant encounter state using stable IDs.
 - [ ] Autosave when quests advance, rewards are granted, or equipment changes. Save kill credit, quest progress, XP, and associated loot together.
-- [ ] Restore a credited Captain defeat on Continue. Test relaunching mid-quest and after the Captain falls, including one-time rewards and equipment retention.
+- [ ] Restore Captain quest credit and Warden’s Coat ownership on Continue. Verify the encounter still follows the respawn rules after relaunching mid-quest and after a turn-in, including equipment retention.
 
 ### Final playtest and delivery
 
