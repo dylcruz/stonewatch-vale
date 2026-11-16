@@ -1,0 +1,87 @@
+name: Godot CI/CD
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GODOT_VERSION: 4.7.2
+  GODOT_RELEASE_URL: https://github.com/godotengine/godot-builds/releases/download
+
+jobs:
+  test-and-export:
+    name: Test and export Windows build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out project
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Install Godot
+        run: |
+          release="${GODOT_VERSION}-stable"
+          editor="Godot_v${release}_linux.x86_64"
+          archive="$RUNNER_TEMP/godot.zip"
+          curl --fail --silent --show-error --location --retry 3 \
+            --output "$archive" "$GODOT_RELEASE_URL/$release/$editor.zip"
+          echo "cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4  $archive" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/godot-bin"
+          unzip -p "$archive" "$editor" > "$RUNNER_TEMP/godot-bin/godot"
+          chmod +x "$RUNNER_TEMP/godot-bin/godot"
+          echo "$RUNNER_TEMP/godot-bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/godot-bin/godot" --version
+
+      - name: Import project
+        run: godot --headless --path . --import
+
+      - name: Run headless regression suites
+        run: |
+          for suite in tests/*_test.gd; do
+            if [[ "$suite" == tests/breadcrumb_test.gd ]]; then
+              continue
+            fi
+            echo "Running $suite"
+            godot --headless --path . --script "res://$suite"
+          done
+
+      - name: Run graphical breadcrumb suite
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          xvfb-run --auto-servernum --server-args='-screen 0 1280x800x24' \
+            godot --path . --audio-driver Dummy --script res://tests/breadcrumb_test.gd
+
+      - name: Install Windows export template
+        run: |
+          release="${GODOT_VERSION}-stable"
+          archive="$RUNNER_TEMP/export-templates.tpz"
+          curl --fail --silent --show-error --location --retry 3 \
+            --output "$archive" "$GODOT_RELEASE_URL/$release/Godot_v${release}_export_templates.tpz"
+          echo "f298490b8d44d934be425a5a65a51bf15f422428b229a06a6e11d9ffea248011  $archive" | sha256sum --check
+          templates="${XDG_DATA_HOME:-$HOME/.local/share}/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$templates"
+          unzip -j "$archive" templates/windows_release_x86_64.exe -d "$templates"
+
+      - name: Export Windows x86_64
+        run: |
+          mkdir -p "$RUNNER_TEMP/stonewatch-windows"
+          godot --headless --path . --export-release 'Windows Desktop' \
+            "$RUNNER_TEMP/stonewatch-windows/StonewatchVale.exe"
+          test -s "$RUNNER_TEMP/stonewatch-windows/StonewatchVale.exe"
+
+      - name: Upload Windows playtest build
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: stonewatch-vale-windows-x86_64
+          path: ${{ runner.temp }}/stonewatch-windows/
+          if-no-files-found: error
+          retention-days: 14
