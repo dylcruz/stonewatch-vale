@@ -86,6 +86,27 @@ func restart(scene_path: String) -> void:
 	await process_frame
 	await start(scene_path)
 
+func check_early_wolf_at_watchpost() -> void:
+	var wolf: ValeWolf = world.get_node("Wolf")
+	var watchpost: Marker3D = world.get_node("Watchpost")
+	wolf.respawn_delay = 4.0
+	await click_world(wolf.global_position + Vector3.UP * 0.85)
+	await until(func(): return wolf.biting, 220)
+	await press_key(KEY_2)
+	check(await until(func(): return not wolf.is_alive(), 420) and warrior.is_alive()
+		and world.quest.state == ValeQuestProgress.State.AVAILABLE and warrior.experience == 15,
+		"The first road wolf can be defeated through gameplay before accepting Clear Pine Road")
+	check(await walk_to(watchpost.global_position) and warrior.is_in_refuge()
+		and wolf.spawn_position.distance_to(warrior.global_position) <= wolf.leash_range and not wolf.is_alive(),
+		"The Warrior can return to the refuge inside the wolf's leash before the delay elapses")
+	check(await until(func(): return wolf.is_alive(), 260) and wolf.health.current == wolf.stats.max_health
+		and world.quest.state == ValeQuestProgress.State.AVAILABLE,
+		"Waiting at the watchpost lets the first wolf respawn while Clear Pine Road is still unaccepted")
+	await talk_to_mara()
+	await click_button(world.dialogue_action)
+	check(world.quest.state == ValeQuestProgress.State.ACTIVE and world.quest.kills == 0,
+		"Accepting Clear Pine Road after the watchpost wait still starts at zero kills")
+
 func check_regular_respawns() -> void:
 	var wolf: ValeWolf = world.get_node("Wolf")
 	var raider: ValeRaider = world.get_node("CampRaider")
@@ -183,6 +204,8 @@ func check_early_captain() -> void:
 func run() -> void:
 	var main_scene: String = ProjectSettings.get_setting("application/run/main_scene")
 	await start(main_scene)
+	await check_early_wolf_at_watchpost()
+	await restart(main_scene)
 	var blockade: ValeQuestProgress = world.quest_chain[2]
 	var captain: ValeRaider = world.get_node("RaiderCaptain")
 	var boss_marker: Label3D = captain.get_node("QuestMarker")

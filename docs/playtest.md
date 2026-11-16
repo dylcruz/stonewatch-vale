@@ -20,13 +20,15 @@ Press **F5** to launch the watchpost arena.
 
 ## Quest credit and respawn checkpoint
 
-During the previous Break the Blockade playtest, Mara’s offer treated an early Captain defeat as a completed objective. In this checkpoint, kill objectives start at zero and the Captain can return after an early defeat. Regular wolves and raiders return after their configured delay while the Warrior is outside their leash radius. The current placements use a 30-second delay and a 10-meter radius. [Issue #1](https://github.com/dylcruz/stonewatch-vale/issues/1), [issue #2](https://github.com/dylcruz/stonewatch-vale/issues/2)
+During the previous Break the Blockade playtest, Mara’s offer treated an early Captain defeat as a completed objective. In this checkpoint, kill objectives start at zero and the Captain can return after an early defeat. Regular wolves and raiders return after their configured delay while the Warrior is outside their encounter area. The current placements use a 30-second delay and a 10-meter leash radius. [Issue #1](https://github.com/dylcruz/stonewatch-vale/issues/1), [issue #2](https://github.com/dylcruz/stonewatch-vale/issues/2)
 
-**Automated on Windows with Godot 4.7.2 Standard.** Movement, combat, quest chain, and graphical breadcrumbs passed. The 52 quest assertions include the normal 240 XP route, active-only kill credit, both respawn conditions, repeated regular defeats, and the Captain’s early defeat and one-time rewards. The quest suite also passed with the Compatibility renderer. The sandboxed runs reported errors writing user data.
+The user reported that wolves killed before quest acceptance stayed defeated. The automated test reproduced this by killing the first road wolf via click-to-attack and waiting at the watchpost, which is inside that wolf’s leash radius. Returning to the green refuge now counts as leaving the encounter for respawns, matching the pursuit rule.
+
+**Automated on Windows with Godot 4.7.2 Standard.** Movement, combat, quest chain, and graphical breadcrumbs passed. The 56 quest assertions include the pre-quest wolf respawn at the refuge, the normal 240 XP route, active-only kill credit, repeated regular defeats, and the Captain’s early defeat and one-time rewards. The quest suite also passed with the Compatibility renderer. The sandboxed runs reported errors writing user data.
 
 **Windows user playtest pending.**
 
-- [ ] Defeat a road wolf before accepting Clear Pine Road. Verify the objective starts at 0 / 3, then defeat a respawned wolf and verify it advances to 1 / 3.
+- [ ] Defeat the first road wolf before accepting Clear Pine Road. Return to the green watchpost refuge and wait for the 30-second timer to expire. Confirm the wolf returns. Accept Clear Pine Road at 0 / 3, then defeat the wolf again and verify it advances to 1 / 3.
 - [ ] Defeat a regular wolf or raider and stay near its spawn for more than 30 seconds. Verify it stays down, then leave the encounter area and check that it returns at full health. On the next defeat, leave immediately and check that it stays down until the delay elapses.
 - [ ] Defeat the Captain before accepting Break the Blockade. Confirm the first defeat grants 50 XP and the Warden’s Coat. Leave the quarry and accept Break the Blockade. Confirm the objective starts at 0 / 1. Return to Quarry Gate after the delay, defeat the Captain again, and confirm the turn-in is ready and XP and loot do not repeat. Return after the delay to verify the credited Captain stays defeated.
 

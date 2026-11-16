@@ -56,8 +56,10 @@ func engage(attacker: Node3D) -> void:
 		opponent = attacker
 
 func _can_pursue(target: Node3D) -> bool:
-	return is_instance_valid(target) and target.is_alive() \
-		and spawn_position.distance_to(target.global_position) <= leash_range \
+	return is_instance_valid(target) and target.is_alive() and _is_in_encounter_area(target)
+
+func _is_in_encounter_area(target: Node3D) -> bool:
+	return spawn_position.distance_to(target.global_position) <= leash_range \
 		and not (target.has_method("is_in_refuge") and target.is_in_refuge())
 
 func _physics_process(delta: float) -> void:
@@ -192,7 +194,7 @@ func _update_respawn(delta: float) -> void:
 	_respawn_remaining = maxf(0.0, _respawn_remaining - delta)
 	if _respawn_remaining > 0.0 or not is_instance_valid(aggro_target):
 		return
-	if spawn_position.distance_to(aggro_target.global_position) <= leash_range:
+	if _is_in_encounter_area(aggro_target):
 		return
 	reset_combat()
 	respawned.emit()

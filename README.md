@@ -29,7 +29,7 @@ For **Recover the Supplies**, take Pine Road north and follow it west around the
 
 For **Break the Blockade**, take the south road west to Quarry Gate. Move out of the Raider Captain’s red circle to avoid the heavy hit or use Guard to halve it. The first Captain defeat awards 50 XP and the Warden’s Coat. Equipping it adds 2 armor. Returning to Mara grants 35 XP, which brings the required route to 240 XP, level 3, and 90 max HP.
 
-Kill objectives count defeats while their quest is active. Regular wolves and raiders return to their spawn when 30 seconds have passed since their defeat and you are outside their encounter area. If you defeat the Captain before accepting Break the Blockade, leave Quarry Gate and return after the delay to fight him for quest credit.
+Kill objectives count defeats while their quest is active. Regular wolves and raiders can respawn 30 seconds after defeat. To let them return, move beyond their leash radius or wait in the green watchpost refuge. If you defeat the Captain before accepting Break the Blockade, leave Quarry Gate and return after the delay to fight him for quest credit.
 
 ## Edit and bake
 
