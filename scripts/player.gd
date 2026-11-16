@@ -2,6 +2,7 @@ class_name ValePlayer
 extends CharacterBody3D
 ## A reusable click-command motor. Only complete navigation paths are accepted.
 signal command_changed(message: String)
+signal movement_path_changed(path: PackedVector3Array)
 
 @export var speed: float = 5.0
 @export var interaction_distance: float = 1.6
@@ -30,6 +31,7 @@ func request_move(point: Vector3, target: Node3D = null) -> bool:
 	destination = goal
 	agent.target_position = goal
 	moving = true
+	movement_path_changed.emit(path)
 	command_changed.emit("Approaching practice target" if target != null else "Moving to destination")
 	return true
 

@@ -1,0 +1,125 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/movement_demo.tscn" id="1"]
+[ext_resource type="Script" path="res://scripts/combat_demo.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/warrior.gd" id="3"]
+[ext_resource type="Resource" path="res://data/warrior.tres" id="4"]
+[ext_resource type="Script" path="res://scripts/health.gd" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/wolf.tscn" id="6"]
+
+[sub_resource type="StandardMaterial3D" id="Steel"]
+albedo_color = Color(0.83, 0.9, 0.94, 1)
+metallic = 0.4
+roughness = 0.35
+
+[sub_resource type="BoxMesh" id="Blade"]
+material = SubResource("Steel")
+size = Vector3(0.12, 0.12, 1.15)
+
+[sub_resource type="StandardMaterial3D" id="HiltMaterial"]
+albedo_color = Color(0.65, 0.42, 0.16, 1)
+
+[sub_resource type="BoxMesh" id="Hilt"]
+material = SubResource("HiltMaterial")
+size = Vector3(0.45, 0.14, 0.12)
+
+[sub_resource type="StyleBoxFlat" id="HealthFill"]
+bg_color = Color(0.5, 0.15, 0.13, 1)
+
+[node name="CombatDemo" instance=ExtResource("1")]
+script = ExtResource("2")
+
+[node name="PracticeTarget" parent="NavigationRegion3D"]
+visible = false
+collision_layer = 0
+collision_mask = 0
+
+[node name="Player" parent="."]
+script = ExtResource("3")
+stats = ExtResource("4")
+
+[node name="Health" type="Node" parent="Player"]
+script = ExtResource("5")
+
+[node name="Sword" type="Node3D" parent="Player/Visual"]
+position = Vector3(0.42, 1, 0.15)
+
+[node name="Blade" type="MeshInstance3D" parent="Player/Visual/Sword"]
+position = Vector3(0, 0, 0.65)
+mesh = SubResource("Blade")
+
+[node name="Hilt" type="MeshInstance3D" parent="Player/Visual/Sword"]
+mesh = SubResource("Hilt")
+
+[node name="TargetLabel" parent="."]
+visible = false
+
+[node name="Wolf" parent="." instance=ExtResource("6")]
+position = Vector3(6, 0.02, 1)
+
+[node name="Title" parent="HUD/Panel/Margin/VBox"]
+text = "STONEWATCH VALE / First melee"
+
+[node name="Help" parent="HUD/Panel/Margin/VBox"]
+text = "Click the wolf to approach and auto-attack.
+Ground clicks cancel attacks. Hold LMB to move.
+R resets the fight. HUD clicks stay on the HUD."
+
+[node name="UITest" parent="HUD/Panel/Margin/VBox"]
+text = "Test UI · keep command"
+
+[node name="ResetFight" type="Button" parent="HUD/Panel/Margin/VBox"]
+layout_mode = 2
+text = "Reset fight (R)"
+
+[node name="CombatPanel" type="PanelContainer" parent="HUD"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -195.0
+offset_right = 480.0
+offset_bottom = -20.0
+grow_vertical = 0
+
+[node name="Margin" type="MarginContainer" parent="HUD/CombatPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="HUD/CombatPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="WarriorName" type="Label" parent="HUD/CombatPanel/Margin/VBox"]
+layout_mode = 2
+text = "Warrior  60 / 60 HP"
+
+[node name="WarriorHealth" type="ProgressBar" parent="HUD/CombatPanel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+theme_override_styles/fill = SubResource("HealthFill")
+max_value = 60.0
+value = 60.0
+show_percentage = false
+
+[node name="WolfName" type="Label" parent="HUD/CombatPanel/Margin/VBox"]
+layout_mode = 2
+text = "Road wolf  40 / 40 HP"
+
+[node name="WolfHealth" type="ProgressBar" parent="HUD/CombatPanel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+theme_override_styles/fill = SubResource("HealthFill")
+max_value = 40.0
+value = 40.0
+show_percentage = false
+
+[node name="Timing" type="Label" parent="HUD/CombatPanel/Margin/VBox"]
+layout_mode = 2
+text = "Sword ready"
+
+[node name="LastHit" type="Label" parent="HUD/CombatPanel/Margin/VBox"]
+layout_mode = 2
+text = "Click the wolf to start. It retaliates in melee."

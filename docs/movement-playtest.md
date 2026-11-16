@@ -66,6 +66,19 @@ The source-project movement playtest is **complete and accepted**. No further mo
 
 The earlier graphical Linux launch failed because WSL lacked a working OpenGL/EGL driver stack. Windows editor rendering and physical-mouse behavior are now verified as described above. Exported-build validation remains a separate future check when a Windows build is produced.
 
+## Breadcrumb route follow-up
+
+After accepting the first combat checkpoint, the user requested a breadcrumb preview of the character's route, enabled by default. Both demo scenes now show gold dots along the remaining navigation path. Dots stay anchored to the route and disappear as the player passes them; arrival, entering melee, death, and reset clear the display. Replacing a destination or steering with held LMB updates the preview. Rejected destinations and HUD input preserve the active route.
+
+`PathBreadcrumbs.enabled` defaults to true and can support a future player-facing visibility setting; no settings menu was added in this step. Rendering does not modify the movement command or navigation bake.
+
+- [x] `tests/breadcrumb_test.gd`: **21 assertions, zero failures**, using the Windows Compatibility renderer. Includes actual MultiMesh transform checks for obstacle routing and endpoints, progress, replacement, rejected destinations, HUD input, visibility, arrival, combat approach, death, and reset.
+- [x] All **31 movement assertions** and **31 combat assertions** still pass.
+- [x] Visually inspect a captured 1280 × 800 route: clear gold dots follow the walkable route around the ruin to the destination. Local screenshot: `builds/playtest/breadcrumb-route.png` (ignored).
+- [ ] User checks breadcrumb visibility and spacing during click movement and held steering in the combat scene.
+
+Run breadcrumb checks **without `--headless`**: the headless rendering server does not retain the instance transforms these visual checks inspect. The normal movement and combat suites remain headless-compatible.
+
 ## Scope
 
 This is implementation step 1, **Prove movement first**. The practice target demonstrates selection and navigation approach only. Combat, auto-attacks, NPC interaction, New Game/Continue, quests, and the authored full zone belong to subsequent milestones. The full-prototype definition of done remains open.

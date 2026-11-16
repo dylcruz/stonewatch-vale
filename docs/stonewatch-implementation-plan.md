@@ -56,7 +56,15 @@ Keep movement and combat code reusable. Store enemy stats, item stats, quest def
 
 ## Milestone status
 
-The **click-to-move / prove movement first** milestone is implemented and its source-project playtest is complete, including Windows rendering and user-confirmed physical-mouse testing. `scenes/movement_demo.tscn` contains a fixed-angle following camera, ray-picked movement, saved baked navigation, a blocking ruin, a disconnected destination, a selectable practice target, destination feedback, and a HUD input-consumption check. See [movement playtest results](movement-playtest.md) and the [README](../README.md) for verification, the recorded label-overlap caveat, export limitations, and editing instructions. Target approach is demonstrated without combat; the complete fight is the next milestone. The full-prototype checklist below remains for later integration.
+The **click-to-move / prove movement first** milestone is implemented and its source-project playtest is complete, including Windows rendering and user-confirmed physical-mouse testing. `scenes/movement_demo.tscn` remains available as the movement regression scene. See [movement playtest results](movement-playtest.md) and the [README](../README.md) for verification, the recorded label-overlap caveat, export limitations, and editing instructions.
+
+**Build a complete fight** is being delivered in playtest checkpoints:
+
+1. **First melee — user playtest completed successfully.** F5 opens `scenes/combat_demo.tscn`: Warrior and one stationary retaliating wolf, click-to-approach and auto-attack, windups with range and scenery checks at impact, health, death, hit feedback, and an R/reset button. The requested movement follow-up adds a breadcrumb preview of the remaining route, enabled by default; a player-facing visibility setting can come later. See the [combat playtest checklist](combat-playtest.md).
+2. **First complete wolf encounter — next after feedback.** Add Guard, proximity aggro, pursuit, leash/return, and player recovery on death. Tune the encounter before expanding the enemy roster.
+3. **Expand the fight — later in this phase.** Add the raider, Cleave, and the boss's telegraphed heavy attack, with another playtest checkpoint.
+
+The full-prototype checklist below remains for later integration.
 
 ## Definition of done
 

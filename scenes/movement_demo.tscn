@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://scripts/player.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/follow_camera.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/practice_target.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/path_breadcrumbs.gd" id="5"]
 
 [sub_resource type="Environment" id="Env"]
 background_mode = 1
@@ -138,6 +139,21 @@ height = 1.8
 [sub_resource type="BoxMesh" id="FacingMesh"]
 material = SubResource("Gold")
 size = Vector3(0.18, 0.22, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="BreadcrumbGold"]
+shading_mode = 0
+albedo_color = Color(1, 0.76, 0.35, 1)
+
+[sub_resource type="CylinderMesh" id="BreadcrumbDot"]
+material = SubResource("BreadcrumbGold")
+top_radius = 0.095
+bottom_radius = 0.095
+height = 0.035
+radial_segments = 8
+
+[sub_resource type="MultiMesh" id="Breadcrumbs"]
+transform_format = 1
+mesh = SubResource("BreadcrumbDot")
 
 [node name="MovementDemo" type="Node3D" unique_id=967566195]
 script = ExtResource("1")
@@ -311,6 +327,12 @@ text = "UNREACHABLE"
 [node name="DestinationMarker" type="MeshInstance3D" parent="." unique_id=471827498]
 visible = false
 mesh = SubResource("Ring")
+
+[node name="PathBreadcrumbs" type="MultiMeshInstance3D" parent="." node_paths=PackedStringArray("subject")]
+cast_shadow = 0
+multimesh = SubResource("Breadcrumbs")
+script = ExtResource("5")
+subject = NodePath("../Player")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=37055230 node_paths=PackedStringArray("subject")]
 transform = Transform3D(1, 0, 0, 0, 0.6332378, 0.7739573, 0, -0.7739573, 0.6332378, 0, 22.02, 25)
