@@ -24,6 +24,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			map_panel.hide()
 		else:
 			_close_panel()
+			ability_hud.close_book()
 			_stop_following_cursor()
 			map_panel.show()
 		get_viewport().set_input_as_handled()
@@ -34,3 +35,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.is_action_pressed(&"quest_log") or event.is_action_pressed(&"gear"):
 			map_panel.hide()
 		super._unhandled_input(event)
+
+func _open_ability_book() -> void:
+	map_panel.hide()
+	super._open_ability_book()

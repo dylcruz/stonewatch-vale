@@ -83,6 +83,7 @@ func run_checkpoint(phase: String) -> void:
 			var legacy := slot.read()
 			legacy.erase("bag")
 			legacy.erase("waiting_rewards")
+			legacy.erase("ability_bar")
 			legacy.owned_items = PackedStringArray(["training_sword", "travel_coat"])
 			check(slot.write(legacy) == OK, "Write a checkpoint from before bags were introduced")
 		"continue_town":
@@ -90,6 +91,8 @@ func run_checkpoint(phase: String) -> void:
 				"Town Continue restores the starter equipment")
 			check(warrior.equipped_bag.id == &"trail_pack" and warrior.free_bag_slots() == 5,
 				"Continuing a checkpoint from before bags were introduced gives the starter inventory")
+			check(world.ability_hud.save_layout() == PackedStringArray(["cleave", "guard", "", ""]),
+				"Continuing a checkpoint from before the ability bar gives the default shortcuts")
 		"early_defeat":
 			var captain: ValeEnemy = world.get_node("RaiderCaptain")
 			captain.receive_hit(captain.health.current, warrior)

@@ -61,6 +61,8 @@ func _ready() -> void:
 	dialogue_action.pressed.connect(_perform_dialogue_action)
 	$HUD/Journal/Margin/Content/Close.pressed.connect(_close_panel)
 	player.equipment_changed.connect(_save_checkpoint)
+	ability_hud.book_requested.connect(_toggle_ability_book)
+	ability_hud.layout_changed.connect(_save_checkpoint)
 	_refresh_progress()
 	if is_new_game:
 		_save_checkpoint()
@@ -83,6 +85,7 @@ func _save_checkpoint() -> void:
 		"weapon": player.equipped_weapon.id as StringName,
 		"armor": player.equipped_armor.id as StringName,
 		"bag": player.equipped_bag.id as StringName,
+		"ability_bar": ability_hud.save_layout(),
 		"quests": quests,
 		"tracked_quest": tracked_quest.definition.id if tracked_quest else &"",
 		"encounters": encounters,
@@ -115,6 +118,7 @@ func _restore_checkpoint(checkpoint: Dictionary) -> void:
 		if enemy.encounter_id != &"" and recorded is Dictionary:
 			enemy.restore_encounter(recorded)
 	_restore_inventory(checkpoint, available_items)
+	ability_hud.restore_layout(checkpoint.get("ability_bar"))
 	player.level = clampi(checkpoint.level, 1, 3)
 	player.award_experience(checkpoint.experience)
 	player.reset_combat()
@@ -150,12 +154,27 @@ func _unhandled_input(event: InputEvent) -> void:
 		_toggle_panel(JournalView.QUEST_LOG)
 	elif event.is_action_pressed(&"gear"):
 		_toggle_panel(JournalView.GEAR)
+	elif event.is_action_pressed(&"ability_book"):
+		_toggle_ability_book()
+	elif ability_hud.is_book_open() and event.is_action_pressed(&"ui_cancel"):
+		ability_hud.close_book()
 	elif panel_mode != JournalView.CLOSED and event.is_action_pressed(&"ui_cancel"):
 		_close_panel()
 	else:
 		super._unhandled_input(event)
 		return
 	get_viewport().set_input_as_handled()
+
+func _toggle_ability_book() -> void:
+	if ability_hud.is_book_open():
+		ability_hud.close_book()
+	else:
+		_open_ability_book()
+
+func _open_ability_book() -> void:
+	_close_panel()
+	_stop_following_cursor()
+	ability_hud.open_book()
 
 func _record_defeat(enemy: ValeEnemy) -> void:
 	var stats := enemy.stats
@@ -307,6 +326,7 @@ func _toggle_panel(mode: JournalView) -> void:
 		_show_panel(mode)
 
 func _show_panel(mode: JournalView) -> void:
+	ability_hud.close_book()
 	panel_mode = mode
 	if mode == JournalView.GEAR:
 		loot_notice.hide()

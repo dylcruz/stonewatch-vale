@@ -16,8 +16,8 @@ A single-player 3D action RPG prototype set in Stonewatch Vale. Explore the Vale
 - **Hold left mouse on the world:** continuously steer toward the cursor. Release to finish moving to the last valid destination. Passing over the HUD pauses destination updates; starting a press on the HUD does not steer.
 - **Left-click an enemy:** select it, approach, and automatically swing while in melee range. The gold ring marks your target. Basic attacks check range and blocking scenery at impact.
 - **Left-click ground while fighting:** clear selection, cancel any pending sword hit, and move. Enemies give up the chase when you leave their leash range or reach the green refuge circle.
-- **1 — Cleave:** deal 12 damage to enemies in front of the Warrior within 2.8 m. Unlocks at level 2 and has a 4-second cooldown.
-- **2 — Guard:** halve incoming damage for 1.25 seconds. A blue ring and the HUD show when Guard is active. The 6-second cooldown starts on activation.
+- **1–4 — Ability bar:** activate the assigned ability with its shortcut or by clicking its slot. Cleave starts on **1** and unlocks at level 2. Guard starts on **2**.
+- **K — Ability book:** inspect effects, cooldowns, and unlocks. Click a bar slot while the book is open to assign an ability or clear the slot. Assigning an ability from another occupied slot swaps the two. The layout is saved with your run.
 - **J — Quest log:** check each accepted quest’s progress and turn-in status, review completed quests, and choose which objective the HUD tracks.
 - **I — Character:** inspect level, XP, health, effective combat stats, and gear by slot. Equip the Iron Sword and Warden’s Coat from the inventory after earning them. The equipped bag controls capacity. Claim waiting rewards once you have a free slot.
 - **M — World map:** view the terrain and landmarks you have explored during the current run in the main Vale.
@@ -73,6 +73,7 @@ Import once before running the automated checks.
 godot --headless --editor --path . --import --quit
 godot --headless --path . --script res://tests/movement_test.gd
 godot --headless --path . --script res://tests/combat_test.gd
+godot --headless --path . --script res://tests/ability_ui_test.gd
 godot --headless --path . --script res://tests/character_inventory_test.gd
 godot --headless --path . --script res://tests/exploration_map_test.gd
 godot --headless --path . --script res://tests/quest_chain_test.gd

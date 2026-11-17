@@ -6,8 +6,7 @@ extends "res://scripts/world_input.gd"
 @onready var combat_hud: VBoxContainer = $HUD/CombatPanel/Margin/VBox
 @onready var enemy_name: Label = $HUD/CombatPanel/Margin/VBox/EnemyName
 @onready var enemy_health: ProgressBar = $HUD/CombatPanel/Margin/VBox/EnemyHealth
-@onready var cleave_status: Label = $HUD/CombatPanel/Margin/VBox/CleaveStatus
-@onready var guard_status: Label = $HUD/CombatPanel/Margin/VBox/GuardStatus
+@onready var ability_hud: ValeAbilityHUD = $HUD/AbilityHUD
 @onready var last_hit: Label = $HUD/CombatPanel/Margin/VBox/LastHit
 var enemies: Array[ValeEnemy] = []
 var last_focused_enemy: ValeEnemy
@@ -15,6 +14,7 @@ var recovery_remaining := 0.0
 
 func _ready() -> void:
 	super._ready()
+	ability_hud.bind_player(player as ValeWarrior)
 	for child in get_children():
 		if child is ValeEnemy:
 			enemies.append(child)
@@ -55,28 +55,6 @@ func _process(_delta: float) -> void:
 			break
 	timing.text = "Heavy attack · move or Guard" if heavy_windup else sword_state
 	timing.modulate = Color(1.0, 0.52, 0.35) if heavy_windup else Color.WHITE
-	_update_abilities()
-
-func _update_abilities() -> void:
-	if not player.has_cleave():
-		cleave_status.text = "1 · Cleave unlocks at level 2"
-	elif not player.is_alive():
-		cleave_status.text = "1 · Cleave unavailable"
-	elif player.cleave_cooldown_remaining > 0.0:
-		cleave_status.text = "1 · Cleave cooldown %.1fs" % player.cleave_cooldown_remaining
-	else:
-		cleave_status.text = "1 · Cleave ready"
-
-	guard_status.modulate = Color.WHITE
-	if not player.is_alive():
-		guard_status.text = "2 · Guard unavailable"
-	elif player.guard_remaining > 0.0:
-		guard_status.text = "2 · Guard active %.1fs" % player.guard_remaining
-		guard_status.modulate = Color(0.37, 0.85, 1.0)
-	elif player.guard_cooldown_remaining > 0.0:
-		guard_status.text = "2 · Guard cooldown %.1fs" % player.guard_cooldown_remaining
-	else:
-		guard_status.text = "2 · Guard ready"
 
 func _focused_enemy() -> ValeEnemy:
 	if player.selected_target is ValeEnemy and player.selected_target.is_alive():
@@ -115,11 +93,7 @@ func _physics_process(delta: float) -> void:
 		_show_hit("You recovered at full health.")
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed(&"cleave"):
-		player.activate_cleave()
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed(&"guard"):
-		player.activate_guard()
+	if ability_hud.handle_shortcut(event):
 		get_viewport().set_input_as_handled()
 	elif player.is_alive():
 		super._unhandled_input(event)
