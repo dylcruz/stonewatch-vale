@@ -2,6 +2,7 @@ extends SceneTree
 ## Validate the baked zone and walk the authored connectors through the gameplay camera.
 
 const SCENE := preload("res://scenes/stonewatch_vale.tscn")
+const NAVIGATION := preload("res://tests/navigation_test_support.gd")
 var world: Node3D
 var player: ValePlayer
 var region: NavigationRegion3D
@@ -32,13 +33,8 @@ func start() -> void:
 	for enemy: ValeEnemy in world.enemies:
 		enemy.set_physics_process(false)
 		enemy.collision_layer = 0
-	var map := player.agent.get_navigation_map()
-	for frame in 600:
-		if NavigationServer3D.map_get_iteration_id(map) > 0 \
-			and NavigationServer3D.map_get_closest_point(map, player.global_position).distance_to(player.global_position) < 0.55:
-			break
-		await physics_frame
 	await frames(5)
+	await NAVIGATION.wait_for_spawn(world, player)
 
 func mark(path: NodePath) -> Vector3:
 	return region.get_node(path).global_position

@@ -1,6 +1,8 @@
 extends SceneTree
 ## Play the F5 quest chain and verify both ways of handling the heavy attack.
 
+const NAVIGATION := preload("res://tests/navigation_test_support.gd")
+
 var assertions := 0
 var failures := 0
 var world: Node3D
@@ -66,6 +68,7 @@ func start(scene_path: String) -> void:
 	root.add_child(world)
 	warrior = world.get_node("Player")
 	await frames(5)
+	await NAVIGATION.wait_for_spawn(world, warrior)
 
 func talk_to_mara() -> bool:
 	await click_world(world.mara.global_position + Vector3.UP)

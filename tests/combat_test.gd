@@ -1,6 +1,8 @@
 extends SceneTree
 ## Real-scene combat tests. Direct repositioning sets up range and terrain cases.
 
+const NAVIGATION := preload("res://tests/navigation_test_support.gd")
+
 var failures := 0
 var assertions := 0
 var world: Node3D
@@ -71,6 +73,7 @@ func run() -> void:
 			enemy.set_physics_process(false)
 			enemy.collision_layer = 0
 	await frames(5)
+	await NAVIGATION.wait_for_spawn(world, warrior)
 	check(warrior.health.current == 60 and wolf.health.current == 40, "Actors start at their tuned maximum health")
 	press_key(KEY_1)
 	check(not warrior.has_cleave() and warrior.cleave_cooldown_remaining == 0.0,
