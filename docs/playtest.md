@@ -96,3 +96,11 @@ Pine trunks, outcrops, and the two Birchwater bridge rails have obstacle collisi
 
 - [ ] Walk across the timber bridge both ways and click each rail while moving down the deck.
 - [ ] At Heather Rest and Signal Ridge, check the woodland and peaks from the trail. Click beyond the edge while moving and verify the original destination remains active.
+
+## Character and inventory
+
+**I** opens the character panel. Equipped weapon, armor, and bag appear above the stored items. The Trail Pack holds six items and the Scout Pouch holds two. A bag change that would overflow is refused. Rewards wait for a free slot and can be claimed from the panel. [Issue #22](https://github.com/dylcruz/stonewatch-vale/issues/22), [issue #23](https://github.com/dylcruz/stonewatch-vale/issues/23)
+
+**Automated on Windows with Godot 4.7.2 Standard.** The character and inventory suite passed 15 checks, including live health and level updates, both gear upgrades, full-bag feedback, waiting rewards, and safe bag changes.
+
+- [ ] In the Watchpost developer scene, equip the Scout Pouch. Earn the Iron Sword and the Warden’s Coat. One reward should wait until you equip the Trail Pack and claim it. Attempt to equip the Scout Pouch again while storing three items.

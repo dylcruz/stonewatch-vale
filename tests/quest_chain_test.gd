@@ -211,7 +211,7 @@ func check_early_captain() -> void:
 	warrior.global_position = captain.spawn_position + Vector3(0, 0, 2)
 	captain.receive_hit(999, warrior)
 	check(blockade.state == ValeQuestProgress.State.READY and blockade.kills == 1 and not marker.visible
-		and warrior.experience == 185 and warrior.owned_items.size() == 4 and not world.loot_notice.visible,
+		and warrior.experience == 185 and warrior.owned_items.size() == 6 and not world.loot_notice.visible,
 		"The rematch grants another 15 XP and readies the quest without a second coat")
 	await frames(20)
 	check(not captain.is_alive() and captain.collision_layer == 0,
@@ -223,7 +223,7 @@ func check_early_captain() -> void:
 	captain.respawn_delay = 1.5
 	captain.receive_hit(999, warrior)
 	check(warrior.experience == 200 and blockade.state == ValeQuestProgress.State.READY and blockade.kills == 1
-		and warrior.owned_items.size() == 4 and not world.loot_notice.visible,
+		and warrior.owned_items.size() == 6 and not world.loot_notice.visible,
 		"A further defeat grants kill XP while the turn-in is ready and the coat stays one-time")
 	# Use a smaller turn-in reward here so the next defeat's XP is visible below the cap.
 	blockade.definition = blockade.definition.duplicate() as ValeQuestDefinition
@@ -238,7 +238,7 @@ func check_early_captain() -> void:
 		"The Captain returns at full health after the quest is complete")
 	captain.receive_hit(999, warrior)
 	check(warrior.experience == 235 and blockade.state == ValeQuestProgress.State.COMPLETED and blockade.kills == 1
-		and warrior.owned_items.size() == 4 and not world.loot_notice.visible,
+		and warrior.owned_items.size() == 6 and not world.loot_notice.visible,
 		"Defeating the Captain after turn-in still grants kill XP and preserves the completed quest")
 
 func check_concurrent_turn_ins() -> void:
@@ -423,7 +423,7 @@ func run() -> void:
 	check(warrior.owned_items.has(&"wardens_coat") and warrior.armor_value() == 0 and world.loot_notice.visible
 		and world.loot_notice.text.contains("Warden's Coat"), "The coat is awarded on defeat and awaits manual equip")
 	captain.receive_hit(999, warrior)
-	check(warrior.experience == 170 and warrior.owned_items.size() == 4, "Hitting the defeated Captain cannot grant kill rewards again")
+	check(warrior.experience == 170 and warrior.owned_items.size() == 6, "Hitting the defeated Captain cannot grant kill rewards again")
 	check(await walk_to(Vector3(-4.8, 0, 6.8)), "The south road connects the quarry to the watchpost")
 
 	warrior.receive_hit(999, null)
@@ -439,7 +439,7 @@ func run() -> void:
 	check(camp_raider.is_alive() and other_raider.is_alive() and optional_wolf.is_alive(),
 		"The required route reaches level 3 with all optional enemies alive")
 	check(await talk_to_mara() and not world.dialogue_action.visible and warrior.experience == 240
-		and warrior.owned_items.size() == 4, "The final turn-in has no repeat reward")
+		and warrior.owned_items.size() == 6, "The final turn-in has no repeat reward")
 	await press_key(KEY_J)
 	check(world.journal_body.text.count("· Completed") == 3 and world.progression_label.text.contains("Max level"),
 		"The log records all three completed quests and the HUD shows the level cap")

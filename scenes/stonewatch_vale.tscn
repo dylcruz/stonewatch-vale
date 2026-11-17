@@ -35,7 +35,7 @@ visible = false
 visible = false
 
 [node name="Help" parent="HUD/Panel/Margin/VBox"]
-text = "Click to move.\nJ · Quest log     I · Gear"
+text = "Click to move.\nJ · Quest log     I · Character"
 
 [node name="CombatPanel" parent="HUD"]
 offset_top = -160.0

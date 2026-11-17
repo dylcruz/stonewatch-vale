@@ -35,7 +35,8 @@ func run() -> void:
 
 	var path := OS.get_temp_dir().path_join("stonewatch-test-%d.save" % OS.get_process_id())
 	for phase in ["fresh_town", "continue_town", "early_defeat", "resume_early",
-		"resume_mid_quest", "resume_credited", "resume_completed"]:
+		"resume_mid_quest", "resume_credited", "resume_completed",
+		"bag_waiting", "resume_waiting", "resume_claimed"]:
 		var output := []
 		var code := OS.execute(OS.get_executable_path(), [
 			"--headless", "--fixed-fps", "60", "--path", ProjectSettings.globalize_path("res://"),
@@ -62,9 +63,9 @@ func run_checkpoint(phase: String) -> void:
 		check(menu.continue_game.disabled and menu.message.text.contains("could not be read"),
 			"Unreadable save gives feedback and leaves New Game available")
 		menu.new_game.pressed.emit()
-	elif phase == "early_defeat":
+	elif phase == "early_defeat" or phase == "bag_waiting":
 		menu.new_game.pressed.emit()
-		check(menu.get_node("%ReplaceSave").visible and slot.read().experience == 0,
+		check(menu.get_node("%ReplaceSave").visible and slot.exists(),
 			"New Game asks before replacing an existing checkpoint")
 		menu.get_node("%ReplaceSave").confirmed.emit()
 	else:
@@ -79,9 +80,16 @@ func run_checkpoint(phase: String) -> void:
 		"fresh_town":
 			check(warrior.level == 1 and warrior.experience == 0 and slot.exists(),
 				"New Game creates a fresh town checkpoint")
+			var legacy := slot.read()
+			legacy.erase("bag")
+			legacy.erase("waiting_rewards")
+			legacy.owned_items = PackedStringArray(["training_sword", "travel_coat"])
+			check(slot.write(legacy) == OK, "Write a checkpoint from before bags were introduced")
 		"continue_town":
 			check(warrior.equipped_weapon.id == &"training_sword" and warrior.equipped_armor.id == &"travel_coat",
 				"Town Continue restores the starter equipment")
+			check(warrior.equipped_bag.id == &"trail_pack" and warrior.free_bag_slots() == 5,
+				"Continuing a checkpoint from before bags were introduced gives the starter inventory")
 		"early_defeat":
 			var captain: ValeEnemy = world.get_node("RaiderCaptain")
 			captain.receive_hit(captain.health.current, warrior)
@@ -107,6 +115,35 @@ func run_checkpoint(phase: String) -> void:
 				"Continue restores the completed chain and final level")
 			dialogue_action(world, 2)
 			check(not world.dialogue_action.visible, "The completed Captain turn-in remains unavailable")
+		"bag_waiting":
+			world._equip(&"scout_pouch")
+			dialogue_action(world, 0)
+			for wolf_name in ["Wolf", "WolfSecond", "WolfThird"]:
+				var wolf: ValeEnemy = world.get_node(wolf_name)
+				wolf.receive_hit(wolf.health.current, warrior)
+			dialogue_action(world, 0)
+			world._equip(&"iron_sword")
+			var captain: ValeEnemy = world.get_node("RaiderCaptain")
+			captain.receive_hit(captain.health.current, warrior)
+			var saved := slot.read()
+			check(saved.bag == &"scout_pouch" and saved.waiting_rewards == PackedStringArray(["wardens_coat"])
+				and saved.encounters[&"watchpost_quarry_captain"].reward_claimed,
+				"The full-bag reward and Captain claim are written with the same checkpoint")
+		"resume_waiting":
+			check(warrior.equipped_bag.id == &"scout_pouch" and warrior.sword_damage() == 12
+				and warrior.free_bag_slots() == 0 and warrior.waiting_rewards.has(&"wardens_coat")
+				and not warrior.owned_items.has(&"wardens_coat"),
+				"Continue restores the equipped bag, stored gear, and unclaimed reward")
+			world._equip(&"trail_pack")
+			world._claim(&"wardens_coat")
+			var claimed := slot.read()
+			check(claimed.waiting_rewards.is_empty() and "wardens_coat" in claimed.owned_items,
+				"Claiming the reward autosaves the updated inventory")
+			world._equip(&"wardens_coat")
+		"resume_claimed":
+			check(warrior.equipped_bag.id == &"trail_pack" and warrior.sword_damage() == 12
+				and warrior.armor_value() == 2 and warrior.waiting_rewards.is_empty()
+				and warrior.free_bag_slots() == 3, "Continue restores the claimed and equipped coat exactly once")
 
 func verify_early_defeat(world: Node, player: ValePlayer) -> void:
 	var captain: ValeEnemy = world.get_node("RaiderCaptain")
@@ -146,7 +183,7 @@ func reach_credited_defeat(world: Node, player: ValePlayer) -> void:
 	check(captain.is_alive(), "Captain returns after the restored respawn delay")
 	captain.receive_hit(captain.health.current, player)
 	check(world.quest_chain[2].state == ValeQuestProgress.State.READY
-		and world.quest_chain[2].kills == 1 and player.owned_items.size() == 4
+		and world.quest_chain[2].kills == 1 and player.owned_items.size() == 6
 		and not world.loot_notice.visible,
 		"The second defeat credits the active quest without awarding the coat twice")
 
