@@ -10,6 +10,7 @@ const LEVEL_TWO_XP := 100
 const LEVEL_THREE_XP := 240
 
 @export var stats: ValeCombatStats
+@export var identity: ValePlayerIdentity
 @export var level := 1
 @export var health_per_level := 0
 @export var starting_weapon: ValeItem

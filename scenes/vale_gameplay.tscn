@@ -9,6 +9,7 @@
 [ext_resource type="Resource" path="res://data/warrior.tres" id="WarriorStats"]
 [ext_resource type="Resource" path="res://data/training_sword.tres" id="TrainingSword"]
 [ext_resource type="Resource" path="res://data/travel_coat.tres" id="TravelCoat"]
+[ext_resource type="Resource" path="res://data/warrior_identity.tres" id="WarriorIdentity"]
 
 [sub_resource type="StandardMaterial3D" id="Gold"]
 albedo_color = Color(0.95, 0.67, 0.26, 1)
@@ -118,6 +119,7 @@ stats = ExtResource("WarriorStats")
 health_per_level = 15
 starting_weapon = ExtResource("TrainingSword")
 starting_armor = ExtResource("TravelCoat")
+identity = ExtResource("WarriorIdentity")
 recovery_point = NodePath("../Watchpost")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1233115970]
