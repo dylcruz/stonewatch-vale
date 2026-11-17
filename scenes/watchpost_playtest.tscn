@@ -75,6 +75,7 @@ position = Vector3(-2.6, 0.02, -8.65)
 position = Vector3(-3.25, 0.02, -9.9)
 
 [node name="RaiderCaptain" parent="." instance=ExtResource("RaiderCaptain")]
+encounter_id = &"watchpost_quarry_captain"
 position = Vector3(-12.0, 0.02, 1.35)
 
 [node name="QuestMarker" type="Label3D" parent="RaiderCaptain"]

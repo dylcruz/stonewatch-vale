@@ -21,26 +21,105 @@ var quest_chain: Array[ValeQuestProgress] = []
 var quest_objects: Array[ValeInteractable] = []
 var dialogue_quest: ValeQuestProgress
 var panel_mode := JournalView.CLOSED
+var save_slot: ValeSaveSlot
+var pending_checkpoint: Dictionary
+
+func configure_checkpoint(slot: ValeSaveSlot, checkpoint: Dictionary) -> void:
+	save_slot = slot
+	pending_checkpoint = checkpoint
 
 func _ready() -> void:
 	super._ready()
+	var is_new_game := pending_checkpoint.is_empty()
 	if quest_definition:
 		quest_chain.append(ValeQuestProgress.new(quest_definition))
 	for follow_up in follow_up_quests:
 		quest_chain.append(ValeQuestProgress.new(follow_up))
+	if not is_new_game:
+		_restore_checkpoint(pending_checkpoint)
+		pending_checkpoint = {}
 	for enemy in enemies:
 		enemy.health.died.connect(_record_defeat.bind(enemy))
-		enemy.respawned.connect(_refresh_enemy_marker.bind(enemy))
+		enemy.respawned.connect(_enemy_respawned.bind(enemy))
 	for child in get_children():
 		if child is ValeInteractable and child.objective_id != &"":
 			quest_objects.append(child)
 			child.interacted.connect(_use_quest_object.bind(child))
+			if quest_chain.any(func(progress: ValeQuestProgress):
+				return progress.definition.target_object == child.objective_id \
+					and progress.state >= ValeQuestProgress.State.READY
+			):
+				child.collect()
 	if mara and not quest_chain.is_empty():
 		mara.interacted.connect(_talk_to_mara)
 	player.health.died.connect(_close_panel)
 	dialogue_action.pressed.connect(_perform_dialogue_action)
 	$HUD/Journal/Margin/Content/Close.pressed.connect(_close_panel)
+	player.equipment_changed.connect(_save_checkpoint)
 	_refresh_progress()
+	if is_new_game:
+		_save_checkpoint()
+
+func _save_checkpoint() -> void:
+	if save_slot == null:
+		return
+	var quests := {}
+	for progress in quest_chain:
+		quests[progress.definition.id] = {"state": progress.state, "kills": progress.kills}
+	var encounters := {}
+	for enemy in enemies:
+		if enemy.encounter_id != &"":
+			encounters[enemy.encounter_id] = enemy.encounter_checkpoint()
+	var checkpoint := {
+		"level": player.level,
+		"experience": player.experience,
+		"owned_items": PackedStringArray(player.owned_items.keys()),
+		"weapon": player.equipped_weapon.id as StringName,
+		"armor": player.equipped_armor.id as StringName,
+		"quests": quests,
+		"tracked_quest": tracked_quest.definition.id if tracked_quest else &"",
+		"encounters": encounters,
+	}
+	var error := save_slot.write(checkpoint)
+	if error != OK:
+		status.text = "Could not save progress"
+		push_warning("Checkpoint save failed: " + error_string(error))
+
+func _restore_checkpoint(checkpoint: Dictionary) -> void:
+	var available_items: Array[ValeItem] = []
+	var quests: Dictionary = checkpoint.quests
+	for progress in quest_chain:
+		var definition := progress.definition
+		available_items.append(definition.reward_item)
+		var recorded: Variant = quests.get(definition.id)
+		if recorded is Dictionary:
+			var state: Variant = recorded.get("state")
+			var kills: Variant = recorded.get("kills")
+			if state is int and state >= ValeQuestProgress.State.AVAILABLE and state <= ValeQuestProgress.State.COMPLETED:
+				progress.state = state
+			if kills is int:
+				progress.kills = clampi(kills, 0, definition.required_kills)
+		if definition.id == checkpoint.get("tracked_quest"):
+			tracked_quest = progress
+	var encounters: Dictionary = checkpoint.encounters
+	for enemy in enemies:
+		available_items.append(enemy.stats.defeat_item)
+		var recorded: Variant = encounters.get(enemy.encounter_id)
+		if enemy.encounter_id != &"" and recorded is Dictionary:
+			enemy.restore_encounter(recorded)
+	var owned: PackedStringArray = checkpoint.owned_items
+	for item in available_items:
+		if item and String(item.id) in owned:
+			player.grant_item(item)
+	var saved_weapon := player.owned_items.get(checkpoint.weapon) as ValeItem
+	var saved_armor := player.owned_items.get(checkpoint.armor) as ValeItem
+	if saved_weapon and saved_weapon.slot == ValeItem.Slot.WEAPON:
+		player.equip_item(saved_weapon.id)
+	if saved_armor and saved_armor.slot == ValeItem.Slot.ARMOR:
+		player.equip_item(saved_armor.id)
+	player.level = clampi(checkpoint.level, 1, 3)
+	player.award_experience(checkpoint.experience)
+	player.reset_combat()
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
@@ -64,10 +143,18 @@ func _record_defeat(enemy: ValeEnemy) -> void:
 	for progress in quest_chain:
 		progress.record_defeat(stats.enemy_id)
 	player.award_experience(stats.defeat_xp)
-	if player.grant_item(stats.defeat_item):
-		loot_notice.text = "%s added to Gear (I)" % stats.defeat_item.display_name
-		loot_notice.show()
+	if stats.defeat_item and not enemy.defeat_reward_claimed:
+		enemy.defeat_reward_claimed = true
+		if player.grant_item(stats.defeat_item):
+			loot_notice.text = "%s added to Gear (I)" % stats.defeat_item.display_name
+			loot_notice.show()
 	_refresh_progress()
+	_save_checkpoint()
+
+func _enemy_respawned(enemy: ValeEnemy) -> void:
+	_refresh_enemy_marker(enemy)
+	if enemy.encounter_id != &"":
+		_save_checkpoint()
 
 func _use_quest_object(object: ValeInteractable) -> void:
 	if object.collision_layer == 0 or not player.is_alive() or not object.is_in_range(player):
@@ -82,6 +169,7 @@ func _use_quest_object(object: ValeInteractable) -> void:
 	object.collect()
 	status.text = "%s recovered" % object.display_name
 	_refresh_progress()
+	_save_checkpoint()
 
 func _talk_to_mara() -> void:
 	dialogue_quest = _first_mara_quest()
@@ -114,7 +202,10 @@ func _perform_dialogue_action() -> void:
 	elif dialogue_quest.complete():
 		player.grant_item(dialogue_quest.definition.reward_item)
 		player.award_experience(dialogue_quest.definition.reward_xp)
+	else:
+		return
 	_refresh_progress()
+	_save_checkpoint()
 
 func _objective_text(progress: ValeQuestProgress) -> String:
 	var definition := progress.definition
@@ -234,6 +325,7 @@ func _add_quest_option(label: String, action: Callable) -> void:
 func _track_quest(progress: ValeQuestProgress) -> void:
 	tracked_quest = progress
 	_refresh_progress()
+	_save_checkpoint()
 
 func _select_dialogue_quest(progress: ValeQuestProgress) -> void:
 	dialogue_quest = progress

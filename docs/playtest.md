@@ -80,3 +80,10 @@ The Watchpost developer scene now ends at the arena walls. It keeps the original
 **Automated on Windows with Godot 4.7.2 Standard.** Both bakes and all five regression suites passed. The Watchpost bake has 40 polygons, and all 75 quest checks passed. The route suite verified the two closed exits and completed the timed crossing in the main game with the same baked mesh.
 
 - [ ] Open `scenes/watchpost_playtest.tscn` and press **F6**. Walk to the east and north walls, then return to Captain Mara in the square. Press **F5** after stopping the playtest to verify that Pine Meadow and North Road are open from town.
+
+## Save checkpoint
+
+**Automated on Windows with Godot 4.7.2 Standard.** All six regression suites passed. The save suite launched seven separate Godot processes and checked town recovery, unreadable-slot handling, a mid-quest relaunch, both Captain defeat paths, and equipment and progress after the final turn-in.
+
+- [ ] Press **F5**, start **New Game**, stop the game, and select **Continue** after relaunching. Verify the Warrior starts in the town square.
+- [ ] Run `godot --path . -- --watchpost-save`, accept a quest, advance the objective, and relaunch. Verify Continue returns to the refuge with the same journal progress and equipped gear.
