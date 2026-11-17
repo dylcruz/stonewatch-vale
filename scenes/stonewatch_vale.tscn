@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/vale/meadow_loop.tscn" id="MeadowLoop"]
 [ext_resource type="PackedScene" path="res://scenes/vale/birchwater_loop.tscn" id="BirchwaterLoop"]
 [ext_resource type="PackedScene" path="res://scenes/vale/lookout_ridge_loop.tscn" id="LookoutRidgeLoop"]
+[ext_resource type="PackedScene" path="res://scenes/vale/vale_backdrop.tscn" id="Backdrop"]
 
 [node name="StonewatchVale" instance=ExtResource("World")]
 ready_text = "Town square"
@@ -24,6 +25,8 @@ navigation_mesh = ExtResource("TownNav")
 [node name="LookoutRidgeLoop" parent="NavigationRegion3D" unique_id=403337571 instance=ExtResource("LookoutRidgeLoop")]
 
 [node name="StartingTown" parent="NavigationRegion3D" instance=ExtResource("Town")]
+
+[node name="ValeBackdrop" parent="." instance=ExtResource("Backdrop")]
 
 [node name="RuinLabel" parent="."]
 visible = false

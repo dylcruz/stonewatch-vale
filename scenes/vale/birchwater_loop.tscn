@@ -34,6 +34,9 @@ roughness = 0.95
 albedo_color = Color(0.31, 0.22, 0.16, 1)
 roughness = 0.95
 
+[sub_resource type="BoxShape3D" id="RailingCollision"]
+size = Vector3(29.7, 0.88, 0.24)
+
 [node name="BirchwaterLoop" type="Node3D"]
 
 [node name="DeepWater" type="CSGPolygon3D" parent="."]
@@ -97,6 +100,18 @@ collision_mask = 4
 position = Vector3(50, 0.76, -205.17)
 size = Vector3(29.7, 0.17, 0.16)
 material = SubResource("Timber")
+
+[node name="Railings" type="StaticBody3D" parent="."]
+collision_layer = 2
+collision_mask = 4
+
+[node name="South" type="CollisionShape3D" parent="Railings"]
+position = Vector3(50, 0.44, -205.17)
+shape = SubResource("RailingCollision")
+
+[node name="North" type="CollisionShape3D" parent="Railings"]
+position = Vector3(50, 0.44, -198.83)
+shape = SubResource("RailingCollision")
 
 [node name="SouthPost1" type="CSGBox3D" parent="."]
 position = Vector3(37, 0.43, -205.17)
