@@ -104,3 +104,11 @@ Pine trunks, outcrops, and the two Birchwater bridge rails have obstacle collisi
 **Automated on Windows with Godot 4.7.2 Standard.** The character and inventory suite passed 15 checks, including live health and level updates, both gear upgrades, full-bag feedback, waiting rewards, and safe bag changes.
 
 - [ ] In the Watchpost developer scene, equip the Scout Pouch. Earn the Iron Sword and the Warden’s Coat. One reward should wait until you equip the Trail Pack and claim it. Attempt to equip the Scout Pouch again while storing three items.
+
+## World map
+
+Press **M** in the main Vale to see the route cells you have entered. Landmarks appear when their area is explored. A fresh run starts with only the town square area revealed. Exploration stays visible while traveling elsewhere in the same run. [Issue #24](https://github.com/dylcruz/stonewatch-vale/issues/24)
+
+**Automated on Windows with Godot 4.7.2 Standard.** All six suites passed. The map suite passed 16 checks covering concealed terrain, different orders, walking into a new area, revisits, and HUD input. The fresh and partially explored views were checked with the Compatibility renderer.
+
+- [ ] Open the map in town, then walk to Heather Rest or Birchwater first. Verify only the traveled area and discovered landmarks are shown. Leave and reopen the map to check that the first area remains visible.
