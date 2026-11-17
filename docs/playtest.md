@@ -112,3 +112,20 @@ Press **M** in the main Vale to see the route cells you have entered. Landmarks 
 **Automated on Windows with Godot 4.7.2 Standard.** All six suites passed. The map suite passed 16 checks covering concealed terrain, different orders, walking into a new area, revisits, and HUD input. The fresh and partially explored views were checked with the Compatibility renderer.
 
 - [ ] Open the map in town, then walk to Heather Rest or Birchwater first. Verify only the traveled area and discovered landmarks are shown. Leave and reopen the map to check that the first area remains visible.
+
+## Windows release verification baseline
+
+The baseline was `6a92fe4bd4cf83bfe640da64eea57b7cdc8238c7` on Windows with Godot Standard `4.7.2.stable.official.ed1daf0bf` and the Compatibility renderer. [Issue #13](https://github.com/dylcruz/stonewatch-vale/issues/13), [issue #15](https://github.com/dylcruz/stonewatch-vale/issues/15)
+
+| Check | Observed result |
+| --- | --- |
+| Five existing regression suites | Passed on Windows. |
+| Fresh Watchpost route with graphics | 75 automated checks passed. All three turn-ins succeeded with the optional enemies alive. |
+| Sword, coat, and level | The Iron Sword dealt 12 damage, the coat added 2 armor, and the required route reached level 3 at 240 XP. |
+| Captain heavy attack | Moving clear avoided the hit. Guard halved it to 10 damage. |
+| Windows x86_64 baseline export | Built from a clean copy of the baseline with the official 4.7.2 release template. The staged preset pointed at the downloaded template and declared an empty include filter. |
+| Clean-directory graphical launch | `builds/windows-verification-6a92fe4/clean/StonewatchVale.exe` started with Compatibility and exited successfully after 120 frames. Its directory contained only the executable. |
+
+The SHA-256 of the local baseline executable is `87ce05891eaf579dee44d41820989a075a9d8f8d3854a7d60bac6f3808717957`. The sandbox reported user-data and shader-cache write errors during the local smoke tests.
+
+See [the release review notes](review-issues-13-15.md) for the final candidate checklist.
