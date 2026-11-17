@@ -34,7 +34,7 @@ The Captain now follows the same exit and timer rules as regular enemies, includ
 
 Mara offers Clear Pine Road and Recover the Supplies from the start. The player can accept and turn in either quest first. Break the Blockade unlocks after both turn-ins. [Issue #3](https://github.com/dylcruz/stonewatch-vale/issues/3)
 
-From a fresh **F5** run, speak to Mara. The opening dialogue shows **Clear Pine Road** and a **View Recover the Supplies** button. Accepting an offer closes the dialogue. Speak to Mara again for the other offer, then open **J** to see both accepted quests.
+In a fresh Watchpost playtest run, speak to Mara. The opening dialogue shows **Clear Pine Road** and a **View Recover the Supplies** button. Accepting an offer closes the dialogue. Speak to Mara again for the other offer, then open **J** to see both accepted quests.
 
 **Automated on Windows with Godot 4.7.2 Standard.** All five suites passed on the build with the Vale routes and revised XP. The quest suite passed 75 assertions, including both starting offers, independent objectives, both turn-in orders, and HUD tracking. Both offers and the two accepted quests were visible with the Compatibility renderer.
 
@@ -64,3 +64,11 @@ To rerun the automated crossing, append `-- --pace` to the `vale_routes_test.gd`
 ### Windows user playtest
 
 The user confirmed all Vale routes playtest items were complete on November 16, 2026. The playtest identified follow-up work for scenery collision and the view beyond walkable terrain. [Issue #20](https://github.com/dylcruz/stonewatch-vale/issues/20), [issue #21](https://github.com/dylcruz/stonewatch-vale/issues/21)
+
+## Starting town checkpoint
+
+A fresh game starts in the town square on the old Watchpost site. The town hall, cottages, and well are graybox placeholders. Two cottages occupy the former campsite and Quarry Gate sites. Pine Road leads east to Pine Meadow. The separate Watchpost developer scene contains the original landmarks, Captain Mara, the wolves and raiders, and the three quests. [Issue #27](https://github.com/dylcruz/stonewatch-vale/issues/27)
+
+**Automated on Windows with Godot 4.7.2 Standard.** Both navigation bakes and all five regression suites passed. The route suite walked around the new cottages and out to Pine Meadow, opened the empty journal and gear panel, and verified town square recovery. The separate Watchpost scene retained both landmarks and passed all 75 quest checks.
+
+**Windows user playtest passed.** The user confirmed the starting town checkpoint on November 16, 2026.

@@ -64,7 +64,7 @@ func reset_pair() -> void:
 	wolf.reset_combat()
 
 func run() -> void:
-	world = load("res://scenes/stonewatch_vale.tscn").instantiate()
+	world = load("res://scenes/watchpost_playtest.tscn").instantiate()
 	root.add_child(world)
 	warrior = world.get_node("Player")
 	wolf = world.get_node("Wolf")

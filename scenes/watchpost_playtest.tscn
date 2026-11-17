@@ -1,0 +1,67 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/vale_gameplay.tscn" id="World"]
+[ext_resource type="NavigationMesh" path="res://scenes/vale/watchpost_navigation.tres" id="WatchpostNav"]
+[ext_resource type="PackedScene" path="res://scenes/vale/watchpost_landmarks.tscn" id="Landmarks"]
+[ext_resource type="Script" path="res://scripts/quest_definition.gd" id="QuestDefinition"]
+[ext_resource type="Resource" path="res://data/clear_pine_road.tres" id="PineRoad"]
+[ext_resource type="Resource" path="res://data/recover_the_supplies.tres" id="Supplies"]
+[ext_resource type="Resource" path="res://data/break_the_blockade.tres" id="Blockade"]
+[ext_resource type="PackedScene" path="res://scenes/captain_mara.tscn" id="Mara"]
+[ext_resource type="PackedScene" path="res://scenes/wolf.tscn" id="Wolf"]
+[ext_resource type="PackedScene" path="res://scenes/raider.tscn" id="Raider"]
+[ext_resource type="PackedScene" path="res://scenes/supply_crate.tscn" id="SupplyCrate"]
+[ext_resource type="PackedScene" path="res://scenes/raider_captain.tscn" id="RaiderCaptain"]
+
+[node name="WatchpostPlaytest" instance=ExtResource("World")]
+ready_text = "Watchpost"
+quest_definition = ExtResource("PineRoad")
+follow_up_quests = Array[ExtResource("QuestDefinition")]([ExtResource("Supplies"), ExtResource("Blockade")])
+chain_completion_text = "Watchpost quest chain complete"
+
+[node name="NavigationRegion3D" parent="."]
+navigation_mesh = ExtResource("WatchpostNav")
+
+[node name="WatchpostLandmarks" parent="NavigationRegion3D" instance=ExtResource("Landmarks")]
+
+[node name="Title" parent="HUD/Panel/Margin/VBox"]
+text = "WATCHPOST PLAYTEST"
+
+[node name="LastHit" parent="HUD/CombatPanel/Margin/VBox"]
+text = "Press 2 during a bite windup to reduce damage."
+
+[node name="Wolf" parent="." instance=ExtResource("Wolf")]
+position = Vector3(6, 0.02, 1)
+
+[node name="CaptainMara" parent="." instance=ExtResource("Mara")]
+position = Vector3(-2.0, 0.02, 6.0)
+
+[node name="WolfSecond" parent="." instance=ExtResource("Wolf")]
+position = Vector3(10.0, 0.02, -1.5)
+
+[node name="WolfThird" parent="." instance=ExtResource("Wolf")]
+position = Vector3(10.7, 0.02, -8.25)
+
+[node name="WolfNorthwest" parent="." instance=ExtResource("Wolf")]
+position = Vector3(-7.0, 0.02, -7.0)
+
+[node name="SupplyCrate" parent="." instance=ExtResource("SupplyCrate")]
+position = Vector3(0.1, 0.02, -9.1)
+
+[node name="CampRaider" parent="." instance=ExtResource("Raider")]
+position = Vector3(-2.6, 0.02, -8.65)
+
+[node name="CampRaiderSecond" parent="." instance=ExtResource("Raider")]
+position = Vector3(-3.25, 0.02, -9.9)
+
+[node name="RaiderCaptain" parent="." instance=ExtResource("RaiderCaptain")]
+position = Vector3(-12.0, 0.02, 1.35)
+
+[node name="QuestMarker" type="Label3D" parent="RaiderCaptain"]
+visible = false
+position = Vector3(0, 3.22, 0)
+pixel_size = 0.025
+font_size = 38
+modulate = Color(1, 0.81, 0.34, 1)
+billboard = 1
+text = "!"

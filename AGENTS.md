@@ -4,7 +4,7 @@
 
 Stonewatch Vale is a Godot 4.7.2 Standard project using GDScript and the Compatibility renderer.
 
-- `scenes/`: editable `.tscn` scenes. `stonewatch_vale.tscn` is the main scene and inherits the terrain and navigation in `watchpost_arena.tscn`. Actor scenes are reusable.
+- `scenes/`: editable `.tscn` scenes. The main scene `stonewatch_vale.tscn` and the developer scene `watchpost_playtest.tscn` share the player, HUD, and terrain through `vale_gameplay.tscn`. The main scene adds the starting town and its navigation mesh. The developer scene adds the Watchpost quests and encounters. Actor scenes are reusable.
 - `scripts/`: movement, camera, combat, health, and breadcrumb rendering. `warrior.gd` extends the shared player motor.
 - `data/`: `.tres` resources containing actor stats and combat tuning.
 - `tests/`: executable GDScript regression suites; `tools/`: navigation baking.
@@ -26,9 +26,9 @@ godot --path . --script res://tests/breadcrumb_test.gd
 git diff --check
 ```
 
-Import before testing. Breadcrumb checks require graphics because they inspect render-buffer transforms. In the editor, **F5** runs the three-quest watchpost arena.
+Import before testing. Breadcrumb checks require graphics because they inspect render-buffer transforms. In the editor, **F5** starts the main game in town. Open `scenes/watchpost_playtest.tscn` and press **F6** for the original watchpost checkpoint.
 
-After collision-layout changes, bake and save navigation. With the editor closed:
+After collision-layout changes, bake and save both navigation meshes. Run this command with the editor closed.
 
 ```sh
 godot --headless --path . --script res://tools/bake_navigation.gd

@@ -5,11 +5,11 @@ enum JournalView { CLOSED, DIALOGUE, QUEST_LOG, GEAR }
 @export var quest_definition: ValeQuestDefinition
 @export var follow_up_quests: Array[ValeQuestDefinition] = []
 @export var chain_completion_text := ""
-@onready var mara: ValeInteractable = $CaptainMara
+@onready var mara: ValeInteractable = get_node_or_null("CaptainMara")
 @onready var objective_label: Label = $HUD/Panel/Margin/VBox/QuestObjective
 @onready var progression_label: Label = $HUD/Panel/Margin/VBox/Progression
 @onready var loot_notice: Label = $HUD/Panel/Margin/VBox/LootNotice
-@onready var quest_marker: Label3D = $CaptainMara/QuestMarker
+@onready var quest_marker: Label3D = get_node_or_null("CaptainMara/QuestMarker")
 @onready var journal: PanelContainer = $HUD/Journal
 @onready var journal_title: Label = $HUD/Journal/Margin/Content/Title
 @onready var journal_body: Label = $HUD/Journal/Margin/Content/Body
@@ -24,7 +24,8 @@ var panel_mode := JournalView.CLOSED
 
 func _ready() -> void:
 	super._ready()
-	quest_chain.append(ValeQuestProgress.new(quest_definition))
+	if quest_definition:
+		quest_chain.append(ValeQuestProgress.new(quest_definition))
 	for follow_up in follow_up_quests:
 		quest_chain.append(ValeQuestProgress.new(follow_up))
 	for enemy in enemies:
@@ -34,7 +35,8 @@ func _ready() -> void:
 		if child is ValeInteractable and child.objective_id != &"":
 			quest_objects.append(child)
 			child.interacted.connect(_use_quest_object.bind(child))
-	mara.interacted.connect(_talk_to_mara)
+	if mara and not quest_chain.is_empty():
+		mara.interacted.connect(_talk_to_mara)
 	player.health.died.connect(_close_panel)
 	dialogue_action.pressed.connect(_perform_dialogue_action)
 	$HUD/Journal/Margin/Content/Close.pressed.connect(_close_panel)
@@ -96,6 +98,8 @@ func _can_accept_quest(progress: ValeQuestProgress) -> bool:
 	return true
 
 func _first_mara_quest() -> ValeQuestProgress:
+	if quest_chain.is_empty():
+		return null
 	for state in [ValeQuestProgress.State.READY, ValeQuestProgress.State.AVAILABLE, ValeQuestProgress.State.ACTIVE]:
 		for progress in quest_chain:
 			if progress.state == state and (state != ValeQuestProgress.State.AVAILABLE or _can_accept_quest(progress)):
@@ -116,7 +120,7 @@ func _objective_text(progress: ValeQuestProgress) -> String:
 	var definition := progress.definition
 	match progress.state:
 		ValeQuestProgress.State.AVAILABLE:
-			return "Speak to Captain Mara at the watchpost"
+			return "Speak to Captain Mara at %s" % recovery_location
 		ValeQuestProgress.State.ACTIVE:
 			if definition.required_kills > 0:
 				return "%s  %d / %d" % [definition.objective, progress.kills, definition.required_kills]
@@ -138,9 +142,12 @@ func _refresh_tracked_quest() -> void:
 func _refresh_progress() -> void:
 	_refresh_tracked_quest()
 	var mara_quest := _first_mara_quest()
-	objective_label.text = _objective_text(tracked_quest if tracked_quest else mara_quest)
-	if tracked_quest and tracked_quest.state == ValeQuestProgress.State.READY:
-		objective_label.text = "%s · %s" % [tracked_quest.definition.title, objective_label.text]
+	var objective := tracked_quest if tracked_quest else mara_quest
+	objective_label.visible = objective != null
+	if objective:
+		objective_label.text = _objective_text(objective)
+		if objective == tracked_quest and objective.state == ValeQuestProgress.State.READY:
+			objective_label.text = "%s · %s" % [objective.definition.title, objective_label.text]
 	var next_xp: int = player.next_level_experience()
 	if next_xp > 0:
 		progression_label.text = "XP %d / %d" % [player.experience, next_xp]
@@ -152,11 +159,12 @@ func _refresh_progress() -> void:
 		))
 	for enemy in enemies:
 		_refresh_enemy_marker(enemy)
-	quest_marker.text = ""
-	if mara_quest.state == ValeQuestProgress.State.READY:
-		quest_marker.text = "?"
-	elif _can_accept_quest(mara_quest):
-		quest_marker.text = "!"
+	if quest_marker and mara_quest:
+		quest_marker.text = ""
+		if mara_quest.state == ValeQuestProgress.State.READY:
+			quest_marker.text = "?"
+		elif _can_accept_quest(mara_quest):
+			quest_marker.text = "!"
 	_refresh_panel()
 
 func _refresh_enemy_marker(enemy: ValeEnemy) -> void:

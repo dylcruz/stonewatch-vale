@@ -1,7 +1,8 @@
 extends SceneTree
 ## Validate the baked zone and walk the authored connectors through the gameplay camera.
 
-const SCENE := preload("res://scenes/stonewatch_vale.tscn")
+const MAIN_SCENE := preload("res://scenes/stonewatch_vale.tscn")
+const WATCHPOST_SCENE := preload("res://scenes/watchpost_playtest.tscn")
 const NAVIGATION := preload("res://tests/navigation_test_support.gd")
 var world: Node3D
 var player: ValePlayer
@@ -25,14 +26,11 @@ func frames(count: int) -> void:
 		await physics_frame
 	await process_frame
 
-func start() -> void:
-	world = SCENE.instantiate()
+func start(scene: PackedScene = MAIN_SCENE) -> void:
+	world = scene.instantiate()
 	root.add_child(world)
 	region = world.get_node("NavigationRegion3D")
 	player = world.player
-	for enemy: ValeEnemy in world.enemies:
-		enemy.set_physics_process(false)
-		enemy.collision_layer = 0
 	await frames(5)
 	await NAVIGATION.wait_for_spawn(world, player)
 
@@ -95,21 +93,67 @@ func layout() -> Dictionary:
 	var snapshot := {}
 	for terrain: Node3D in region.find_children("*", "Node3D", true, false):
 		snapshot[region.get_path_to(terrain)] = terrain.global_transform
-	for actor: Node3D in world.enemies:
-		snapshot[world.get_path_to(actor)] = actor.global_transform
-	for actor: Node3D in [world.mara, world.get_node("SupplyCrate")]:
-		snapshot[world.get_path_to(actor)] = actor.global_transform
 	return snapshot
 
+func press_key(key: Key) -> void:
+	var event := InputEventKey.new()
+	event.keycode = key
+	event.physical_keycode = key
+	event.pressed = true
+	root.push_input(event, true)
+	event = event.duplicate()
+	event.pressed = false
+	root.push_input(event, true)
+	await frames(2)
+
+func check_starting_town() -> void:
+	var square := Vector3(0, 0, 7)
+	check(ProjectSettings.get_setting("application/run/main_scene") == MAIN_SCENE.resource_path
+		and region.has_node("StartingTown/TownHall") and region.has_node("StartingTown/WestCottage")
+		and region.has_node("StartingTown/EastCottage") and player.global_position.distance_to(square) < 0.05
+		and world.status.text == "Town square",
+		"A fresh game opens in the town square at the original spawn")
+	check(world.enemies.is_empty() and world.quest_chain.is_empty()
+		and not world.has_node("CaptainMara") and not world.has_node("SupplyCrate"),
+		"The main game has no Watchpost encounters or quest fixtures")
+	check(region.has_node("StartingTown/NorthCottage") and region.has_node("StartingTown/WestLaneCottage")
+		and not region.has_node("WatchpostLandmarks")
+		and not world.has_node("AbandonedCampsite") and not world.has_node("QuarryGate")
+		and not region.has_node("WatchpostDressing/CartBed") and not region.has_node("WatchpostDressing/CampSignLabel"),
+		"Town buildings replace the campsite, supply cart, and Quarry Gate")
+	check(not world.enemy_name.visible and not world.enemy_health.visible
+		and not world.objective_label.visible and not world.last_hit.visible,
+		"The town HUD starts without enemy health, combat tips, or a Watchpost objective")
+	await press_key(KEY_J)
+	check(world.journal.visible and world.journal_body.text == "No quests accepted",
+		"The empty town journal opens with J")
+	await press_key(KEY_I)
+	check(world.journal.visible and world.journal_title.text == "Gear",
+		"The town gear panel opens with I")
+	await press_key(KEY_I)
+	check(camera_click(Vector3(8, 0, 7)), "Pine Road accepts a move from the town square")
+	var destination := player.destination
+	check(not camera_click(Vector3(-1.55, 3.1, -10.3)) and not camera_click(Vector3(-11.6, 3.1, 2.35))
+		and player.destination == destination and player.moving,
+		"Clicking either new cottage preserves the previous destination")
+	check(await walk_steps([Vector3(8, 0, 7), mark("MeadowLoop/SouthConnection")])
+		and player.is_alive() and player.experience == 0 and world.tracked_quest == null,
+		"The Warrior can walk out to Pine Meadow without taking a quest or fighting")
+	player.receive_hit(999, null)
+	await frames(150)
+	check(player.health.current == player.health.maximum and player.global_position.distance_to(square) < 0.05
+		and world.status.text == "Recovered at the town square",
+		"Defeat returns the Warrior to the town square")
+
 func check_main_road() -> void:
-	var watchpost_point: Vector3 = world.get_node("Watchpost").global_position
-	var campsite := Vector3(1.8, 0, -8)
-	var quarry := Vector3(-10.8, 0, 5.3)
-	check(connected(watchpost_point, campsite) and connected(campsite, quarry)
-		and connected(quarry, watchpost_point), "The watchpost, campsite, and Quarry Gate share a two-way network")
-	check(await walk_steps([Vector3(8, 0, 7), Vector3(8, 0, -7.5), campsite,
-		Vector3(-8.5, 0, -6), quarry, watchpost_point]),
-		"The gameplay camera can route from Pine Road through the campsite to the quarry and back")
+	var town_square: Vector3 = world.get_node("Watchpost").global_position
+	var north_lane := Vector3(2.7, 0, -7.8)
+	var west_lane := Vector3(-10.8, 0, 6.2)
+	check(connected(town_square, north_lane) and connected(north_lane, west_lane)
+		and connected(west_lane, town_square), "The streets around the new houses form a two-way network")
+	check(await walk_steps([Vector3(8, 0, 7), Vector3(8, 0, -7.5), north_lane,
+		Vector3(-8.5, 0, -6), west_lane, town_square]),
+		"The gameplay camera can route past the new cottages and back to the square")
 	check(not camera_click(Vector3(0, 0, 15)), "A click beyond the south boundary is rejected")
 	await place(Vector3(8, 0, -10))
 	check(await walk_steps([Vector3(8, 0, -18), Vector3(8, 0, -10)]),
@@ -121,7 +165,7 @@ func check_meadow() -> void:
 	var north_gate := mark("MeadowLoop/NorthConnection")
 	check(connected(east_gate, heather_rest) and connected(heather_rest, north_gate)
 		and connected(north_gate, mark("NorthRoad/MeadowConnection")),
-		"Pine Meadow connects the watchpost gate, Heather Rest, and North Road in both directions")
+		"Pine Meadow connects the town gate, Heather Rest, and North Road in both directions")
 	await place(Vector3(10.5, 0, 7.6))
 	check(await walk_steps([east_gate, Vector3(11.2, 0, 7.6)]), "The east gate can be walked in both directions")
 	await place(mark("NorthRoad/MeadowConnection"))
@@ -180,7 +224,7 @@ func time_crossing() -> void:
 	var start_point := mark("MeadowLoop/HeatherRest")
 	var lookout := mark("LookoutRidgeLoop/Lookout")
 	await place(mark("MeadowLoop/SouthConnection"))
-	check(await walk_steps([start_point]), "The watchpost entrance reaches Heather Rest entirely on foot")
+	check(await walk_steps([start_point]), "The town entrance reaches Heather Rest entirely on foot")
 	var start_frame := Engine.get_physics_frames()
 	var length := 0.0
 	for destination in [
@@ -205,6 +249,8 @@ func run() -> void:
 	await start()
 	var initial_layout := layout()
 	check(region.navigation_mesh.get_polygon_count() > 27, "The expanded zone has saved baked navigation")
+	await check_starting_town()
+	await place(world.get_node("Watchpost").global_position)
 	await check_main_road()
 	await check_meadow()
 	await check_river()
@@ -214,7 +260,19 @@ func run() -> void:
 	world.queue_free()
 	await process_frame
 	await start()
-	check(initial_layout == layout(), "Two fresh games load identical terrain, props, quest objects, and encounters")
+	check(initial_layout == layout(), "Two fresh games load identical terrain and props")
+	world.queue_free()
+	await process_frame
+	await start(WATCHPOST_SCENE)
+	check(not region.has_node("StartingTown") and world.status.text == "Watchpost"
+		and world.get_node("Watchpost/Label").visible and world.quest_chain.size() == 3
+		and world.enemies.size() == 7 and world.has_node("CaptainMara") and world.has_node("SupplyCrate")
+		and world.get_node("HUD/Panel/Margin/VBox/Title").text == "WATCHPOST PLAYTEST",
+		"The separate developer scene opens the original watchpost and its quest and combat fixtures")
+	check(region.has_node("WatchpostLandmarks/AbandonedCampsite")
+		and region.has_node("WatchpostLandmarks/QuarryGate")
+		and region.has_node("WatchpostLandmarks/CartBed") and region.has_node("WatchpostLandmarks/CampSignLabel"),
+		"The developer scene keeps the original landmarks and their dressing")
 
 	print("Vale route checks complete; assertions: ", assertions, "; failures: ", failures)
 	world.queue_free()

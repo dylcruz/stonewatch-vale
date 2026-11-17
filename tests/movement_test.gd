@@ -55,12 +55,13 @@ func wait_for_stop() -> void:
 			return
 
 func run() -> void:
-	world = load("res://scenes/stonewatch_vale.tscn").instantiate()
+	world = load("res://scenes/watchpost_playtest.tscn").instantiate()
 	root.add_child(world)
 	player = world.get_node("Player")
 	for enemy in world.enemies:
 		enemy.set_physics_process(false)
 	var mara: ValeInteractable = world.mara
+	var wolf: ValeWolf = world.get_node("Wolf")
 	await frames(5)
 	await NAVIGATION.wait_for_spawn(world, player)
 	check(world.get_node("NavigationRegion3D").navigation_mesh.get_polygon_count() > 0, "Scene contains saved baked navigation")
@@ -108,7 +109,7 @@ func run() -> void:
 	check(NavigationServer3D.map_get_closest_point(map, player.global_position).distance_to(player.global_position) < 0.25, "Player remains on walkable terrain")
 	# Holding uses the same viewport input and ray picking as ordinary clicks.
 	var start := player.global_position
-	check(click_at(world.wolf.global_position + Vector3.UP * 0.8), "An enemy approach is active before held steering")
+	check(click_at(wolf.global_position + Vector3.UP * 0.8), "An enemy approach is active before held steering")
 	hold_button(world.camera.unproject_position(Vector3(6, 0, -7)), true)
 	await frames(2)
 	check(world.following_cursor, "World press starts cursor following")
