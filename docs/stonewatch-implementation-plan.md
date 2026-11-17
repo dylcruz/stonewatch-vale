@@ -37,6 +37,6 @@ The watchpost graybox supports click-to-move, breadcrumbs, combat, death recover
 
 ### Final playtest and delivery
 
-- [ ] Replay the [Windows checklist](playtest.md#current-windows-checklist) from a new save in the full zone. Verify both gear upgrades, both responses to the Captain’s heavy attack, all three turn-ins, and level 3 with optional enemies left alive.
+- [ ] Repeat the [watchpost Windows playtest](playtest.md#watchpost-windows-playtest) from a new save in the full zone. Verify both gear upgrades, both responses to the Captain’s heavy attack, all three turn-ins, and level 3 with optional enemies left alive.
 - [ ] Update the README for New Game, Continue, and the final zone. Record licenses and attribution for any external assets added.
 - [ ] Produce a runnable Windows build and repeat the playtest in it.

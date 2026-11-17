@@ -14,8 +14,9 @@ enum JournalView { CLOSED, DIALOGUE, QUEST_LOG, GEAR }
 @onready var journal_title: Label = $HUD/Journal/Margin/Content/Title
 @onready var journal_body: Label = $HUD/Journal/Margin/Content/Body
 @onready var gear_options: VBoxContainer = $HUD/Journal/Margin/Content/GearOptions
+@onready var quest_options: VBoxContainer = $HUD/Journal/Margin/Content/QuestOptions
 @onready var dialogue_action: Button = $HUD/Journal/Margin/Content/Action
-var quest: ValeQuestProgress
+var tracked_quest: ValeQuestProgress
 var quest_chain: Array[ValeQuestProgress] = []
 var quest_objects: Array[ValeInteractable] = []
 var dialogue_quest: ValeQuestProgress
@@ -23,8 +24,7 @@ var panel_mode := JournalView.CLOSED
 
 func _ready() -> void:
 	super._ready()
-	quest = ValeQuestProgress.new(quest_definition)
-	quest_chain.append(quest)
+	quest_chain.append(ValeQuestProgress.new(quest_definition))
 	for follow_up in follow_up_quests:
 		quest_chain.append(ValeQuestProgress.new(follow_up))
 	for enemy in enemies:
@@ -70,7 +70,11 @@ func _record_defeat(enemy: ValeEnemy) -> void:
 func _use_quest_object(object: ValeInteractable) -> void:
 	if object.collision_layer == 0 or not player.is_alive() or not object.is_in_range(player):
 		return
-	if not quest.record_interaction(object.objective_id):
+	var credited := false
+	for progress in quest_chain:
+		if progress.record_interaction(object.objective_id):
+			credited = true
+	if not credited:
 		status.text = "Ask Captain Mara about the %s" % object.display_name.to_lower()
 		return
 	object.collect()
@@ -78,64 +82,89 @@ func _use_quest_object(object: ValeInteractable) -> void:
 	_refresh_progress()
 
 func _talk_to_mara() -> void:
-	dialogue_quest = quest
+	dialogue_quest = _first_mara_quest()
 	_show_panel(JournalView.DIALOGUE)
+
+func _can_accept_quest(progress: ValeQuestProgress) -> bool:
+	if progress.state != ValeQuestProgress.State.AVAILABLE:
+		return false
+	for prerequisite in progress.definition.prerequisite_quests:
+		if not quest_chain.any(func(other: ValeQuestProgress):
+			return other.definition.id == prerequisite and other.state == ValeQuestProgress.State.COMPLETED
+		):
+			return false
+	return true
+
+func _first_mara_quest() -> ValeQuestProgress:
+	for state in [ValeQuestProgress.State.READY, ValeQuestProgress.State.AVAILABLE, ValeQuestProgress.State.ACTIVE]:
+		for progress in quest_chain:
+			if progress.state == state and (state != ValeQuestProgress.State.AVAILABLE or _can_accept_quest(progress)):
+				return progress
+	return quest_chain.back()
 
 func _perform_dialogue_action() -> void:
 	if panel_mode != JournalView.DIALOGUE or not player.is_alive() or not mara.is_in_range(player):
 		return
-	if dialogue_quest.state == ValeQuestProgress.State.COMPLETED and dialogue_quest != quest:
-		dialogue_quest = quest
-	elif dialogue_quest.accept():
+	if _can_accept_quest(dialogue_quest) and dialogue_quest.accept():
 		_close_panel()
 	elif dialogue_quest.complete():
 		player.grant_item(dialogue_quest.definition.reward_item)
 		player.award_experience(dialogue_quest.definition.reward_xp)
-		var next_index := quest_chain.find(dialogue_quest) + 1
-		if next_index < quest_chain.size():
-			quest = quest_chain[next_index]
 	_refresh_progress()
 
-func _objective_text() -> String:
-	var definition := quest.definition
-	match quest.state:
+func _objective_text(progress: ValeQuestProgress) -> String:
+	var definition := progress.definition
+	match progress.state:
 		ValeQuestProgress.State.AVAILABLE:
 			return "Speak to Captain Mara at the watchpost"
 		ValeQuestProgress.State.ACTIVE:
 			if definition.required_kills > 0:
-				return "%s  %d / %d" % [definition.objective, quest.kills, definition.required_kills]
+				return "%s  %d / %d" % [definition.objective, progress.kills, definition.required_kills]
 			return definition.objective
 		ValeQuestProgress.State.READY:
 			return definition.return_objective
 		_:
 			return "%s complete" % definition.title if chain_completion_text.is_empty() else chain_completion_text
 
+func _refresh_tracked_quest() -> void:
+	if tracked_quest and tracked_quest.is_in_progress():
+		return
+	tracked_quest = null
+	for progress in quest_chain:
+		if progress.is_in_progress():
+			tracked_quest = progress
+			break
+
 func _refresh_progress() -> void:
-	objective_label.text = _objective_text()
+	_refresh_tracked_quest()
+	var mara_quest := _first_mara_quest()
+	objective_label.text = _objective_text(tracked_quest if tracked_quest else mara_quest)
+	if tracked_quest and tracked_quest.state == ValeQuestProgress.State.READY:
+		objective_label.text = "%s · %s" % [tracked_quest.definition.title, objective_label.text]
 	var next_xp: int = player.next_level_experience()
 	if next_xp > 0:
 		progression_label.text = "XP %d / %d" % [player.experience, next_xp]
 	else:
 		progression_label.text = "XP %d · Max level" % player.experience
 	for object in quest_objects:
-		object.set_objective_hint(quest.state == ValeQuestProgress.State.ACTIVE
-			and quest.definition.target_object == object.objective_id)
+		object.set_objective_hint(quest_chain.any(func(progress: ValeQuestProgress):
+			return progress.state == ValeQuestProgress.State.ACTIVE and progress.definition.target_object == object.objective_id
+		))
 	for enemy in enemies:
 		_refresh_enemy_marker(enemy)
-	match quest.state:
-		ValeQuestProgress.State.AVAILABLE:
-			quest_marker.text = "!"
-		ValeQuestProgress.State.READY:
-			quest_marker.text = "?"
-		_:
-			quest_marker.text = ""
+	quest_marker.text = ""
+	if mara_quest.state == ValeQuestProgress.State.READY:
+		quest_marker.text = "?"
+	elif _can_accept_quest(mara_quest):
+		quest_marker.text = "!"
 	_refresh_panel()
 
 func _refresh_enemy_marker(enemy: ValeEnemy) -> void:
 	var marker := enemy.get_node_or_null("QuestMarker") as Label3D
 	if marker:
-		marker.visible = quest.state == ValeQuestProgress.State.ACTIVE and enemy.is_alive() \
-			and quest.definition.target_enemy == enemy.stats.enemy_id
+		marker.visible = enemy.is_alive() and quest_chain.any(func(progress: ValeQuestProgress):
+			return progress.state == ValeQuestProgress.State.ACTIVE and progress.definition.target_enemy == enemy.stats.enemy_id
+		)
 
 func _toggle_panel(mode: JournalView) -> void:
 	if panel_mode == mode:
@@ -159,6 +188,10 @@ func _refresh_panel() -> void:
 	if panel_mode == JournalView.CLOSED:
 		return
 	dialogue_action.hide()
+	quest_options.hide()
+	for option in quest_options.get_children():
+		quest_options.remove_child(option)
+		option.queue_free()
 	gear_options.visible = panel_mode == JournalView.GEAR
 	match panel_mode:
 		JournalView.DIALOGUE:
@@ -174,9 +207,29 @@ func _show_quest_log() -> void:
 	for progress in quest_chain:
 		if progress.state == ValeQuestProgress.State.COMPLETED:
 			entries.append("%s · Completed" % progress.definition.title)
-		elif progress == quest:
-			entries.append("%s\n%s" % [progress.definition.title, _objective_text()])
-	journal_body.text = "\n\n".join(entries)
+		elif progress.is_in_progress():
+			var progress_text := "Ready to turn in" if progress.state == ValeQuestProgress.State.READY else "In progress"
+			if progress == tracked_quest:
+				progress_text += " · Tracked"
+			else:
+				_add_quest_option("Track " + progress.definition.title, _track_quest.bind(progress))
+			entries.append("%s · %s\n%s" % [progress.definition.title, progress_text, _objective_text(progress)])
+	journal_body.text = "No quests accepted" if entries.is_empty() else "\n\n".join(entries)
+
+func _add_quest_option(label: String, action: Callable) -> void:
+	var option := Button.new()
+	option.text = label
+	option.pressed.connect(action)
+	quest_options.add_child(option)
+	quest_options.show()
+
+func _track_quest(progress: ValeQuestProgress) -> void:
+	tracked_quest = progress
+	_refresh_progress()
+
+func _select_dialogue_quest(progress: ValeQuestProgress) -> void:
+	dialogue_quest = progress
+	_refresh_panel()
 
 func _show_dialogue() -> void:
 	journal_title.text = mara.display_name
@@ -188,20 +241,20 @@ func _show_dialogue() -> void:
 		ValeQuestProgress.State.AVAILABLE:
 			journal_body.text = "%s\n\n%s\n\nReward · %s" % [definition.title, definition.briefing, reward]
 			dialogue_action.text = "Accept quest"
-			dialogue_action.show()
+			dialogue_action.visible = _can_accept_quest(dialogue_quest)
 		ValeQuestProgress.State.ACTIVE:
-			journal_body.text = "%s\n\n%s\n\n%s" % [definition.title, definition.briefing, _objective_text()]
+			journal_body.text = "%s\n\n%s\n\n%s" % [definition.title, definition.briefing, _objective_text(dialogue_quest)]
 		ValeQuestProgress.State.READY:
-			journal_body.text = "%s\n\nReward · %s" % [definition.turn_in_dialogue, reward]
+			journal_body.text = "%s\n\n%s\n\nReward · %s" % [definition.title, definition.turn_in_dialogue, reward]
 			dialogue_action.text = "Turn in quest"
 			dialogue_action.show()
 		ValeQuestProgress.State.COMPLETED:
 			journal_body.text = "%s complete\n\nReward earned · %s" % [definition.title, reward]
 			if definition.reward_item:
 				journal_body.text += "\nOpen Gear (I) to equip your reward."
-			if dialogue_quest != quest:
-				dialogue_action.text = "View next quest"
-				dialogue_action.show()
+	for progress in quest_chain:
+		if progress != dialogue_quest and (progress.is_in_progress() or _can_accept_quest(progress)):
+			_add_quest_option("View " + progress.definition.title, _select_dialogue_quest.bind(progress))
 
 func _show_gear() -> void:
 	journal_title.text = "Gear"

@@ -6,7 +6,7 @@ A single-player 3D action RPG prototype. Captain Mara sends the Warrior to clear
 
 1. Use **Godot 4.7.2 Standard** (`4.7.2.stable.official.ed1daf0bf`) with the Compatibility renderer.
 2. Import `project.godot` in Godot Project Manager and allow the initial import to finish.
-3. Press **F5** to start a fresh level 1 run in `scenes/stonewatch_vale.tscn`. Click Captain Mara at the watchpost for **Clear Pine Road**. After each turn-in, choose **View next quest** or speak to Mara again. Progress stays in the current run, including through defeat and recovery.
+3. Press **F5** to start a fresh level 1 run in `scenes/stonewatch_vale.tscn`. Click Captain Mara at the watchpost to accept **Clear Pine Road** or **Recover the Supplies**. Speak to her again to accept the other quest. Turn in both to unlock **Break the Blockade**. Progress stays in the current run, including through defeat and recovery.
 
 ## Controls
 
@@ -17,7 +17,7 @@ A single-player 3D action RPG prototype. Captain Mara sends the Warrior to clear
 - **Left-click ground while fighting:** clear selection, cancel any pending sword hit, and move. Enemies give up the chase when you leave their leash range or reach the green watchpost circle.
 - **1 — Cleave:** deal 12 damage to enemies in front of the Warrior within 2.8 m. Unlocks at level 2 and has a 4-second cooldown.
 - **2 — Guard:** halve incoming damage for 1.25 seconds. A blue ring and the HUD show when Guard is active. The 6-second cooldown starts on activation.
-- **J — Quest log:** check the current objective, turn-in status, and completed quests.
+- **J — Quest log:** check each accepted quest’s progress and turn-in status, review completed quests, and choose which objective the HUD tracks.
 - **I — Gear:** inspect equipment, sword damage, and armor. Equip the Iron Sword and Warden’s Coat after earning them.
 - **After defeat:** wait two seconds to recover at the watchpost at full health.
 - HUD panels consume clicks and preserve the active movement command.
@@ -75,7 +75,7 @@ Run the breadcrumb draw-buffer checks with a graphical renderer:
 godot --path . --script res://tests/breadcrumb_test.gd
 ```
 
-See the [playtest record](docs/playtest.md) for Windows results and the quest credit and respawn checklist.
+See the [playtest record](docs/playtest.md) for Windows results and the current checkpoint checklists.
 
 ## Development and releases
 

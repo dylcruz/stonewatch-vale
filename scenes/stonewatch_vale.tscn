@@ -419,6 +419,10 @@ layout_mode = 2
 visible = false
 layout_mode = 2
 
+[node name="QuestOptions" type="VBoxContainer" parent="HUD/Journal/Margin/Content"]
+visible = false
+layout_mode = 2
+
 [node name="Close" type="Button" parent="HUD/Journal/Margin/Content"]
 layout_mode = 2
 text = "Close"

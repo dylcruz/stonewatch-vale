@@ -2,6 +2,7 @@ class_name ValeQuestDefinition
 extends Resource
 
 @export var id: StringName
+@export var prerequisite_quests: Array[StringName] = []
 @export var title: String
 @export_multiline var briefing: String
 @export var objective: String
