@@ -1,7 +1,6 @@
 class_name ValeAbilityHUD
 extends Control
 
-signal book_requested
 signal layout_changed
 
 const SLOT_ACTIONS: Array[StringName] = [&"ability_slot_1", &"ability_slot_2", &"ability_slot_3", &"ability_slot_4"]
@@ -13,10 +12,10 @@ const ACTIVE := Color(0.56, 0.85, 0.96)
 
 @onready var book: PanelContainer = %Book
 @onready var slots_row: HBoxContainer = %Slots
+@onready var menu_buttons: HBoxContainer = %MenuButtons
 @onready var entries: VBoxContainer = %Entries
 @onready var slot_summary: Label = %SlotSummary
 @onready var clear_slot: Button = %ClearSlot
-@onready var book_button: Button = %OpenBook
 
 var _player: ValeWarrior
 var _layout: Array[StringName] = [&"cleave", &"guard", &"", &""]
@@ -27,17 +26,16 @@ var _selected_slot := 0
 func bind_player(player: ValeWarrior) -> void:
 	_player = player
 	%CloseBook.pressed.connect(close_book)
-	book_button.pressed.connect(func(): book_requested.emit())
 	clear_slot.pressed.connect(_clear_selected_slot)
 	_player.progression_changed.connect(_refresh_book)
 	_player.health.died.connect(close_book)
 	for index in SLOT_ACTIONS.size():
 		var button := Button.new()
 		button.custom_minimum_size = Vector2(94, 56)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.add_theme_font_size_override("font_size", 14)
 		button.pressed.connect(_press_slot.bind(index))
 		slots_row.add_child(button)
-		slots_row.move_child(button, index)
 		_slot_buttons.append(button)
 	_add_entry(&"cleave", "Strike enemies in a frontal arc for %d damage within %.1f m." % [
 		_player.cleave_damage, _player.cleave_range],
@@ -47,6 +45,16 @@ func bind_player(player: ValeWarrior) -> void:
 		"Available at level 1  ·  %.1fs cooldown" % _player.guard_cooldown)
 	_refresh_book()
 	_update_slots()
+
+func add_menu_button(label: String, shortcut: String, toggle_menu: Callable) -> void:
+	var button := Button.new()
+	button.text = label
+	button.tooltip_text = "%s (%s)" % [label, shortcut]
+	button.custom_minimum_size.y = 27
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.add_theme_font_size_override("font_size", 14)
+	button.pressed.connect(toggle_menu)
+	menu_buttons.add_child(button)
 
 func open_book() -> void:
 	book.show()

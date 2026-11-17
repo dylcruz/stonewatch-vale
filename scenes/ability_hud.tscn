@@ -24,40 +24,51 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("AbilityHUD")
 
-[node name="Bar" type="PanelContainer" parent="."]
+[node name="BottomBars" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -241.0
-offset_top = -92.0
-offset_right = 241.0
+offset_left = -205.0
+offset_top = -131.0
+offset_right = 205.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_constants/separation = 5
+
+[node name="Bar" type="PanelContainer" parent="BottomBars"]
+layout_mode = 2
 theme_override_styles/panel = SubResource("Panel")
 
-[node name="Margin" type="MarginContainer" parent="Bar"]
+[node name="Margin" type="MarginContainer" parent="BottomBars/Bar"]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="Slots" type="HBoxContainer" parent="Bar/Margin"]
+[node name="Slots" type="HBoxContainer" parent="BottomBars/Bar/Margin"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="OpenBook" type="Button" parent="Bar/Margin/Slots"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(70, 56)
+[node name="MenuBar" type="PanelContainer" parent="BottomBars"]
 layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Open or close the ability book"
-text = "Book
-K"
+theme_override_styles/panel = SubResource("Panel")
+
+[node name="Margin" type="MarginContainer" parent="BottomBars/MenuBar"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 4
+
+[node name="MenuButtons" type="HBoxContainer" parent="BottomBars/MenuBar/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 5
 
 [node name="Book" type="PanelContainer" parent="."]
 unique_name_in_owner = true

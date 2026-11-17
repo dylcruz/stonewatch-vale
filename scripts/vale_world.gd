@@ -13,6 +13,7 @@ func _ready() -> void:
 	exploration_map.configure($NavigationRegion3D, landmarks)
 	exploration_map.reveal(player.global_position)
 	$HUD/WorldMap/Margin/Content/Header/Close.pressed.connect(map_panel.hide)
+	ability_hud.add_menu_button("Map", "M", _toggle_map)
 
 func _process(delta: float) -> void:
 	super._process(delta)
@@ -20,21 +21,26 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"world_map"):
-		if map_panel.visible:
-			map_panel.hide()
-		else:
-			_close_panel()
-			ability_hud.close_book()
-			_stop_following_cursor()
-			map_panel.show()
+		_toggle_map()
 		get_viewport().set_input_as_handled()
 	elif map_panel.visible and event.is_action_pressed(&"ui_cancel"):
 		map_panel.hide()
 		get_viewport().set_input_as_handled()
 	else:
-		if event.is_action_pressed(&"quest_log") or event.is_action_pressed(&"gear"):
-			map_panel.hide()
 		super._unhandled_input(event)
+
+func _toggle_map() -> void:
+	if map_panel.visible:
+		map_panel.hide()
+		return
+	_close_panel()
+	ability_hud.close_book()
+	_stop_following_cursor()
+	map_panel.show()
+
+func _show_panel(mode: JournalView) -> void:
+	map_panel.hide()
+	super._show_panel(mode)
 
 func _open_ability_book() -> void:
 	map_panel.hide()

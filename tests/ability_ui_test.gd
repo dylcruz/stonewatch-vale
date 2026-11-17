@@ -45,11 +45,19 @@ func run() -> void:
 	root.add_child(world)
 	var player: ValeWarrior = world.player
 	var hud: ValeAbilityHUD = world.ability_hud
+	var book_button: Button = hud.menu_buttons.get_child(0)
+	var quest_button: Button = hud.menu_buttons.get_child(1)
+	var character_button: Button = hud.menu_buttons.get_child(2)
+	var bag_button: Button = hud.menu_buttons.get_child(3)
+	var map_button: Button = hud.menu_buttons.get_child(4)
 	var first: Button = hud.slots_row.get_child(0)
 	var second: Button = hud.slots_row.get_child(1)
 	var third: Button = hud.slots_row.get_child(2)
 	await NAVIGATION.wait_for_spawn(world, player)
 	await process_frame
+	check(hud.slots_row.get_child_count() == 4 and hud.menu_buttons.get_child_count() == 5
+		and hud.menu_buttons.get_global_rect().position.y > hud.slots_row.get_global_rect().end.y,
+		"The ability slots and menu buttons occupy separate rows")
 	check(not hud.is_book_open() and first.text.contains("Locked") and second.text.ends_with("Ready"),
 		"A fresh bar has locked Cleave on 1 and ready Guard on 2")
 	press(KEY_1)
@@ -66,7 +74,7 @@ func run() -> void:
 	check(world.click_world(world.camera.unproject_position(Vector3(8, 0, 7))),
 		"Town accepts a movement command")
 	var destination := player.destination
-	click(hud.book_button)
+	click(book_button)
 	await process_frame
 	check(hud.is_book_open() and player.destination == destination and not world.following_cursor,
 		"Clicking Book opens it while preserving the active destination")
@@ -87,12 +95,18 @@ func run() -> void:
 	click(hud.clear_slot)
 	check(hud.save_layout() == PackedStringArray(["", "", "cleave", ""])
 		and slot.read().ability_bar == hud.save_layout(), "Moving and clearing slots autosaves the arrangement")
-	press(KEY_M)
+	click(map_button)
 	check(world.map_panel.visible and not hud.is_book_open(), "Opening the map closes the ability book")
-	click(hud.book_button)
+	click(book_button)
 	check(hud.is_book_open() and not world.map_panel.visible, "Opening the ability book with its button closes the map")
-	press(KEY_J)
+	click(quest_button)
 	check(world.journal.visible and not hud.is_book_open(), "The quest log opens independently from the book")
+	click(character_button)
+	check(world.journal_title.text == "Character" and not world.bag_scroll.visible,
+		"The Character button opens the sheet without inventory controls")
+	click(bag_button)
+	check(world.journal_title.text == "Bag" and world.bag_scroll.visible,
+		"The Bag button opens a separate inventory view")
 	press(KEY_ESCAPE)
 	player.reset_combat()
 	press(KEY_1)

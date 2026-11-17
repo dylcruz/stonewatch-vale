@@ -18,9 +18,9 @@ func check(condition: bool, message: String) -> void:
 		failures += 1
 		push_error("FAIL: " + message)
 
-func press_character_key() -> void:
+func press_menu_key(code: Key) -> void:
 	var key := InputEventKey.new()
-	key.physical_keycode = KEY_I
+	key.physical_keycode = code
 	key.pressed = true
 	root.push_input(key, true)
 	key = key.duplicate()
@@ -39,13 +39,11 @@ func run() -> void:
 	root.add_child(world)
 	player = world.player
 	await physics_frame
-	press_character_key()
+	press_menu_key(KEY_I)
 	check(world.journal.visible and world.journal_title.text == "Character"
 		and world.journal_body.text.contains("Level 1") and world.journal_body.text.contains("0 / 100 XP")
 		and world.journal_body.text.contains("Training Sword") and world.journal_body.text.contains("Travel Coat"),
 		"I opens the character loadout and current progression")
-	check(world.bag_heading.text.contains("1 / 6 used") and world.bag_heading.text.contains("5 free"),
-		"The starter bag displays usage and free slots")
 	player.health.take_damage(7)
 	check(world.journal_body.text.contains("Health   53 / 60"), "Damage updates health while the panel is open")
 	player.award_experience(100)
@@ -54,6 +52,9 @@ func run() -> void:
 		and world.progression_label.text == "XP 100 / 240",
 		"Leveling immediately updates XP, maximum health, and effective ability stats")
 
+	press_menu_key(KEY_B)
+	check(world.journal_title.text == "Bag" and world.bag_heading.text.contains("1 / 6 used")
+		and world.bag_heading.text.contains("5 free"), "B opens the bag and shows used and free slots")
 	press_inventory_button("Equip Scout Pouch")
 	check(player.equipped_bag.id == &"scout_pouch" and world.bag_heading.text.contains("1 / 2 used")
 		and player.stored_items()[0].id == &"trail_pack",
@@ -81,14 +82,16 @@ func run() -> void:
 	check(player.waiting_rewards.is_empty() and world.bag_heading.text.contains("3 / 6 used"),
 		"The waiting reward moves into inventory when claimed with free slots")
 	press_inventory_button("Equip Warden's Coat")
-	check(player.armor_value() == 2 and world.journal_body.text.contains("Warden's Coat")
-		and world.journal_body.text.contains("Armor 2") and world.bag_heading.text.contains("3 / 6 used"),
+	check(player.armor_value() == 2 and world.bag_heading.text.contains("3 / 6 used"),
 		"Equipping the stored coat updates effective armor and returns the old coat to storage")
 	check(player.grant_item(IRON_SWORD), "The larger bag holds another piece of gear")
 	world._refresh_panel()
 	press_inventory_button("Equip Iron Sword")
+	press_menu_key(KEY_I)
 	check(player.sword_damage() == 12 and world.journal_body.text.contains("Sword damage 12")
-		and world.journal_body.text.contains("Iron Sword"), "Equipping the sword updates loadout and sword damage")
+		and world.journal_body.text.contains("Iron Sword") and world.journal_body.text.contains("Warden's Coat")
+		and world.journal_body.text.contains("Armor 2"), "The character sheet reflects gear changes made in the bag")
+	press_menu_key(KEY_B)
 	var items_before: Array[ValeItem] = player.stored_items()
 	press_inventory_button("Equip Scout Pouch")
 	check(player.equipped_bag.id == &"trail_pack" and player.stored_items() == items_before

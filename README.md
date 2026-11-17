@@ -19,7 +19,9 @@ A single-player 3D action RPG prototype set in Stonewatch Vale. Explore the Vale
 - **1–4 — Ability bar:** activate the assigned ability with its shortcut or by clicking its slot. Cleave starts on **1** and unlocks at level 2. Guard starts on **2**.
 - **K — Ability book:** inspect effects, cooldowns, and unlocks. Click a bar slot while the book is open to assign an ability or clear the slot. Assigning an ability from another occupied slot swaps the two. The layout is saved with your run.
 - **J — Quest log:** check each accepted quest’s progress and turn-in status, review completed quests, and choose which objective the HUD tracks.
-- **I — Character:** inspect level, XP, health, effective combat stats, and gear by slot. Equip the Iron Sword and Warden’s Coat from the inventory after earning them. The equipped bag controls capacity. Claim waiting rewards once you have a free slot.
+- **I — Character:** inspect level, XP, health, effective combat stats, and equipped gear by slot.
+- **B — Bag:** manage stored gear and rewards. The equipped bag controls capacity. Claim waiting rewards once you have a free slot.
+- Click the menu buttons below the ability bar to open the ability book, quest log, character sheet, bag, or map. The map is available in the main Vale.
 - **M — World map:** view the terrain and landmarks you have explored during the current run in the main Vale.
 - **After defeat:** wait two seconds to recover in the town square at full health.
 - HUD panels consume clicks and preserve the active movement command.

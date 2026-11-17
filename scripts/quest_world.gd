@@ -1,6 +1,6 @@
 extends "res://scripts/combat_world.gd"
 
-enum JournalView { CLOSED, DIALOGUE, QUEST_LOG, GEAR }
+enum JournalView { CLOSED, DIALOGUE, QUEST_LOG, CHARACTER, BAG }
 
 @export var quest_definition: ValeQuestDefinition
 @export var follow_up_quests: Array[ValeQuestDefinition] = []
@@ -61,7 +61,10 @@ func _ready() -> void:
 	dialogue_action.pressed.connect(_perform_dialogue_action)
 	$HUD/Journal/Margin/Content/Close.pressed.connect(_close_panel)
 	player.equipment_changed.connect(_save_checkpoint)
-	ability_hud.book_requested.connect(_toggle_ability_book)
+	ability_hud.add_menu_button("Ability Book", "K", _toggle_ability_book)
+	ability_hud.add_menu_button("Quest Log", "J", _toggle_panel.bind(JournalView.QUEST_LOG))
+	ability_hud.add_menu_button("Character", "I", _toggle_panel.bind(JournalView.CHARACTER))
+	ability_hud.add_menu_button("Bag", "B", _toggle_panel.bind(JournalView.BAG))
 	ability_hud.layout_changed.connect(_save_checkpoint)
 	_refresh_progress()
 	if is_new_game:
@@ -153,7 +156,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"quest_log"):
 		_toggle_panel(JournalView.QUEST_LOG)
 	elif event.is_action_pressed(&"gear"):
-		_toggle_panel(JournalView.GEAR)
+		_toggle_panel(JournalView.CHARACTER)
+	elif event.is_action_pressed(&"bag"):
+		_toggle_panel(JournalView.BAG)
 	elif event.is_action_pressed(&"ability_book"):
 		_toggle_ability_book()
 	elif ability_hud.is_book_open() and event.is_action_pressed(&"ui_cancel"):
@@ -197,7 +202,7 @@ func _grant_reward_item(item: ValeItem, announce: bool = false) -> void:
 		return
 	var was_waiting: bool = player.waiting_rewards.has(item.id)
 	if player.grant_item(item) and announce:
-		loot_notice.text = "%s added to Character (I)" % item.display_name
+		loot_notice.text = "%s added to Bag (B)" % item.display_name
 		loot_notice.show()
 	elif not was_waiting and player.waiting_rewards.has(item.id):
 		loot_notice.text = player.bag_feedback
@@ -328,7 +333,7 @@ func _toggle_panel(mode: JournalView) -> void:
 func _show_panel(mode: JournalView) -> void:
 	ability_hud.close_book()
 	panel_mode = mode
-	if mode == JournalView.GEAR:
+	if mode == JournalView.BAG:
 		loot_notice.hide()
 	_stop_following_cursor()
 	_refresh_panel()
@@ -346,16 +351,19 @@ func _refresh_panel() -> void:
 	for option in quest_options.get_children():
 		quest_options.remove_child(option)
 		option.queue_free()
-	bag_heading.visible = panel_mode == JournalView.GEAR
-	bag_scroll.visible = panel_mode == JournalView.GEAR
+	bag_heading.visible = panel_mode == JournalView.BAG
+	bag_scroll.visible = panel_mode == JournalView.BAG
 	bag_feedback.hide()
 	match panel_mode:
 		JournalView.DIALOGUE:
 			_show_dialogue()
 		JournalView.QUEST_LOG:
 			_show_quest_log()
-		JournalView.GEAR:
-			_show_gear()
+		JournalView.CHARACTER:
+			journal_title.text = "Character"
+			_refresh_character_stats()
+		JournalView.BAG:
+			_show_bag()
 
 func _show_quest_log() -> void:
 	journal_title.text = "Quest log"
@@ -408,13 +416,13 @@ func _show_dialogue() -> void:
 		ValeQuestProgress.State.COMPLETED:
 			journal_body.text = "%s complete\n\nReward earned · %s" % [definition.title, reward]
 			if definition.reward_item:
-				journal_body.text += "\nOpen Character (I) to manage your reward."
+				journal_body.text += "\nOpen Bag (B) to manage your reward."
 	for progress in quest_chain:
 		if progress != dialogue_quest and (progress.is_in_progress() or _can_accept_quest(progress)):
 			_add_quest_option("View " + progress.definition.title, _select_dialogue_quest.bind(progress))
 
 func _refresh_character_stats() -> void:
-	if panel_mode != JournalView.GEAR:
+	if panel_mode != JournalView.CHARACTER:
 		return
 	var next_xp: int = player.next_level_experience()
 	var xp_status := "%d / %d XP" % [player.experience, next_xp] if next_xp else "%d XP · Max level" % player.experience
@@ -434,9 +442,9 @@ func _refresh_character_stats() -> void:
 		"%s   ·   Guard %d%%" % [cleave, roundi(player.guard_reduction * 100.0)],
 	])
 
-func _show_gear() -> void:
-	journal_title.text = "Character"
-	_refresh_character_stats()
+func _show_bag() -> void:
+	journal_title.text = "Bag"
+	journal_body.text = player.equipped_bag.display_name
 	var available: int = player.free_bag_slots()
 	var capacity: int = player.bag_capacity()
 	bag_heading.text = "Inventory   %d / %d used   ·   %d free" % [capacity - available, capacity, available]
