@@ -2,21 +2,15 @@
 
 ## Accepted checkpoints
 
-The user confirmed Windows playtesting for click-to-move and held steering, route breadcrumbs, melee, the full wolf encounter, raiders and Cleave, and the Captain’s telegraph. The user also accepted Clear Pine Road and Recover the Supplies. Prior Windows checks found that fixed HUD panels can overlap world labels as the camera follows the Warrior. A Windows executable export is pending matching Godot 4.7.2 templates.
+The user confirmed Windows playtesting for click-to-move and held steering, route breadcrumbs, melee, the full wolf encounter, raiders and Cleave, and the Captain’s telegraph. Prior Windows checks found that fixed HUD panels can overlap world labels as the camera follows the Warrior.
 
 ## Automated verification
 
 The original three-quest F5 scene passed the launch smoke test. The terrain navigation bake saved 27 polygons. The four suites passed 156 assertions across movement, combat, the quest chain, and graphical breadcrumbs. The sandboxed editor import completed with a safe-save error during initialization.
 
-## Current Windows checklist
+## Watchpost Windows playtest
 
-Press **F5** to launch the watchpost arena.
-
-- [ ] Route around the ruin. Try the disconnected platform, click the HUD, and verify both preserve the active movement command. Check held steering and breadcrumb clearance on arrival.
-- [ ] Accept Clear Pine Road, defeat three wolves, and report to Mara. Confirm 100 XP, level 2, 75 max HP, and Cleave. Equip the Iron Sword in **I** and confirm 12 sword damage.
-- [ ] Accept Recover the Supplies and collect the marked crate. Return with both guards alive and confirm 155 XP. Try **J** to check active and completed entries.
-- [ ] Accept Break the Blockade. Dodge the Captain’s red circle once, then time Guard to halve a heavy hit. Defeat the Captain for 50 XP and the Warden’s Coat. Equip the coat and confirm 2 armor.
-- [ ] Turn in the final quest. With optional enemies alive, confirm 240 XP, level 3, and 90 max HP. Check that death recovery retains progress during the run and reopening dialogue leaves XP and gear unchanged.
+The user completed the watchpost route on Windows. The checks covered navigation and HUD input, all three turn-ins with optional enemies alive, dodging and guarding the Captain’s heavy attack, and progress through defeat and recovery. The route reached 240 XP and level 3. The Iron Sword dealt 12 damage, and the Warden’s Coat granted 2 armor.
 
 ## Quest credit and respawn checkpoint
 
@@ -28,18 +22,47 @@ The user reported that wolves killed before quest acceptance stayed defeated. Th
 
 **Windows user playtest passed.** The user confirmed the open checks on November 16, 2026.
 
-- [x] Defeat the first road wolf before accepting Clear Pine Road. Return to the green watchpost refuge and wait for the 30-second timer to expire. Confirm the wolf returns. Accept Clear Pine Road at 0 / 3, then defeat the wolf again and verify it advances to 1 / 3.
-- [x] Defeat a regular wolf or raider and stay near its spawn for more than 30 seconds. Verify it stays down, then leave the encounter area and check that it returns at full health. On the next defeat, leave immediately and check that it stays down until the delay elapses.
-- [x] Defeat the Captain before accepting Break the Blockade. Confirm the first defeat grants 50 XP and the Warden’s Coat. Leave the quarry and accept Break the Blockade. Confirm the objective starts at 0 / 1. Return to Quarry Gate after the delay, defeat the Captain again, and confirm the turn-in is ready and XP and loot do not repeat. Return after the delay to verify the credited Captain stays defeated.
+## Recurring Captain and quest XP checkpoint
 
-## Concurrent quest journal checkpoint
+The Captain now follows the same exit and timer rules as regular enemies, including after a credited defeat or a completed turn-in. Wolves and raiders award 5 XP per defeat. The Captain awards 15 XP per defeat and the Warden’s Coat on the first defeat. In the watchpost playtest, the three turn-ins award 210 of the 240 XP needed to reach level 3.
+
+**Automated on Windows with Godot 4.7.2 Standard.** Movement, combat, quest chain, and graphical breadcrumbs passed. The quest suite covers XP before acceptance, with the turn-in ready, and after completion, as well as the authored 240 XP route.
+
+**Windows user playtest passed.** The user confirmed the Captain’s return during and after the quest, repeat kill XP, the one-time coat, and the revised quest XP balance.
+
+## Quest journal follow-up
 
 Mara offers Clear Pine Road and Recover the Supplies from the start. The player can accept and turn in either quest first. Break the Blockade unlocks after both turn-ins. [Issue #3](https://github.com/dylcruz/stonewatch-vale/issues/3)
 
-**Automated on Windows with Godot 4.7.2 Standard.** Movement, combat, quest chain, and graphical breadcrumbs passed. The quest suite passed 70 assertions covering independent objectives and rewards, both turn-in orders, HUD tracking during movement, and the Captain’s prerequisites. The journal and Mara’s dialogue were also checked with the Compatibility renderer.
+From a fresh **F5** run, speak to Mara. The opening dialogue shows **Clear Pine Road** and a **View Recover the Supplies** button. Accepting an offer closes the dialogue. Speak to Mara again for the other offer, then open **J** to see both accepted quests.
 
-**Windows user playtest passed.** The user confirmed the open checks on November 16, 2026.
+**Automated on Windows with Godot 4.7.2 Standard.** All five suites passed on the build with the Vale routes and revised XP. The quest suite passed 75 assertions, including both starting offers, independent objectives, both turn-in orders, and HUD tracking. Both offers and the two accepted quests were visible with the Compatibility renderer.
 
-- [x] Accept both quests before turning either in. Open **J** and verify each quest has its own objective. Use **Track** to switch the single HUD objective while a movement command is active.
-- [x] Defeat one road wolf and recover the crate while tracking Clear Pine Road. Confirm the journal shows `1 / 3` for Clear Pine Road and **Ready to turn in** for Recover the Supplies.
-- [x] Defeat the remaining wolves and return to Mara with both quests ready. Turn in Recover the Supplies first. Confirm the journal shows it as completed and Clear Pine Road still ready with all three kills. Turn in Clear Pine Road and verify Break the Blockade becomes available at 155 XP.
+- [ ] Accept both quests before turning either in. Use **Track** in **J** to switch the HUD objective during a movement command.
+- [ ] Defeat one road wolf and recover the crate. Confirm that Clear Pine Road shows `1 / 3` and Recover the Supplies is ready to turn in.
+- [ ] Return with both quests ready. Turn in either one and verify that the other stays ready. Turn in both and confirm Break the Blockade becomes available at 155 XP.
+
+## Vale routes checkpoint
+
+The terrain now connects the fenced watchpost, Pine Road, the campsite and supply cart, and Quarry Gate. Pine Meadow rejoins North Road at the north meadow junction. Birchwater has a stone ford and timber bridge linked by an east-bank trail. Two climbs connect Signal Ridge and its lookout to North Road. All three loops are open on a fresh run. [Issue #4](https://github.com/dylcruz/stonewatch-vale/issues/4), [issue #5](https://github.com/dylcruz/stonewatch-vale/issues/5), [issue #6](https://github.com/dylcruz/stonewatch-vale/issues/6), [issue #7](https://github.com/dylcruz/stonewatch-vale/issues/7)
+
+The Windows Godot 4.7.2 bake saved 360 navigation polygons. All five regression suites passed. The route suite passed 22 checks with the timed crossing enabled, including two-way portal, river, and ridge movement, matching placements across fresh runs, and command preservation when clicking deep water or a cliff. The route and landmark views were checked with the Compatibility renderer.
+
+### Recorded timings
+
+Times are 60 Hz simulation time from scripted gameplay clicks on Windows. The watchpost run started from a fresh instance and included combat and turn-ins with zero recoveries. The crossing used camera clicks and walked each leg from Heather Rest onward.
+
+| Route | Measured time |
+| --- | ---: |
+| Watchpost → three road wolves → Mara | 21.7 s |
+| Watchpost run through the supply crate turn-in | 33.4 s cumulative |
+| Watchpost run through the Captain turn-in, optional encounters alive | 42.1 s cumulative |
+| Heather Rest → north meadow junction → North Road → south ridge climb → Signal Ridge lookout, 613.9 m | 124.6 s |
+
+The scripted watchpost run is below the 10–15 minute benchmark. The three existing quest placements are close to Mara. Further pacing work can use the measured runs as a baseline. [Issue #8](https://github.com/dylcruz/stonewatch-vale/issues/8)
+
+To rerun the automated crossing, append `-- --pace` to the `vale_routes_test.gd` command.
+
+### Windows user playtest
+
+The user confirmed all Vale routes playtest items were complete on November 16, 2026. The playtest identified follow-up work for scenery collision and the view beyond walkable terrain. [Issue #20](https://github.com/dylcruz/stonewatch-vale/issues/20), [issue #21](https://github.com/dylcruz/stonewatch-vale/issues/21)

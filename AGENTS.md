@@ -21,6 +21,7 @@ godot --headless --editor --path . --import --quit
 godot --headless --path . --script res://tests/movement_test.gd
 godot --headless --path . --script res://tests/combat_test.gd
 godot --headless --path . --script res://tests/quest_chain_test.gd
+godot --headless --path . --script res://tests/vale_routes_test.gd
 godot --path . --script res://tests/breadcrumb_test.gd
 git diff --check
 ```
@@ -48,6 +49,10 @@ Tests extend `SceneTree`, instantiate real scenes, print assertions, and return 
 Use concise, imperative commit subjects, matching history: `Add first melee combat checkpoint and path breadcrumbs`. Keep commits focused on reviewable checkpoints. PRs should explain changed behavior, list validation and limitations, link relevant issues when applicable, and include screenshots for visual changes.
 
 Branch feature work from `dev` and target `dev` with feature PRs. Release a batch of integrated features through a PR from `dev` to `main`. GitHub Actions tests both branches and produces Windows executables only after tests pass on a push to `main`.
+
+## Gameplay Direction
+
+Design Stonewatch Vale as an open, living world with standalone quests and quest chains. Keep chain prerequisites local to the quests they unlock. Let players choose which zones to explore and level through local quests and combat. Quest turn-ins should be the main source of XP, with smaller rewards from repeatable encounters. Use the watchpost quest route as a playtest benchmark for one way to level.
 
 ## Incremental Delivery
 

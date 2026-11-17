@@ -1,6 +1,8 @@
 extends SceneTree
 ## Play the F5 quest chain and verify both ways of handling the heavy attack.
 
+const NAVIGATION := preload("res://tests/navigation_test_support.gd")
+
 var assertions := 0
 var failures := 0
 var world: Node3D
@@ -66,6 +68,7 @@ func start(scene_path: String) -> void:
 	root.add_child(world)
 	warrior = world.get_node("Player")
 	await frames(5)
+	await NAVIGATION.wait_for_spawn(world, warrior)
 
 func talk_to_mara() -> bool:
 	await click_world(world.mara.global_position + Vector3.UP)
@@ -108,7 +111,7 @@ func check_early_wolf_at_watchpost() -> void:
 	await until(func(): return wolf.biting, 220)
 	await press_key(KEY_2)
 	check(await until(func(): return not wolf.is_alive(), 420) and warrior.is_alive()
-		and pine_road.state == ValeQuestProgress.State.AVAILABLE and warrior.experience == 15,
+		and pine_road.state == ValeQuestProgress.State.AVAILABLE and warrior.experience == 5,
 		"The first road wolf can be defeated through gameplay before accepting Clear Pine Road")
 	check(await walk_to(watchpost.global_position) and warrior.is_in_refuge()
 		and wolf.spawn_position.distance_to(warrior.global_position) <= wolf.leash_range and not wolf.is_alive(),
@@ -149,7 +152,7 @@ func check_regular_respawns() -> void:
 			and enemy.opponent == null and not enemy.attacking and not enemy.returning
 			and enemy.attack_cooldown == 0.0 and not enemy.get_node("SelectionRing").visible,
 			"%s returns to its authored spawn with full health and reset AI" % enemy.stats.display_name)
-	check(warrior.experience == 30 and pine_road.kills == 0,
+	check(warrior.experience == 10 and pine_road.kills == 0,
 		"Pre-quest regular defeats grant XP without storing kill credit")
 	await talk_to_mara()
 	await click_button(world.dialogue_action)
@@ -158,7 +161,7 @@ func check_regular_respawns() -> void:
 	warrior.global_position = Vector3(-5, 0.02, 7)
 	wolf.receive_hit(999, warrior)
 	raider.receive_hit(999, warrior)
-	check(pine_road.kills == 1 and warrior.experience == 60,
+	check(pine_road.kills == 1 and warrior.experience == 20,
 		"The respawned wolf credits the active objective and both regular defeats grant XP again")
 	check(await until(func(): return wolf.is_alive() and raider.is_alive(), 50) and respawns == [2, 2],
 		"Each repeated defeat restores its existing placement exactly once")
@@ -172,8 +175,8 @@ func check_early_captain() -> void:
 	warrior.global_position = captain.spawn_position + Vector3(0, 0, 2)
 	captain.receive_hit(999, warrior)
 	check(blockade.state == ValeQuestProgress.State.AVAILABLE and blockade.kills == 0
-		and warrior.experience == 50 and warrior.owned_items.has(&"wardens_coat") and world.loot_notice.visible,
-		"An early Captain defeat grants 50 XP and the coat without banking quest credit")
+		and warrior.experience == 15 and warrior.owned_items.has(&"wardens_coat") and world.loot_notice.visible,
+		"An early Captain defeat grants 15 XP and the coat without banking quest credit")
 	world.loot_notice.hide()
 	warrior.reset_combat()
 	await frames(2)
@@ -204,17 +207,38 @@ func check_early_captain() -> void:
 		and captain.heavy_cooldown_remaining == 0.0,
 		"The Captain returns to Quarry Gate with full health, reset attacks, and the active quest marker")
 	captain.respawn_delay = 0.2
+	warrior.global_position = captain.spawn_position + Vector3(0, 0, 2)
 	captain.receive_hit(999, warrior)
 	check(blockade.state == ValeQuestProgress.State.READY and blockade.kills == 1 and not marker.visible
-		and warrior.experience == 205 and warrior.owned_items.size() == 4 and not world.loot_notice.visible,
-		"The rematch credits the quest once without awarding more kill XP or loot")
+		and warrior.experience == 185 and warrior.owned_items.size() == 4 and not world.loot_notice.visible,
+		"The rematch grants another 15 XP and readies the quest without a second coat")
 	await frames(20)
 	check(not captain.is_alive() and captain.collision_layer == 0,
-		"A credited Captain defeat ends the encounter even after the respawn delay")
+		"The Captain stays down while the Warrior remains at Quarry Gate past the respawn delay")
+	warrior.reset_combat()
+	check(await until(func(): return captain.is_alive(), 30) and not marker.visible
+		and blockade.state == ValeQuestProgress.State.READY and blockade.kills == 1,
+		"The credited Captain returns before turn-in without reopening the quest objective")
+	captain.respawn_delay = 1.5
+	captain.receive_hit(999, warrior)
+	check(warrior.experience == 200 and blockade.state == ValeQuestProgress.State.READY and blockade.kills == 1
+		and warrior.owned_items.size() == 4 and not world.loot_notice.visible,
+		"A further defeat grants kill XP while the turn-in is ready and the coat stays one-time")
+	# Use a smaller turn-in reward here so the next defeat's XP is visible below the cap.
+	blockade.definition = blockade.definition.duplicate() as ValeQuestDefinition
+	blockade.definition.reward_xp = 20
+	await frames(2)
 	await talk_to_mara()
 	await click_button(world.dialogue_action)
-	check(blockade.state == ValeQuestProgress.State.COMPLETED and warrior.experience == 240,
-		"The early-defeat route can turn in Break the Blockade and reach level 3")
+	check(blockade.state == ValeQuestProgress.State.COMPLETED and warrior.experience == 220 and not captain.is_alive(),
+		"Break the Blockade can be turned in while the Captain's respawn timer is running")
+	check(await until(func(): return captain.is_alive(), 120) and not marker.visible
+		and captain.health.current == captain.stats.max_health and blockade.state == ValeQuestProgress.State.COMPLETED,
+		"The Captain returns at full health after the quest is complete")
+	captain.receive_hit(999, warrior)
+	check(warrior.experience == 235 and blockade.state == ValeQuestProgress.State.COMPLETED and blockade.kills == 1
+		and warrior.owned_items.size() == 4 and not world.loot_notice.visible,
+		"Defeating the Captain after turn-in still grants kill XP and preserves the completed quest")
 
 func check_concurrent_turn_ins() -> void:
 	var pine_road: ValeQuestProgress = world.quest_chain[0]
@@ -270,7 +294,7 @@ func check_concurrent_turn_ins() -> void:
 		"Mara lets the player choose which ready quest to turn in first")
 	await click_button(world.dialogue_action)
 	check(supplies.state == ValeQuestProgress.State.COMPLETED and pine_road.state == ValeQuestProgress.State.READY
-		and pine_road.kills == 3 and warrior.experience == 100 and not warrior.owned_items.has(&"iron_sword")
+		and pine_road.kills == 3 and warrior.experience == 70 and not warrior.owned_items.has(&"iron_sword")
 		and quest_option("View Break the Blockade") == null,
 		"Turning in supplies pays only its reward and keeps Clear Pine Road ready with all three kills")
 	await press_key(KEY_J)
@@ -312,8 +336,8 @@ func run() -> void:
 	await frames(3)
 
 	await talk_to_mara()
-	check(world.journal_body.text.begins_with("Clear Pine Road") and world.dialogue_action.text == "Accept quest",
-		"Mara opens the first quest offer")
+	check(world.journal_body.text.begins_with("Clear Pine Road") and world.dialogue_action.text == "Accept quest"
+		and quest_option("View Recover the Supplies") != null, "Mara presents both starter offers at the first meeting")
 	await click_button(world.dialogue_action)
 	check(await talk_to_mara() and world.dialogue_quest == supplies and world.dialogue_action.text == "Accept quest",
 		"Mara offers Recover the Supplies while Clear Pine Road is active")
@@ -329,6 +353,7 @@ func run() -> void:
 		await until(func(): return wolf.biting, 220)
 		await press_key(KEY_2)
 		check(await until(func(): return not wolf.is_alive(), 420), "The F5 chain supports the %s fight" % wolf_path)
+	check(warrior.experience == 15 and warrior.level == 1, "The required road wolves award 15 XP before turn-in")
 	await walk_to(Vector3(8, 0, 6.8))
 	await talk_to_mara()
 	await click_button(world.dialogue_action)
@@ -394,23 +419,23 @@ func run() -> void:
 	check(await until(func(): return not captain.is_alive(), 420) and warrior.is_alive(),
 		"The Warrior can defeat the Captain with the earned sword and abilities")
 	check(blockade.kills == 1 and blockade.state == ValeQuestProgress.State.READY and not boss_marker.visible
-		and warrior.experience == 205, "The Captain grants 50 XP and readies the final turn-in")
+		and warrior.experience == 170, "The Captain grants 15 XP and readies the final turn-in")
 	check(warrior.owned_items.has(&"wardens_coat") and warrior.armor_value() == 0 and world.loot_notice.visible
 		and world.loot_notice.text.contains("Warden's Coat"), "The coat is awarded on defeat and awaits manual equip")
 	captain.receive_hit(999, warrior)
-	check(warrior.experience == 205 and warrior.owned_items.size() == 4, "A defeated Captain cannot grant rewards again")
+	check(warrior.experience == 170 and warrior.owned_items.size() == 4, "Hitting the defeated Captain cannot grant kill rewards again")
 	check(await walk_to(Vector3(-4.8, 0, 6.8)), "The south road connects the quarry to the watchpost")
 
 	warrior.receive_hit(999, null)
 	await until(func(): return warrior.is_alive(), 150)
 	check(not captain.is_alive() and captain.collision_layer == 0 and blockade.state == ValeQuestProgress.State.READY
-		and warrior.owned_items.has(&"wardens_coat") and warrior.experience == 205,
-		"Death recovery retains the defeated Captain, coat, and final turn-in")
+		and warrior.owned_items.has(&"wardens_coat") and warrior.experience == 170,
+		"Death recovery retains the coat and final turn-in during the Captain's respawn delay")
 	check(await talk_to_mara() and world.dialogue_action.text == "Turn in quest", "Mara accepts the Captain's defeat")
 	await click_button(world.dialogue_action)
 	check(blockade.state == ValeQuestProgress.State.COMPLETED and warrior.experience == 240 and warrior.level == 3
 		and warrior.health.maximum == 90 and world.objective_label.text == "Watchpost quest chain complete",
-		"The final 35 XP reaches level 3 at 240 XP and completes the quest chain")
+		"The final 70 XP reaches level 3 at 240 XP and completes the quest chain")
 	check(camp_raider.is_alive() and other_raider.is_alive() and optional_wolf.is_alive(),
 		"The required route reaches level 3 with all optional enemies alive")
 	check(await talk_to_mara() and not world.dialogue_action.visible and warrior.experience == 240

@@ -1,5 +1,7 @@
 extends SceneTree
 
+const NAVIGATION := preload("res://tests/navigation_test_support.gd")
+
 var failures := 0
 var world: Node3D
 var player: ValePlayer
@@ -60,6 +62,7 @@ func run() -> void:
 		enemy.set_physics_process(false)
 	var mara: ValeInteractable = world.mara
 	await frames(5)
+	await NAVIGATION.wait_for_spawn(world, player)
 	check(world.get_node("NavigationRegion3D").navigation_mesh.get_polygon_count() > 0, "Scene contains saved baked navigation")
 	var far_road := Vector3(0, 0, -6.7)
 	await dispatch_click(world.camera.unproject_position(far_road))

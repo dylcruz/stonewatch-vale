@@ -6,7 +6,7 @@
 script = ExtResource("1")
 display_name = "Road wolf"
 enemy_id = &"road_wolf"
-defeat_xp = 15
+defeat_xp = 5
 max_health = 40
 damage = 6
 melee_range = 1.9

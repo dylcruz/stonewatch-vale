@@ -13,4 +13,4 @@ return_objective = "Return to Captain Mara"
 turn_in_dialogue = "With the blockade broken, the Compact can reopen the road. You have our thanks, Warrior."
 target_enemy = &"raider_captain"
 required_kills = 1
-reward_xp = 35
+reward_xp = 70
