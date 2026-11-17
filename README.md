@@ -18,6 +18,7 @@ A single-player 3D action RPG prototype set in Stonewatch Vale. Explore the Vale
 - **1 — Cleave:** deal 12 damage to enemies in front of the Warrior within 2.8 m. Unlocks at level 2 and has a 4-second cooldown.
 - **2 — Guard:** halve incoming damage for 1.25 seconds. A blue ring and the HUD show when Guard is active. The 6-second cooldown starts on activation.
 - **J — Quest log:** check each accepted quest’s progress and turn-in status, review completed quests, and choose which objective the HUD tracks.
+- **M — World map:** view the terrain and landmarks you have explored during the current run in the main Vale.
 - **I — Gear:** inspect equipment, sword damage, and armor. Equip the Iron Sword and Warden’s Coat after earning them.
 - **After defeat:** wait two seconds to recover in the town square at full health.
 - HUD panels consume clicks and preserve the active movement command.
@@ -69,6 +70,7 @@ Import once before running the automated checks.
 godot --headless --editor --path . --import --quit
 godot --headless --path . --script res://tests/movement_test.gd
 godot --headless --path . --script res://tests/combat_test.gd
+godot --headless --path . --script res://tests/exploration_map_test.gd
 godot --headless --path . --script res://tests/quest_chain_test.gd
 godot --headless --path . --script res://tests/vale_routes_test.gd
 ```
