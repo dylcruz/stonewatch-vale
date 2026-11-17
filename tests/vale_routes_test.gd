@@ -128,8 +128,8 @@ func check_starting_town() -> void:
 	check(world.journal.visible and world.journal_body.text == "No quests accepted",
 		"The empty town journal opens with J")
 	await press_key(KEY_I)
-	check(world.journal.visible and world.journal_title.text == "Gear",
-		"The town gear panel opens with I")
+	check(world.journal.visible and world.journal_title.text == "Character",
+		"The town character panel opens with I")
 	await press_key(KEY_I)
 	check(camera_click(Vector3(8, 0, 7)), "Pine Road accepts a move from the town square")
 	var destination := player.destination
