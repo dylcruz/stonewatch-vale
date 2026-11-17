@@ -1,0 +1,285 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/vale/trail_sign.tscn" id="Sign"]
+
+[ext_resource type="PackedScene" path="res://scenes/vale/pine.tscn" id="Pine"]
+
+[ext_resource type="PackedScene" path="res://scenes/vale/outcrop.tscn" id="Rock"]
+
+[sub_resource type="StandardMaterial3D" id="Grass"]
+albedo_color = Color(0.29, 0.39, 0.25, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="DryGrass"]
+albedo_color = Color(0.34, 0.42, 0.26, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Trail"]
+albedo_color = Color(0.49, 0.42, 0.29, 1)
+roughness = 0.95
+
+[node name="MeadowLoop" type="Node3D"]
+
+[node name="MeadowGrassland" type="CSGPolygon3D" parent="." groups=["walkable"]]
+position = Vector3(0, 0.012, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(14.2, -5.2, 21, -4.9, 28, -1, 43, 13, 53, 32, 45, 49, 32, 55, 20, 61, 10.5, 66, 9.5, 79, 23, 81, 42, 78, 67, 68, 90, 71, 121, 64, 151, 61, 174, 57, 194, 44, 215, 29, 228, 7, 231, -17, 218, -39, 195, -46, 166, -43, 146, -38, 120, -36, 93, -30, 69, -33, 48, -27, 32, -23, 20, -13, 14.2, -10)
+depth = 6
+material = SubResource("Grass")
+use_collision = true
+collision_layer = 1
+collision_mask = 4
+
+[node name="OpenGlade" type="CSGPolygon3D" parent="."]
+position = Vector3(0, 0.019, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(68, 29, 96, 37, 122, 35, 141, 42, 166, 42, 187, 29, 208, 15, 212, -7, 198, -26, 180, -27, 155, -16, 132, -18, 105, -11, 85, 0)
+depth = 0.005
+material = SubResource("DryGrass")
+
+[node name="MeadowCircuit" type="CSGPolygon3D" parent="."]
+position = Vector3(0, 0.023, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(12.43269, -9.19858, 21.72304, -9.58976, 37.65085, -14.5672, 59.85829, -17.59548, 83.80864, -18.59342, 108.78526, -23.58874, 136.77885, -25.58828, 160.68574, -30.56888, 187.19495, -35.66681, 208.04098, -26.2861, 219.69733, -10.39106, 215.46939, 12.86264, 197.88921, 27.34044, 176.61964, 38.48164, 151.36773, 46.56225, 125.27282, 50.57685, 99.18287, 55.59415, 73.25416, 56.59141, 52.42342, 62.54305, 33.59111, 67.49892, 20.31923, 74.64532, 10.82331, 73.59021, 11.17669, 70.40979, 19.68077, 71.35468, 32.40889, 64.50108, 51.57658, 59.45695, 72.74584, 53.40859, 98.81713, 52.40585, 124.72718, 47.42315, 150.63227, 43.43775, 175.38036, 35.51836, 196.11079, 24.65956, 212.53061, 11.13736, 216.30267, -9.60894, 205.95902, -23.7139, 186.80505, -32.33319, 161.31426, -27.43112, 137.22115, -22.41172, 109.21474, -20.41126, 84.19136, -15.40658, 60.14171, -14.40452, 38.34915, -11.4328, 22.27696, -6.41024, 12.56731, -6.00142)
+depth = 0.012
+material = SubResource("Trail")
+
+[node name="InnerMeadowTrail" type="CSGPolygon3D" parent="."]
+position = Vector3(0, 0.021, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(60.82413, -16.65063, 75.7419, 2.24522, 96.48625, 18.05044, 119.11499, 24.93745, 143.721, 22.96897, 170.5846, 10.03464, 191.93455, 1.90132, 212.25466, 6.98135, 211.74534, 9.01865, 192.06545, 4.09868, 171.4154, 11.96536, 144.279, 25.03103, 118.88501, 27.06255, 95.51375, 19.94956, 74.2581, 3.75478, 59.17587, -15.34937)
+depth = 0.012
+material = SubResource("Trail")
+
+[node name="WatchpostEntry" parent="." instance=ExtResource("Sign")]
+position = Vector3(28, 0, 8.8)
+
+[node name="WatchpostEntryLabel" type="Label3D" parent="."]
+position = Vector3(28, 2.4, 8.8)
+pixel_size = 0.019
+font_size = 32
+billboard = 1
+modulate = Color(0.98, 0.89, 0.65, 1)
+text = "PINE MEADOW"
+
+[node name="StandingStoneSign" parent="." instance=ExtResource("Sign")]
+position = Vector3(107, 0, 17)
+
+[node name="StandingStoneSignLabel" type="Label3D" parent="."]
+position = Vector3(107, 2.4, 17)
+pixel_size = 0.019
+font_size = 32
+billboard = 1
+modulate = Color(0.98, 0.89, 0.65, 1)
+text = "STANDING STONES"
+
+[node name="HeatherRestSign" parent="." instance=ExtResource("Sign")]
+position = Vector3(207, 0, 17)
+
+[node name="HeatherRestSignLabel" type="Label3D" parent="."]
+position = Vector3(207, 2.4, 17)
+pixel_size = 0.019
+font_size = 32
+billboard = 1
+modulate = Color(0.98, 0.89, 0.65, 1)
+text = "HEATHER REST"
+
+[node name="NorthTrailSign" parent="." instance=ExtResource("Sign")]
+position = Vector3(29, 0, -70)
+
+[node name="NorthTrailSignLabel" type="Label3D" parent="."]
+position = Vector3(29, 2.4, -70)
+pixel_size = 0.019
+font_size = 32
+billboard = 1
+modulate = Color(0.98, 0.89, 0.65, 1)
+text = "← NORTH ROAD"
+
+[node name="MeadowPine01" parent="." instance=ExtResource("Pine")]
+position = Vector3(27, 0, 4)
+scale = Vector3(0.8, 0.8, 0.8)
+
+[node name="MeadowPine02" parent="." instance=ExtResource("Pine")]
+position = Vector3(35, 0, 20)
+scale = Vector3(1.1, 1.1, 1.1)
+
+[node name="MeadowPine03" parent="." instance=ExtResource("Pine")]
+position = Vector3(50, 0, 21)
+scale = Vector3(1.2, 1.2, 1.2)
+
+[node name="MeadowPine04" parent="." instance=ExtResource("Pine")]
+position = Vector3(52, 0, 1)
+scale = Vector3(0.98, 0.98, 0.98)
+
+[node name="MeadowPine05" parent="." instance=ExtResource("Pine")]
+position = Vector3(72, 0, 27)
+scale = Vector3(0.94, 0.94, 0.94)
+
+[node name="MeadowPine06" parent="." instance=ExtResource("Pine")]
+position = Vector3(83, 0, 25)
+scale = Vector3(1.04, 1.04, 1.04)
+
+[node name="MeadowPine07" parent="." instance=ExtResource("Pine")]
+position = Vector3(64, 0, -25)
+scale = Vector3(1.24, 1.24, 1.24)
+
+[node name="MeadowPine08" parent="." instance=ExtResource("Pine")]
+position = Vector3(66, 0, -32)
+scale = Vector3(1.1, 1.1, 1.1)
+
+[node name="MeadowPine09" parent="." instance=ExtResource("Pine")]
+position = Vector3(72, 0, -34)
+scale = Vector3(0.94, 0.94, 0.94)
+
+[node name="MeadowPine10" parent="." instance=ExtResource("Pine")]
+position = Vector3(98, 0, 29)
+scale = Vector3(0.85, 0.85, 0.85)
+
+[node name="MeadowPine11" parent="." instance=ExtResource("Pine")]
+position = Vector3(124, 0, 28)
+scale = Vector3(1.12, 1.12, 1.12)
+
+[node name="MeadowPine12" parent="." instance=ExtResource("Pine")]
+position = Vector3(126, 0, 8)
+scale = Vector3(1.17, 1.17, 1.17)
+
+[node name="MeadowPine13" parent="." instance=ExtResource("Pine")]
+position = Vector3(133, 0, 12)
+scale = Vector3(0.99, 0.99, 0.99)
+
+[node name="MeadowPine14" parent="." instance=ExtResource("Pine")]
+position = Vector3(143, 0, 29)
+scale = Vector3(1.1, 1.1, 1.1)
+
+[node name="MeadowPine15" parent="." instance=ExtResource("Pine")]
+position = Vector3(164, 0, 35)
+scale = Vector3(1.27, 1.27, 1.27)
+
+[node name="MeadowPine16" parent="." instance=ExtResource("Pine")]
+position = Vector3(173, 0, 38)
+scale = Vector3(0.93, 0.93, 0.93)
+
+[node name="MeadowPine17" parent="." instance=ExtResource("Pine")]
+position = Vector3(191, 0, 37)
+scale = Vector3(1.06, 1.06, 1.06)
+
+[node name="MeadowPine18" parent="." instance=ExtResource("Pine")]
+position = Vector3(215, 0, 26)
+scale = Vector3(1.02, 1.02, 1.02)
+
+[node name="MeadowPine19" parent="." instance=ExtResource("Pine")]
+position = Vector3(220, 0, 19)
+scale = Vector3(0.84, 0.84, 0.84)
+
+[node name="MeadowPine20" parent="." instance=ExtResource("Pine")]
+position = Vector3(223, 0, 7)
+scale = Vector3(1.21, 1.21, 1.21)
+
+[node name="MeadowPine21" parent="." instance=ExtResource("Pine")]
+position = Vector3(216, 0, -19)
+scale = Vector3(1.13, 1.13, 1.13)
+
+[node name="MeadowPine22" parent="." instance=ExtResource("Pine")]
+position = Vector3(205, 0, -25)
+scale = Vector3(0.95, 0.95, 0.95)
+
+[node name="MeadowPine23" parent="." instance=ExtResource("Pine")]
+position = Vector3(194, 0, -34)
+scale = Vector3(1.12, 1.12, 1.12)
+
+[node name="MeadowPine24" parent="." instance=ExtResource("Pine")]
+position = Vector3(173, 0, -46)
+scale = Vector3(0.97, 0.97, 0.97)
+
+[node name="MeadowPine25" parent="." instance=ExtResource("Pine")]
+position = Vector3(170, 0, -48)
+scale = Vector3(1.23, 1.23, 1.23)
+
+[node name="MeadowPine26" parent="." instance=ExtResource("Pine")]
+position = Vector3(151, 0, -30)
+scale = Vector3(0.87, 0.87, 0.87)
+
+[node name="MeadowPine27" parent="." instance=ExtResource("Pine")]
+position = Vector3(133, 0, -58)
+scale = Vector3(1.05, 1.05, 1.05)
+
+[node name="MeadowPine28" parent="." instance=ExtResource("Pine")]
+position = Vector3(115, 0, -58)
+scale = Vector3(1.12, 1.12, 1.12)
+
+[node name="MeadowPine29" parent="." instance=ExtResource("Pine")]
+position = Vector3(103, 0, -47)
+scale = Vector3(0.84, 0.84, 0.84)
+
+[node name="MeadowPine30" parent="." instance=ExtResource("Pine")]
+position = Vector3(91, 0, -65)
+scale = Vector3(1.14, 1.14, 1.14)
+
+[node name="MeadowPine31" parent="." instance=ExtResource("Pine")]
+position = Vector3(78, 0, -63)
+scale = Vector3(1.3, 1.3, 1.3)
+
+[node name="MeadowPine32" parent="." instance=ExtResource("Pine")]
+position = Vector3(62, 0, -65)
+scale = Vector3(0.92, 0.92, 0.92)
+
+[node name="MeadowPine33" parent="." instance=ExtResource("Pine")]
+position = Vector3(50, 0, -53)
+scale = Vector3(1.11, 1.11, 1.11)
+
+[node name="MeadowPine34" parent="." instance=ExtResource("Pine")]
+position = Vector3(35, 0, -73)
+scale = Vector3(0.85, 0.85, 0.85)
+
+[node name="MeadowPine35" parent="." instance=ExtResource("Pine")]
+position = Vector3(25, 0, -64)
+scale = Vector3(1.23, 1.23, 1.23)
+
+[node name="GateRock" parent="." instance=ExtResource("Rock")]
+position = Vector3(34, 0, 6)
+rotation_degrees = Vector3(0, 25, 0)
+scale = Vector3(1.2, 1.2, 1.2)
+
+[node name="StoneCircleNorth" parent="." instance=ExtResource("Rock")]
+position = Vector3(104, 0, -7)
+rotation_degrees = Vector3(0, 35, 0)
+scale = Vector3(2.2, 2.2, 2.2)
+
+[node name="StoneCircleEast" parent="." instance=ExtResource("Rock")]
+position = Vector3(111, 0, -3)
+rotation_degrees = Vector3(0, 66, 0)
+scale = Vector3(1.7, 1.7, 1.7)
+
+[node name="StoneCircleWest" parent="." instance=ExtResource("Rock")]
+position = Vector3(101, 0, -1)
+rotation_degrees = Vector3(0, 10, 0)
+scale = Vector3(1.25, 1.25, 1.25)
+
+[node name="HeatherOutcrop" parent="." instance=ExtResource("Rock")]
+position = Vector3(217, 0, 21)
+rotation_degrees = Vector3(0, 41, 0)
+scale = Vector3(2.45, 2.45, 2.45)
+
+[node name="HeatherSlab" parent="." instance=ExtResource("Rock")]
+position = Vector3(212, 0, 18)
+rotation_degrees = Vector3(0, 95, 0)
+scale = Vector3(1.2, 1.2, 1.2)
+
+[node name="NorthBankRock" parent="." instance=ExtResource("Rock")]
+position = Vector3(73, 0, -60)
+rotation_degrees = Vector3(0, 30, 0)
+scale = Vector3(1.75, 1.75, 1.75)
+
+[node name="RimRock" parent="." instance=ExtResource("Rock")]
+position = Vector3(171, 0, 32)
+rotation_degrees = Vector3(0, 63, 0)
+scale = Vector3(1.4, 1.4, 1.4)
+
+[node name="SouthConnection" type="Marker3D" parent="."]
+position = Vector3(18, 0, 8)
+
+[node name="HeatherRest" type="Marker3D" parent="."]
+position = Vector3(207, 0, 25)
+
+[node name="NorthConnection" type="Marker3D" parent="."]
+position = Vector3(19, 0, -73)

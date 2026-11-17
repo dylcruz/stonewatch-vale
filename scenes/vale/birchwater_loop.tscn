@@ -1,0 +1,419 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/vale/trail_sign.tscn" id="Sign"]
+
+[ext_resource type="PackedScene" path="res://scenes/vale/pine.tscn" id="Pine"]
+
+[ext_resource type="PackedScene" path="res://scenes/vale/outcrop.tscn" id="Rock"]
+
+[sub_resource type="StandardMaterial3D" id="Bank"]
+albedo_color = Color(0.25, 0.37, 0.3, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Water"]
+albedo_color = Color(0.1, 0.3, 0.4, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Shallows"]
+albedo_color = Color(0.19, 0.42, 0.46, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Trail"]
+albedo_color = Color(0.43, 0.37, 0.26, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Paving"]
+albedo_color = Color(0.43, 0.48, 0.44, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Planks"]
+albedo_color = Color(0.54, 0.38, 0.23, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Timber"]
+albedo_color = Color(0.31, 0.22, 0.16, 1)
+roughness = 0.95
+
+[node name="BirchwaterLoop" type="Node3D"]
+
+[node name="DeepWater" type="CSGPolygon3D" parent="."]
+position = Vector3(0, -1.4, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(33, 90, 62, 88, 72, 112, 67, 155, 69, 188, 64, 228, 55, 247, 39, 247, 28, 230, 30, 196, 29, 150, 32, 114)
+depth = 4
+material = SubResource("Water")
+use_collision = true
+collision_layer = 2
+collision_mask = 4
+
+[node name="WestBank" type="CSGPolygon3D" parent="." groups=["walkable"]]
+position = Vector3(0, 0.012, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(18, 98, 29, 94, 36, 102, 39, 121, 35, 141, 40, 157, 37, 179, 41, 199, 36, 222, 31, 237, 17, 234)
+depth = 5
+material = SubResource("Bank")
+use_collision = true
+collision_layer = 1
+collision_mask = 4
+
+[node name="EastBankTerrain" type="CSGPolygon3D" parent="." groups=["walkable"]]
+position = Vector3(0, 0.012, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(62, 96, 88, 100, 101, 115, 97, 148, 104, 172, 92, 190, 97, 217, 78, 236, 62, 231, 57, 215, 61, 195, 56, 167, 61, 140, 58, 121)
+depth = 5
+material = SubResource("Bank")
+use_collision = true
+collision_layer = 1
+collision_mask = 4
+
+[node name="FordWater" type="CSGPolygon3D" parent="."]
+position = Vector3(0, -1.37, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(37, 132, 61, 134, 62, 113, 39, 114)
+depth = 0.02
+material = SubResource("Shallows")
+
+[node name="StoneFord" type="CSGPolygon3D" parent="." groups=["walkable"]]
+position = Vector3(0, 0.034, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(33, 126.5, 63, 126.5, 64, 119.5, 33, 119.5)
+depth = 1.9
+material = SubResource("Paving")
+use_collision = true
+collision_layer = 1
+collision_mask = 4
+
+[node name="TimberBridge" type="CSGPolygon3D" parent="." groups=["walkable"]]
+position = Vector3(0, 0.034, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(35, 205.5, 65, 205.5, 65, 198.5, 35, 198.5)
+depth = 0.62
+material = SubResource("Planks")
+use_collision = true
+collision_layer = 1
+collision_mask = 4
+
+[node name="SouthRail" type="CSGBox3D" parent="."]
+position = Vector3(50, 0.76, -205.17)
+size = Vector3(29.7, 0.17, 0.16)
+material = SubResource("Timber")
+
+[node name="SouthPost1" type="CSGBox3D" parent="."]
+position = Vector3(37, 0.43, -205.17)
+size = Vector3(0.24, 0.86, 0.24)
+material = SubResource("Timber")
+
+[node name="SouthPost2" type="CSGBox3D" parent="."]
+position = Vector3(43, 0.43, -205.17)
+size = Vector3(0.24, 0.86, 0.24)
+material = SubResource("Timber")
+
+[node name="SouthPost3" type="CSGBox3D" parent="."]
+position = Vector3(49, 0.43, -205.17)
+size = Vector3(0.24, 0.86, 0.24)
+material = SubResource("Timber")
+
+[node name="SouthPost4" type="CSGBox3D" parent="."]
+position = Vector3(55, 0.43, -205.17)
+size = Vector3(0.24, 0.86, 0.24)
+material = SubResource("Timber")
+
+[node name="SouthPost5" type="CSGBox3D" parent="."]
+position = Vector3(61, 0.43, -205.17)
+size = Vector3(0.24, 0.86, 0.24)
+material = SubResource("Timber")
+
+[node name="SouthPost6" type="CSGBox3D" parent="."]
+position = Vector3(64, 0.43, -205.17)
+size = Vector3(0.24, 0.86, 0.24)
+material = SubResource("Timber")
+
+[node name="NorthRail" type="CSGBox3D" parent="."]
+position = Vector3(50, 0.76, -198.83)
+size = Vector3(29.7, 0.17, 0.16)
+material = SubResource("Timber")
+
+[node name="NorthPost1" type="CSGBox3D" parent="."]
+position = Vector3(37, 0.43, -198.83)
+size = Vector3(0.24, 0.86, 0.24)
+material = SubResource("Timber")
+
+[node name="NorthPost2" type="CSGBox3D" parent="."]
+position = Vector3(43, 0.43, -198.83)
+size = Vector3(0.24, 0.86, 0.24)
+material = SubResource("Timber")
+
+[node name="NorthPost3" type="CSGBox3D" parent="."]
+position = Vector3(49, 0.43, -198.83)
+size = Vector3(0.24, 0.86, 0.24)
+material = SubResource("Timber")
+
+[node name="NorthPost4" type="CSGBox3D" parent="."]
+position = Vector3(55, 0.43, -198.83)
+size = Vector3(0.24, 0.86, 0.24)
+material = SubResource("Timber")
+
+[node name="NorthPost5" type="CSGBox3D" parent="."]
+position = Vector3(61, 0.43, -198.83)
+size = Vector3(0.24, 0.86, 0.24)
+material = SubResource("Timber")
+
+[node name="NorthPost6" type="CSGBox3D" parent="."]
+position = Vector3(64, 0.43, -198.83)
+size = Vector3(0.24, 0.86, 0.24)
+material = SubResource("Timber")
+
+[node name="BridgePier1" type="CSGBox3D" parent="."]
+position = Vector3(43, -0.77, -202)
+size = Vector3(1.3, 1.55, 6.25)
+material = SubResource("Timber")
+
+[node name="BridgePier2" type="CSGBox3D" parent="."]
+position = Vector3(52, -0.77, -202)
+size = Vector3(1.3, 1.55, 6.25)
+material = SubResource("Timber")
+
+[node name="BridgePier3" type="CSGBox3D" parent="."]
+position = Vector3(58, -0.77, -202)
+size = Vector3(1.3, 1.55, 6.25)
+material = SubResource("Timber")
+
+[node name="BridgeDeckSeam1" type="CSGBox3D" parent="."]
+position = Vector3(38, 0.036, -202)
+size = Vector3(0.052, 0.009, 6.8)
+material = SubResource("Timber")
+
+[node name="BridgeDeckSeam2" type="CSGBox3D" parent="."]
+position = Vector3(41, 0.036, -202)
+size = Vector3(0.052, 0.009, 6.8)
+material = SubResource("Timber")
+
+[node name="BridgeDeckSeam3" type="CSGBox3D" parent="."]
+position = Vector3(44, 0.036, -202)
+size = Vector3(0.052, 0.009, 6.8)
+material = SubResource("Timber")
+
+[node name="BridgeDeckSeam4" type="CSGBox3D" parent="."]
+position = Vector3(47, 0.036, -202)
+size = Vector3(0.052, 0.009, 6.8)
+material = SubResource("Timber")
+
+[node name="BridgeDeckSeam5" type="CSGBox3D" parent="."]
+position = Vector3(50, 0.036, -202)
+size = Vector3(0.052, 0.009, 6.8)
+material = SubResource("Timber")
+
+[node name="BridgeDeckSeam6" type="CSGBox3D" parent="."]
+position = Vector3(53, 0.036, -202)
+size = Vector3(0.052, 0.009, 6.8)
+material = SubResource("Timber")
+
+[node name="BridgeDeckSeam7" type="CSGBox3D" parent="."]
+position = Vector3(56, 0.036, -202)
+size = Vector3(0.052, 0.009, 6.8)
+material = SubResource("Timber")
+
+[node name="BridgeDeckSeam8" type="CSGBox3D" parent="."]
+position = Vector3(59, 0.036, -202)
+size = Vector3(0.052, 0.009, 6.8)
+material = SubResource("Timber")
+
+[node name="BridgeDeckSeam9" type="CSGBox3D" parent="."]
+position = Vector3(62, 0.036, -202)
+size = Vector3(0.052, 0.009, 6.8)
+material = SubResource("Timber")
+
+[node name="FordSlab1" type="CSGBox3D" parent="."]
+position = Vector3(39, 0.035, -123)
+size = Vector3(2.9, 0.08, 4.4)
+material = SubResource("Paving")
+
+[node name="FordSlab2" type="CSGBox3D" parent="."]
+position = Vector3(43, 0.035, -123)
+rotation_degrees = Vector3(0, 4, 0)
+size = Vector3(2.9, 0.08, 4.4)
+material = SubResource("Paving")
+
+[node name="FordSlab3" type="CSGBox3D" parent="."]
+position = Vector3(47, 0.035, -123)
+rotation_degrees = Vector3(0, -4, 0)
+size = Vector3(2.9, 0.08, 4.4)
+material = SubResource("Paving")
+
+[node name="FordSlab4" type="CSGBox3D" parent="."]
+position = Vector3(52, 0.035, -123)
+size = Vector3(2.9, 0.08, 4.4)
+material = SubResource("Paving")
+
+[node name="FordSlab5" type="CSGBox3D" parent="."]
+position = Vector3(56, 0.035, -123)
+rotation_degrees = Vector3(0, 4, 0)
+size = Vector3(2.9, 0.08, 4.4)
+material = SubResource("Paving")
+
+[node name="FordApproach" type="CSGPolygon3D" parent="."]
+position = Vector3(0, 0.023, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(6, 121.3, 20, 121.3, 34, 121.3, 34, 124.7, 20, 124.7, 6, 124.7)
+depth = 0.012
+material = SubResource("Trail")
+
+[node name="BridgeApproach" type="CSGPolygon3D" parent="."]
+position = Vector3(0, 0.023, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(8, 200.1, 23, 200.1, 36, 200.1, 36, 203.9, 23, 203.9, 8, 203.9)
+depth = 0.012
+material = SubResource("Trail")
+
+[node name="EastBankTrail" type="CSGPolygon3D" parent="."]
+position = Vector3(0, 0.023, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(62, 121.25, 74.93657, 121.25, 83.80969, 134.55968, 81.77662, 152.85731, 86.76596, 170.81891, 85.70625, 186.71457, 77.23502, 196.2447, 68.65754, 203.75, 64, 203.75, 64, 200.25, 67.34246, 200.25, 74.76498, 193.7553, 82.29375, 185.28543, 83.23404, 171.18109, 78.22338, 153.14269, 80.19031, 135.44032, 73.06343, 124.75, 62, 124.75)
+depth = 0.012
+material = SubResource("Trail")
+
+[node name="FordSign" parent="." instance=ExtResource("Sign")]
+position = Vector3(29, 0, -118)
+
+[node name="FordSignLabel" type="Label3D" parent="."]
+position = Vector3(29, 2.4, -118)
+pixel_size = 0.019
+font_size = 32
+billboard = 1
+modulate = Color(0.98, 0.89, 0.65, 1)
+text = "STONE FORD"
+
+[node name="EastBankSign" parent="." instance=ExtResource("Sign")]
+position = Vector3(76, 0, -147)
+
+[node name="EastBankSignLabel" type="Label3D" parent="."]
+position = Vector3(76, 2.4, -147)
+pixel_size = 0.019
+font_size = 32
+billboard = 1
+modulate = Color(0.98, 0.89, 0.65, 1)
+text = "BIRCHWATER BANK"
+
+[node name="BridgeSign" parent="." instance=ExtResource("Sign")]
+position = Vector3(70, 0, -206)
+
+[node name="BridgeSignLabel" type="Label3D" parent="."]
+position = Vector3(70, 2.4, -206)
+pixel_size = 0.019
+font_size = 32
+billboard = 1
+modulate = Color(0.98, 0.89, 0.65, 1)
+text = "TIMBER BRIDGE"
+
+[node name="BankPine01" parent="." instance=ExtResource("Pine")]
+position = Vector3(30, 0, -104)
+scale = Vector3(1.1, 1.1, 1.1)
+
+[node name="BankPine02" parent="." instance=ExtResource("Pine")]
+position = Vector3(31, 0, -132)
+scale = Vector3(0.83, 0.83, 0.83)
+
+[node name="BankPine03" parent="." instance=ExtResource("Pine")]
+position = Vector3(34, 0, -154)
+scale = Vector3(1.07, 1.07, 1.07)
+
+[node name="BankPine04" parent="." instance=ExtResource("Pine")]
+position = Vector3(32, 0, -175)
+scale = Vector3(0.93, 0.93, 0.93)
+
+[node name="BankPine05" parent="." instance=ExtResource("Pine")]
+position = Vector3(35, 0, -193)
+scale = Vector3(1.18, 1.18, 1.18)
+
+[node name="BankPine06" parent="." instance=ExtResource("Pine")]
+position = Vector3(30, 0, -218)
+scale = Vector3(1.16, 1.16, 1.16)
+
+[node name="BankPine07" parent="." instance=ExtResource("Pine")]
+position = Vector3(72, 0, -105)
+
+[node name="BankPine08" parent="." instance=ExtResource("Pine")]
+position = Vector3(86, 0, -112)
+scale = Vector3(0.85, 0.85, 0.85)
+
+[node name="BankPine09" parent="." instance=ExtResource("Pine")]
+position = Vector3(89, 0, -132)
+scale = Vector3(1.16, 1.16, 1.16)
+
+[node name="BankPine10" parent="." instance=ExtResource("Pine")]
+position = Vector3(91, 0, -143)
+scale = Vector3(0.92, 0.92, 0.92)
+
+[node name="BankPine11" parent="." instance=ExtResource("Pine")]
+position = Vector3(72, 0, -149)
+scale = Vector3(1.2, 1.2, 1.2)
+
+[node name="BankPine12" parent="." instance=ExtResource("Pine")]
+position = Vector3(71, 0, -164)
+scale = Vector3(1.02, 1.02, 1.02)
+
+[node name="BankPine13" parent="." instance=ExtResource("Pine")]
+position = Vector3(92, 0, -175)
+scale = Vector3(1.36, 1.36, 1.36)
+
+[node name="BankPine14" parent="." instance=ExtResource("Pine")]
+position = Vector3(92, 0, -184)
+scale = Vector3(0.93, 0.93, 0.93)
+
+[node name="BankPine15" parent="." instance=ExtResource("Pine")]
+position = Vector3(72, 0, -188)
+scale = Vector3(1.02, 1.02, 1.02)
+
+[node name="BankPine16" parent="." instance=ExtResource("Pine")]
+position = Vector3(84, 0, -207)
+scale = Vector3(1.14, 1.14, 1.14)
+
+[node name="BankPine17" parent="." instance=ExtResource("Pine")]
+position = Vector3(81, 0, -224)
+scale = Vector3(1.22, 1.22, 1.22)
+
+[node name="BankPine18" parent="." instance=ExtResource("Pine")]
+position = Vector3(70, 0, -220)
+scale = Vector3(0.95, 0.95, 0.95)
+
+[node name="BankSlab1" parent="." instance=ExtResource("Rock")]
+position = Vector3(35, 0, -113)
+rotation_degrees = Vector3(0, 22, 0)
+scale = Vector3(1.3, 1.3, 1.3)
+
+[node name="BankSlab2" parent="." instance=ExtResource("Rock")]
+position = Vector3(37, 0, -160)
+rotation_degrees = Vector3(0, 44, 0)
+scale = Vector3(1.28, 1.28, 1.28)
+
+[node name="BankSlab3" parent="." instance=ExtResource("Rock")]
+position = Vector3(62, 0, -142)
+rotation_degrees = Vector3(0, 66, 0)
+scale = Vector3(1.9, 1.9, 1.9)
+
+[node name="BankSlab4" parent="." instance=ExtResource("Rock")]
+position = Vector3(66, 0, -171)
+rotation_degrees = Vector3(0, 88, 0)
+scale = Vector3(1.55, 1.55, 1.55)
+
+[node name="BankSlab5" parent="." instance=ExtResource("Rock")]
+position = Vector3(65, 0, -187)
+rotation_degrees = Vector3(0, 110, 0)
+scale = Vector3(1.3, 1.3, 1.3)
+
+[node name="BankSlab6" parent="." instance=ExtResource("Rock")]
+position = Vector3(61, 0, -219)
+rotation_degrees = Vector3(0, 132, 0)
+scale = Vector3(1.2, 1.2, 1.2)
+
+[node name="Ford" type="Marker3D" parent="."]
+position = Vector3(48, 0, -123)
+
+[node name="EastBank" type="Marker3D" parent="."]
+position = Vector3(83, 0, -167)
+
+[node name="Bridge" type="Marker3D" parent="."]
+position = Vector3(49, 0, -202)
+
+[node name="DeepWaterPool" type="Marker3D" parent="."]
+position = Vector3(48, -1.4, -133)

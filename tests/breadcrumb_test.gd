@@ -1,5 +1,7 @@
 extends SceneTree
 
+const NAVIGATION := preload("res://tests/navigation_test_support.gd")
+
 var failures := 0
 var assertions := 0
 var world: Node3D
@@ -43,6 +45,7 @@ func run() -> void:
 	for enemy in world.enemies:
 		enemy.set_physics_process(false)
 	await frames(5)
+	await NAVIGATION.wait_for_spawn(world, player)
 	check(trail.enabled and points().is_empty(), "Breadcrumbs default to enabled and are empty while idle")
 	check(click(Vector3(0, 0, -6.7)), "Ground command accepts a route past the ruin")
 	await frames(2)

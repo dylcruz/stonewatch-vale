@@ -10,6 +10,8 @@ func bake() -> void:
 	var scene := load(ARENA_SCENE) as PackedScene
 	var world := scene.instantiate()
 	root.add_child(world)
+	# Let the authored CSG terrain build its meshes before parsing the colliders.
+	await process_frame
 	var region := world.get_node("NavigationRegion3D") as NavigationRegion3D
 	region.bake_navigation_mesh(false)
 	if region.navigation_mesh.get_polygon_count() == 0:
