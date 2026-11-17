@@ -1,0 +1,173 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/vale/trail_sign.tscn" id="Sign"]
+
+[sub_resource type="StandardMaterial3D" id="CampSoil"]
+albedo_color = Color(0.3, 0.24, 0.17, 1)
+
+[sub_resource type="CylinderMesh" id="CampClearing"]
+material = SubResource("CampSoil")
+top_radius = 3.5
+bottom_radius = 3.5
+height = 0.025
+
+[sub_resource type="StandardMaterial3D" id="Canvas"]
+albedo_color = Color(0.55, 0.51, 0.38, 1)
+
+[sub_resource type="PrismMesh" id="Tent"]
+material = SubResource("Canvas")
+size = Vector3(2.25, 0.19, 1.45)
+
+[sub_resource type="BoxMesh" id="Bedroll"]
+material = SubResource("Canvas")
+size = Vector3(0.7, 0.17, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="QuarryStone"]
+albedo_color = Color(0.37, 0.38, 0.36, 1)
+roughness = 0.95
+
+[sub_resource type="BoxMesh" id="QuarryFloor"]
+material = SubResource("QuarryStone")
+size = Vector3(5.6, 0.03, 7.0)
+
+[sub_resource type="BoxMesh" id="GatePier"]
+material = SubResource("QuarryStone")
+size = Vector3(0.7, 2.9, 0.94)
+
+[sub_resource type="BoxMesh" id="Threshold"]
+material = SubResource("QuarryStone")
+size = Vector3(4.7, 0.045, 0.63)
+
+[sub_resource type="StandardMaterial3D" id="Oak"]
+albedo_color = Color(0.4, 0.29, 0.19, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Iron"]
+albedo_color = Color(0.21, 0.24, 0.25, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Canvas"]
+albedo_color = Color(0.7, 0.58, 0.38, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Stone"]
+albedo_color = Color(0.43, 0.43, 0.38, 1)
+roughness = 0.95
+
+[sub_resource type="CylinderMesh" id="Wheel"]
+material = SubResource("Iron")
+top_radius = 0.41
+bottom_radius = 0.41
+height = 0.15
+radial_segments = 10
+
+[node name="WatchpostLandmarks" type="Node3D"]
+
+[node name="CartBed" type="CSGBox3D" parent="."]
+position = Vector3(0.8, 0.56, -11.2)
+size = Vector3(2.35, 0.3, 1.45)
+material = SubResource("Oak")
+use_collision = true
+collision_layer = 2
+collision_mask = 4
+
+[node name="CartSideNorth" type="CSGBox3D" parent="."]
+position = Vector3(0.8, 0.89, -11.83)
+size = Vector3(2.35, 0.48, 0.16)
+material = SubResource("Oak")
+
+[node name="CartSideSouth" type="CSGBox3D" parent="."]
+position = Vector3(0.8, 0.89, -10.57)
+size = Vector3(2.35, 0.48, 0.16)
+material = SubResource("Oak")
+
+[node name="CartHandles" type="CSGBox3D" parent="."]
+position = Vector3(2.09, 0.53, -11.2)
+size = Vector3(1.7, 0.13, 0.78)
+material = SubResource("Oak")
+
+[node name="CartCanvas" type="CSGBox3D" parent="."]
+position = Vector3(0.53, 0.97, -11.21)
+rotation_degrees = Vector3(0, 8, 0)
+size = Vector3(1.25, 0.55, 0.75)
+material = SubResource("Canvas")
+
+[node name="CartWheelNorth" type="MeshInstance3D" parent="."]
+position = Vector3(0.34, 0.4, -11.96)
+rotation_degrees = Vector3(90, 0, 0)
+mesh = SubResource("Wheel")
+
+[node name="CartWheelSouth" type="MeshInstance3D" parent="."]
+position = Vector3(0.34, 0.4, -10.44)
+rotation_degrees = Vector3(90, 0, 0)
+mesh = SubResource("Wheel")
+
+[node name="BrokenGateMasonry" type="CSGBox3D" parent="."]
+position = Vector3(-9.41, 0.19, 5.93)
+rotation_degrees = Vector3(0, 19, 0)
+size = Vector3(1.48, 0.35, 0.51)
+material = SubResource("Stone")
+
+[node name="QuarryPierRemnant" type="CSGBox3D" parent="."]
+position = Vector3(-9.07, 0.48, 5.45)
+rotation_degrees = Vector3(0, -12, 0)
+size = Vector3(0.63, 0.94, 0.68)
+material = SubResource("Stone")
+
+[node name="CampSign" parent="." instance=ExtResource("Sign")]
+position = Vector3(5.5, 0, -6.7)
+
+[node name="CampSignLabel" type="Label3D" parent="."]
+position = Vector3(5.5, 2.4, -6.7)
+pixel_size = 0.019
+font_size = 32
+billboard = 1
+modulate = Color(0.98, 0.89, 0.65, 1)
+text = "← CAMPSITE"
+
+[node name="AbandonedCampsite" type="Node3D" parent="."]
+position = Vector3(-1.0, 0, -9.7)
+
+[node name="Clearing" type="MeshInstance3D" parent="AbandonedCampsite"]
+position = Vector3(0, 0.028, 0)
+scale = Vector3(1.0, 1.0, 0.63)
+mesh = SubResource("CampClearing")
+
+[node name="CollapsedTent" type="MeshInstance3D" parent="AbandonedCampsite"]
+position = Vector3(2.8, 0.105, -1.25)
+rotation_degrees = Vector3(0, 18, 0)
+mesh = SubResource("Tent")
+
+[node name="Bedroll" type="MeshInstance3D" parent="AbandonedCampsite"]
+position = Vector3(-0.8, 0.12, -0.85)
+rotation_degrees = Vector3(0, -26, 0)
+mesh = SubResource("Bedroll")
+
+[node name="Label" type="Label3D" parent="AbandonedCampsite"]
+position = Vector3(1.5, 2.3, -1.35)
+pixel_size = 0.018
+billboard = 1
+text = "ABANDONED CAMPSITE"
+
+[node name="QuarryGate" type="Node3D" parent="."]
+position = Vector3(-11.6, 0, 3.4)
+
+[node name="QuarryFloor" type="MeshInstance3D" parent="QuarryGate"]
+position = Vector3(0, 0.008, -0.2)
+mesh = SubResource("QuarryFloor")
+
+[node name="Threshold" type="MeshInstance3D" parent="QuarryGate"]
+position = Vector3(0.15, 0.016, 2.3)
+mesh = SubResource("Threshold")
+
+[node name="GatePier" type="MeshInstance3D" parent="QuarryGate"]
+position = Vector3(-3.28, 1.45, 2.2)
+rotation_degrees = Vector3(0, 0, -4)
+mesh = SubResource("GatePier")
+
+[node name="Label" type="Label3D" parent="QuarryGate"]
+position = Vector3(0.72, 0.55, 2.65)
+pixel_size = 0.02
+font_size = 28
+billboard = 1
+text = "QUARRY GATE"

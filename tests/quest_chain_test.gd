@@ -1,7 +1,8 @@
 extends SceneTree
-## Play the F5 quest chain and verify both ways of handling the heavy attack.
+## Play the Watchpost quest chain and verify both ways of handling the heavy attack.
 
 const NAVIGATION := preload("res://tests/navigation_test_support.gd")
+const WATCHPOST_SCENE := preload("res://scenes/watchpost_playtest.tscn")
 
 var assertions := 0
 var failures := 0
@@ -63,8 +64,8 @@ func press_key(key: Key) -> void:
 	root.push_input(event, true)
 	await frames(2)
 
-func start(scene_path: String) -> void:
-	world = load(scene_path).instantiate()
+func start() -> void:
+	world = WATCHPOST_SCENE.instantiate()
 	root.add_child(world)
 	warrior = world.get_node("Player")
 	await frames(5)
@@ -97,10 +98,10 @@ func equip_from_panel(item_name: String) -> bool:
 	await press_key(KEY_I)
 	return false
 
-func restart(scene_path: String) -> void:
+func restart() -> void:
 	world.queue_free()
 	await process_frame
-	await start(scene_path)
+	await start()
 
 func check_early_wolf_at_watchpost() -> void:
 	var wolf: ValeWolf = world.get_node("Wolf")
@@ -310,10 +311,9 @@ func check_concurrent_turn_ins() -> void:
 		"Break the Blockade becomes eligible after both turn-ins in reverse order")
 
 func run() -> void:
-	var main_scene: String = ProjectSettings.get_setting("application/run/main_scene")
-	await start(main_scene)
+	await start()
 	await check_early_wolf_at_watchpost()
-	await restart(main_scene)
+	await restart()
 	var pine_road: ValeQuestProgress = world.quest_chain[0]
 	var supplies: ValeQuestProgress = world.quest_chain[1]
 	var blockade: ValeQuestProgress = world.quest_chain[2]
@@ -325,7 +325,7 @@ func run() -> void:
 	var optional_wolf: ValeWolf = world.get_node("WolfNorthwest")
 	check(world.quest_chain.size() == 3 and pine_road.definition.id == &"clear_pine_road"
 		and blockade.definition.id == &"break_the_blockade" and warrior.level == 1 and not boss_marker.visible,
-		"F5 starts the three-quest chain at level 1")
+		"The Watchpost starts the three-quest chain at level 1")
 
 	warrior.global_position = Vector3(6, 0.02, -8.5)
 	await frames(3)
@@ -352,7 +352,7 @@ func run() -> void:
 		await click_world(wolf.global_position + Vector3.UP * 0.85)
 		await until(func(): return wolf.biting, 220)
 		await press_key(KEY_2)
-		check(await until(func(): return not wolf.is_alive(), 420), "The F5 chain supports the %s fight" % wolf_path)
+		check(await until(func(): return not wolf.is_alive(), 420), "The Watchpost chain supports the %s fight" % wolf_path)
 	check(warrior.experience == 15 and warrior.level == 1, "The required road wolves award 15 XP before turn-in")
 	await walk_to(Vector3(8, 0, 6.8))
 	await talk_to_mara()
@@ -456,11 +456,11 @@ func run() -> void:
 	optional_wolf.receive_hit(999, warrior)
 	check(warrior.level == 3 and warrior.experience == 240, "More kill XP respects the prototype cap")
 
-	await restart(main_scene)
+	await restart()
 	await check_regular_respawns()
-	await restart(main_scene)
+	await restart()
 	await check_early_captain()
-	await restart(main_scene)
+	await restart()
 	await check_concurrent_turn_ins()
 
 	print("Quest chain checks complete; assertions: ", assertions, "; failures: ", failures)

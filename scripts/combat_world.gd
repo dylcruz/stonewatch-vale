@@ -1,11 +1,14 @@
 extends "res://scripts/world_input.gd"
 
 @export var recovery_delay := 2.0
+@export var recovery_location := "the watchpost"
 @export var ready_text := "Ready"
-@onready var wolf: ValeWolf = $Wolf
 @onready var combat_hud: VBoxContainer = $HUD/CombatPanel/Margin/VBox
+@onready var enemy_name: Label = $HUD/CombatPanel/Margin/VBox/EnemyName
+@onready var enemy_health: ProgressBar = $HUD/CombatPanel/Margin/VBox/EnemyHealth
 @onready var cleave_status: Label = $HUD/CombatPanel/Margin/VBox/CleaveStatus
 @onready var guard_status: Label = $HUD/CombatPanel/Margin/VBox/GuardStatus
+@onready var last_hit: Label = $HUD/CombatPanel/Margin/VBox/LastHit
 var enemies: Array[ValeEnemy] = []
 var last_focused_enemy: ValeEnemy
 var recovery_remaining := 0.0
@@ -19,6 +22,7 @@ func _ready() -> void:
 			child.combat_message.connect(_show_hit)
 	player.combat_message.connect(_show_hit)
 	player.health.died.connect(_start_recovery)
+	last_hit.visible = not last_hit.text.is_empty()
 	status.text = ready_text
 
 func _process(_delta: float) -> void:
@@ -28,10 +32,12 @@ func _process(_delta: float) -> void:
 		player.level, player.health.current, player.health.maximum]
 	var enemy := _focused_enemy()
 	last_focused_enemy = enemy
-	combat_hud.get_node("EnemyHealth").max_value = enemy.health.maximum
-	combat_hud.get_node("EnemyHealth").value = enemy.health.current
-	combat_hud.get_node("EnemyName").text = "%s   %d / %d HP" % [
-		enemy.stats.display_name, enemy.health.current, enemy.health.maximum]
+	enemy_name.visible = enemy != null
+	enemy_health.visible = enemy != null
+	if enemy:
+		enemy_health.max_value = enemy.health.maximum
+		enemy_health.value = enemy.health.current
+		enemy_name.text = "%s   %d / %d HP" % [enemy.stats.display_name, enemy.health.current, enemy.health.maximum]
 	var sword_state := "Sword ready"
 	if is_instance_valid(player.swing_target):
 		sword_state = "Sword windup"
@@ -39,13 +45,15 @@ func _process(_delta: float) -> void:
 		sword_state = "Sword recovery %.1fs" % player.attack_cooldown
 	if not player.is_alive():
 		sword_state = "Warrior defeated"
+	if enemy:
+		sword_state += "  ·  " + _enemy_status(enemy)
 	var timing: Label = combat_hud.get_node("Timing")
 	var heavy_windup := false
 	for threat in enemies:
 		if threat is ValeRaider and threat.heavy_attacking:
 			heavy_windup = true
 			break
-	timing.text = "Heavy attack · move or Guard" if heavy_windup else sword_state + "  ·  " + _enemy_status(enemy)
+	timing.text = "Heavy attack · move or Guard" if heavy_windup else sword_state
 	timing.modulate = Color(1.0, 0.52, 0.35) if heavy_windup else Color.WHITE
 	_update_abilities()
 
@@ -79,29 +87,31 @@ func _focused_enemy() -> ValeEnemy:
 	for enemy in enemies:
 		if is_instance_valid(enemy.opponent) or enemy.returning:
 			return enemy
-	return last_focused_enemy if is_instance_valid(last_focused_enemy) else wolf
+	if is_instance_valid(last_focused_enemy):
+		return last_focused_enemy
+	return enemies.front() if not enemies.is_empty() else null
 
 func _enemy_status(enemy: ValeEnemy) -> String:
-	var enemy_name := enemy.stats.display_name
+	var display_name := enemy.stats.display_name
 	if not enemy.is_alive():
-		return "%s defeated" % enemy_name
+		return "%s defeated" % display_name
 	if enemy.returning:
-		return "%s returning" % enemy_name
+		return "%s returning" % display_name
 	if enemy.attacking:
-		return "%s %s windup" % [enemy_name, enemy.attack_name().to_lower()]
+		return "%s %s windup" % [display_name, enemy.attack_name().to_lower()]
 	if is_instance_valid(enemy.opponent):
-		return "%s pursuing" % enemy_name if enemy.velocity.length_squared() > 0.05 else "%s recovering" % enemy_name
-	return "%s idle" % enemy_name
+		return "%s pursuing" % display_name if enemy.velocity.length_squared() > 0.05 else "%s recovering" % display_name
+	return "%s idle" % display_name
 
 func _physics_process(delta: float) -> void:
 	if player.is_alive():
 		super._physics_process(delta)
 		return
 	recovery_remaining = maxf(0.0, recovery_remaining - delta)
-	status.text = "Returning to the watchpost in %.1fs" % recovery_remaining
+	status.text = "Returning to %s in %.1fs" % [recovery_location, recovery_remaining]
 	if recovery_remaining <= 0.0:
 		player.reset_combat()
-		status.text = "Recovered at the watchpost"
+		status.text = "Recovered at %s" % recovery_location
 		_show_hit("You recovered at full health.")
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -115,7 +125,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		super._unhandled_input(event)
 
 func _show_hit(message: String) -> void:
-	combat_hud.get_node("LastHit").text = message
+	last_hit.text = message
+	last_hit.show()
 
 func _start_recovery() -> void:
 	recovery_remaining = recovery_delay

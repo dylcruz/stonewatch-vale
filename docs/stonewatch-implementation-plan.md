@@ -10,6 +10,8 @@ Enemies repopulate encounters and award XP again on defeat. Quest turn-ins provi
 
 The watchpost graybox supports click-to-move, breadcrumbs, combat, death recovery, and all three starter quests. Completing the watchpost quests can bring the player to level 3 and grants the Iron Sword and Warden’s Coat. Windows playtesting accepted movement, combat, and the first two quests. The final quest playtest exposed retroactive Captain kill credit. [Playtest record](playtest.md)
 
+The main game starts in a small town at the original spawn site, with routes into the Vale open from the start. The original Watchpost layout, encounters, and quests are available in the developer scene. Windows user playtesting passed. [Issue #27](https://github.com/dylcruz/stonewatch-vale/issues/27)
+
 ## Remaining work
 
 ### Quest credit, respawns, and journal
@@ -30,7 +32,7 @@ The watchpost graybox supports click-to-move, breadcrumbs, combat, death recover
 
 ### Save and resume
 
-- [ ] Add New Game and Continue with one local save slot under `user://`. Continue at the watchpost.
+- [ ] Add New Game and Continue with one local save slot under `user://`. Continue in the town square.
 - [ ] Persist level, XP, active and completed quests, owned and equipped gear, and relevant encounter state using stable IDs.
 - [ ] Autosave when quests advance, rewards are granted, or equipment changes. Save kill credit, quest progress, XP, and associated loot together.
 - [ ] Restore Captain quest credit and Warden’s Coat ownership on Continue. Verify the encounter still follows the respawn rules after relaunching mid-quest and after a turn-in, including equipment retention.

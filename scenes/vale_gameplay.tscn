@@ -1,0 +1,364 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/watchpost_arena.tscn" id="Arena"]
+[ext_resource type="Script" path="res://scripts/quest_world.gd" id="QuestWorld"]
+[ext_resource type="Script" path="res://scripts/warrior.gd" id="Warrior"]
+[ext_resource type="Script" path="res://scripts/health.gd" id="Health"]
+[ext_resource type="Script" path="res://scripts/follow_camera.gd" id="Camera"]
+[ext_resource type="Script" path="res://scripts/path_breadcrumbs.gd" id="Breadcrumbs"]
+[ext_resource type="Resource" path="res://data/warrior.tres" id="WarriorStats"]
+[ext_resource type="Resource" path="res://data/training_sword.tres" id="TrainingSword"]
+[ext_resource type="Resource" path="res://data/travel_coat.tres" id="TravelCoat"]
+
+[sub_resource type="StandardMaterial3D" id="Gold"]
+albedo_color = Color(0.95, 0.67, 0.26, 1)
+roughness = 0.85
+
+[sub_resource type="TorusMesh" id="Ring"]
+material = SubResource("Gold")
+inner_radius = 0.65
+outer_radius = 0.75
+
+[sub_resource type="CapsuleShape3D" id="PlayerShape"]
+radius = 0.35
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="Blue"]
+albedo_color = Color(0.18, 0.48, 0.72, 1)
+roughness = 0.85
+
+[sub_resource type="CapsuleMesh" id="PlayerMesh"]
+material = SubResource("Blue")
+radius = 0.35
+height = 1.8
+
+[sub_resource type="BoxMesh" id="FacingMesh"]
+material = SubResource("Gold")
+size = Vector3(0.18, 0.22, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="BreadcrumbGold"]
+shading_mode = 0
+albedo_color = Color(1, 0.76, 0.35, 1)
+
+[sub_resource type="CylinderMesh" id="BreadcrumbDot"]
+material = SubResource("BreadcrumbGold")
+top_radius = 0.095
+bottom_radius = 0.095
+height = 0.035
+radial_segments = 8
+
+[sub_resource type="MultiMesh" id="Breadcrumbs"]
+transform_format = 1
+mesh = SubResource("BreadcrumbDot")
+
+[sub_resource type="StandardMaterial3D" id="Steel"]
+albedo_color = Color(0.83, 0.9, 0.94, 1)
+metallic = 0.4
+roughness = 0.35
+
+[sub_resource type="BoxMesh" id="Blade"]
+material = SubResource("Steel")
+size = Vector3(0.12, 0.12, 1.15)
+
+[sub_resource type="StandardMaterial3D" id="HiltMaterial"]
+albedo_color = Color(0.65, 0.42, 0.16, 1)
+
+[sub_resource type="BoxMesh" id="Hilt"]
+material = SubResource("HiltMaterial")
+size = Vector3(0.45, 0.14, 0.12)
+
+[sub_resource type="StyleBoxFlat" id="HealthFill"]
+bg_color = Color(0.5, 0.15, 0.13, 1)
+
+[sub_resource type="StandardMaterial3D" id="RefugeMaterial"]
+albedo_color = Color(0.39, 0.74, 0.58, 1)
+shading_mode = 0
+
+[sub_resource type="TorusMesh" id="RefugeRing"]
+material = SubResource("RefugeMaterial")
+inner_radius = 2.45
+outer_radius = 2.55
+
+[sub_resource type="StandardMaterial3D" id="GuardMaterial"]
+albedo_color = Color(0.37, 0.85, 1, 1)
+shading_mode = 0
+
+[sub_resource type="TorusMesh" id="GuardRing"]
+material = SubResource("GuardMaterial")
+inner_radius = 0.58
+outer_radius = 0.74
+
+[sub_resource type="StandardMaterial3D" id="CleaveMaterial"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(1, 0.77, 0.32, 0.72)
+
+[sub_resource type="StyleBoxFlat" id="JournalBackground"]
+bg_color = Color(0.08, 0.11, 0.12, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.37, 0.44, 0.42, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="ValeGameplay" instance=ExtResource("Arena")]
+script = ExtResource("QuestWorld")
+
+[node name="Player" type="CharacterBody3D" parent="." unique_id=1531966462 node_paths=PackedStringArray("recovery_point")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 7)
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("Warrior")
+stats = ExtResource("WarriorStats")
+health_per_level = 15
+starting_weapon = ExtResource("TrainingSword")
+starting_armor = ExtResource("TravelCoat")
+recovery_point = NodePath("../Watchpost")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1233115970]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("PlayerShape")
+
+[node name="Visual" type="Node3D" parent="Player" unique_id=1306979928]
+
+[node name="Body" type="MeshInstance3D" parent="Player/Visual" unique_id=57155368]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+mesh = SubResource("PlayerMesh")
+
+[node name="Facing" type="MeshInstance3D" parent="Player/Visual" unique_id=380962183]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0.35)
+mesh = SubResource("FacingMesh")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="Player" unique_id=926327933]
+path_desired_distance = 0.25
+target_desired_distance = 0.4
+height = 1.8
+radius = 0.35
+
+[node name="DestinationMarker" type="MeshInstance3D" parent="." unique_id=471827498]
+visible = false
+mesh = SubResource("Ring")
+
+[node name="PathBreadcrumbs" type="MultiMeshInstance3D" parent="." node_paths=PackedStringArray("subject")]
+cast_shadow = 0
+multimesh = SubResource("Breadcrumbs")
+script = ExtResource("Breadcrumbs")
+subject = NodePath("../Player")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=37055230 node_paths=PackedStringArray("subject")]
+transform = Transform3D(1, 0, 0, 0, 0.6332378, 0.7739573, 0, -0.7739573, 0.6332378, 0, 22.02, 25)
+projection = 1
+current = true
+size = 30.0
+far = 200.0
+script = ExtResource("Camera")
+subject = NodePath("../Player")
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1386075631]
+
+[node name="Panel" type="PanelContainer" parent="HUD" unique_id=2054670273]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 480.0
+
+[node name="Margin" type="MarginContainer" parent="HUD/Panel" unique_id=1064512527]
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="HUD/Panel/Margin" unique_id=755721559]
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="HUD/Panel/Margin/VBox" unique_id=998156319]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "STONEWATCH VALE"
+
+[node name="Help" type="Label" parent="HUD/Panel/Margin/VBox" unique_id=1875455189]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Click to move, talk, or attack.
+J · Quest log     I · Gear"
+
+[node name="Status" type="Label" parent="HUD/Panel/Margin/VBox" unique_id=314850506]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Ready · choose a destination"
+
+[node name="Health" type="Node" parent="Player"]
+script = ExtResource("Health")
+
+[node name="Sword" type="Node3D" parent="Player/Visual"]
+position = Vector3(0.42, 1, 0.15)
+
+[node name="Blade" type="MeshInstance3D" parent="Player/Visual/Sword"]
+position = Vector3(0, 0, 0.65)
+mesh = SubResource("Blade")
+
+[node name="Hilt" type="MeshInstance3D" parent="Player/Visual/Sword"]
+mesh = SubResource("Hilt")
+
+[node name="GuardRing" type="MeshInstance3D" parent="Player"]
+position = Vector3(0, 0.1, 0)
+visible = false
+cast_shadow = 0
+mesh = SubResource("GuardRing")
+
+[node name="CleaveArc" type="MeshInstance3D" parent="Player"]
+top_level = true
+visible = false
+cast_shadow = 0
+material_override = SubResource("CleaveMaterial")
+
+[node name="Watchpost" type="Marker3D" parent="."]
+position = Vector3(0, 0.02, 7)
+
+[node name="RefugeRing" type="MeshInstance3D" parent="Watchpost"]
+position = Vector3(0, 0.025, 0)
+cast_shadow = 0
+mesh = SubResource("RefugeRing")
+
+[node name="Label" type="Label3D" parent="Watchpost"]
+position = Vector3(0, 0.3, 2.05)
+pixel_size = 0.014
+billboard = 1
+text = "WATCHPOST"
+
+[node name="CombatPanel" type="PanelContainer" parent="HUD"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -255.0
+offset_right = 480.0
+offset_bottom = -20.0
+grow_vertical = 0
+
+[node name="Margin" type="MarginContainer" parent="HUD/CombatPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="HUD/CombatPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="WarriorName" type="Label" parent="HUD/CombatPanel/Margin/VBox"]
+layout_mode = 2
+text = "Warrior  60 / 60 HP"
+
+[node name="WarriorHealth" type="ProgressBar" parent="HUD/CombatPanel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+theme_override_styles/fill = SubResource("HealthFill")
+max_value = 60.0
+value = 60.0
+show_percentage = false
+
+[node name="EnemyName" type="Label" parent="HUD/CombatPanel/Margin/VBox"]
+visible = false
+layout_mode = 2
+
+[node name="EnemyHealth" type="ProgressBar" parent="HUD/CombatPanel/Margin/VBox"]
+visible = false
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+theme_override_styles/fill = SubResource("HealthFill")
+max_value = 40.0
+value = 40.0
+show_percentage = false
+
+[node name="Timing" type="Label" parent="HUD/CombatPanel/Margin/VBox"]
+layout_mode = 2
+text = "Sword ready"
+
+[node name="CleaveStatus" type="Label" parent="HUD/CombatPanel/Margin/VBox"]
+layout_mode = 2
+text = "1 · Cleave unlocks at level 2"
+
+[node name="GuardStatus" type="Label" parent="HUD/CombatPanel/Margin/VBox"]
+layout_mode = 2
+text = "2 · Guard ready"
+
+[node name="LastHit" type="Label" parent="HUD/CombatPanel/Margin/VBox"]
+layout_mode = 2
+
+[node name="PineRoadLabel" type="Label3D" parent="."]
+position = Vector3(8.5, 0.4, 5.2)
+pixel_size = 0.018
+font_size = 26
+modulate = Color(0.78, 0.88, 0.78, 1)
+billboard = 1
+text = "PINE ROAD"
+
+[node name="QuestObjective" type="Label" parent="HUD/Panel/Margin/VBox"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.82, 0.47, 1)
+
+[node name="Progression" type="Label" parent="HUD/Panel/Margin/VBox"]
+layout_mode = 2
+text = "XP 0 / 100"
+
+[node name="LootNotice" type="Label" parent="HUD/Panel/Margin/VBox"]
+layout_mode = 2
+visible = false
+theme_override_colors/font_color = Color(1, 0.82, 0.47, 1)
+
+[node name="Journal" type="PanelContainer" parent="HUD"]
+visible = false
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -400.0
+offset_top = 20.0
+offset_right = -20.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("JournalBackground")
+
+[node name="Margin" type="MarginContainer" parent="HUD/Journal"]
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="Content" type="VBoxContainer" parent="HUD/Journal/Margin"]
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="HUD/Journal/Margin/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+
+[node name="Body" type="Label" parent="HUD/Journal/Margin/Content"]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="GearOptions" type="VBoxContainer" parent="HUD/Journal/Margin/Content"]
+visible = false
+layout_mode = 2
+
+[node name="Action" type="Button" parent="HUD/Journal/Margin/Content"]
+visible = false
+layout_mode = 2
+
+[node name="QuestOptions" type="VBoxContainer" parent="HUD/Journal/Margin/Content"]
+visible = false
+layout_mode = 2
+
+[node name="Close" type="Button" parent="HUD/Journal/Margin/Content"]
+layout_mode = 2
+text = "Close"

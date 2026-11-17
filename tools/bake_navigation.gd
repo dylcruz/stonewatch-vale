@@ -1,28 +1,35 @@
 @tool
 extends SceneTree
 ## Run with --headless --path . --script res://tools/bake_navigation.gd
-const ARENA_SCENE := "res://scenes/watchpost_arena.tscn"
+const WATCHPOST_SCENE := "res://scenes/watchpost_playtest.tscn"
+const WATCHPOST_NAVIGATION := "res://scenes/vale/watchpost_navigation.tres"
+const TOWN_SCENE := "res://scenes/stonewatch_vale.tscn"
+const TOWN_NAVIGATION := "res://scenes/vale/town_navigation.tres"
 
 func _initialize() -> void:
 	bake.call_deferred()
 
 func bake() -> void:
-	var scene := load(ARENA_SCENE) as PackedScene
+	var error := await bake_scene(WATCHPOST_SCENE, WATCHPOST_NAVIGATION)
+	if error == OK:
+		error = await bake_scene(TOWN_SCENE, TOWN_NAVIGATION)
+	quit(error)
+
+func bake_scene(scene_path: String, navigation_path: String) -> Error:
+	var scene := load(scene_path) as PackedScene
 	var world := scene.instantiate()
 	root.add_child(world)
 	# Let the authored CSG terrain build its meshes before parsing the colliders.
 	await process_frame
 	var region := world.get_node("NavigationRegion3D") as NavigationRegion3D
 	region.bake_navigation_mesh(false)
-	if region.navigation_mesh.get_polygon_count() == 0:
-		push_error("Navigation bake produced no polygons; scene was not saved")
-		quit(1)
-		return
-	var packed := PackedScene.new()
-	var error := packed.pack(world)
-	if error == OK:
-		error = ResourceSaver.save(packed, ARENA_SCENE)
-	print("Navigation bake: ", region.navigation_mesh.get_polygon_count(), " polygons; save error: ", error)
+	var polygons := region.navigation_mesh.get_polygon_count()
+	var error := ERR_CANT_CREATE
+	if polygons == 0:
+		push_error("Navigation bake produced no polygons for " + scene_path)
+	else:
+		error = ResourceSaver.save(region.navigation_mesh, navigation_path)
+	print("Navigation bake for ", scene_path, ": ", polygons, " polygons; save error: ", error)
 	world.free()
 	await process_frame
-	quit(error)
+	return error

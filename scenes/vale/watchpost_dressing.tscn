@@ -12,25 +12,6 @@ roughness = 0.95
 albedo_color = Color(0.4, 0.29, 0.19, 1)
 roughness = 0.95
 
-[sub_resource type="StandardMaterial3D" id="Iron"]
-albedo_color = Color(0.21, 0.24, 0.25, 1)
-roughness = 0.95
-
-[sub_resource type="StandardMaterial3D" id="Canvas"]
-albedo_color = Color(0.7, 0.58, 0.38, 1)
-roughness = 0.95
-
-[sub_resource type="StandardMaterial3D" id="Stone"]
-albedo_color = Color(0.43, 0.43, 0.38, 1)
-roughness = 0.95
-
-[sub_resource type="CylinderMesh" id="Wheel"]
-material = SubResource("Iron")
-top_radius = 0.41
-bottom_radius = 0.41
-height = 0.15
-radial_segments = 10
-
 [node name="WatchpostDressing" type="Node3D"]
 
 [node name="PineRoad" type="CSGPolygon3D" parent="."]
@@ -47,7 +28,7 @@ polygon = PackedVector2Array(7.38261, -7.42899, 9.66762, -8.8, 13, -8.8, 13, -6.
 depth = 0.012
 material = SubResource("Trail")
 
-[node name="CampApproach" type="CSGPolygon3D" parent="."]
+[node name="NorthLane" type="CSGPolygon3D" parent="."]
 position = Vector3(0, 0.031, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 polygon = PackedVector2Array(8.03231, 11.00612, 4.88869, 10.48219, 2.22897, 9.20158, -0.19521, 9.00764, -5.14901, 7.45958, -9.2299, 5.75921, -10.64775, 1.26936, -9.66539, -4.3301, -10.3, -5.52, -8.5, -6.48, -7.53461, -4.6699, -8.55225, 1.13064, -7.5701, 4.24079, -4.45099, 5.54042, 0.19521, 6.99236, 2.77103, 7.19842, 5.51131, 8.51781, 8.36769, 8.99388)
@@ -123,57 +104,6 @@ position = Vector3(0.468, 0.55, 10)
 size = Vector3(0.27, 1.1, 0.27)
 material = SubResource("Oak")
 
-[node name="CartBed" type="CSGBox3D" parent="."]
-position = Vector3(0.8, 0.56, -11.2)
-size = Vector3(2.35, 0.3, 1.45)
-material = SubResource("Oak")
-use_collision = true
-collision_layer = 2
-collision_mask = 4
-
-[node name="CartSideNorth" type="CSGBox3D" parent="."]
-position = Vector3(0.8, 0.89, -11.83)
-size = Vector3(2.35, 0.48, 0.16)
-material = SubResource("Oak")
-
-[node name="CartSideSouth" type="CSGBox3D" parent="."]
-position = Vector3(0.8, 0.89, -10.57)
-size = Vector3(2.35, 0.48, 0.16)
-material = SubResource("Oak")
-
-[node name="CartHandles" type="CSGBox3D" parent="."]
-position = Vector3(2.09, 0.53, -11.2)
-size = Vector3(1.7, 0.13, 0.78)
-material = SubResource("Oak")
-
-[node name="CartCanvas" type="CSGBox3D" parent="."]
-position = Vector3(0.53, 0.97, -11.21)
-rotation_degrees = Vector3(0, 8, 0)
-size = Vector3(1.25, 0.55, 0.75)
-material = SubResource("Canvas")
-
-[node name="CartWheelNorth" type="MeshInstance3D" parent="."]
-position = Vector3(0.34, 0.4, -11.96)
-rotation_degrees = Vector3(90, 0, 0)
-mesh = SubResource("Wheel")
-
-[node name="CartWheelSouth" type="MeshInstance3D" parent="."]
-position = Vector3(0.34, 0.4, -10.44)
-rotation_degrees = Vector3(90, 0, 0)
-mesh = SubResource("Wheel")
-
-[node name="BrokenGateMasonry" type="CSGBox3D" parent="."]
-position = Vector3(-9.41, 0.19, 5.93)
-rotation_degrees = Vector3(0, 19, 0)
-size = Vector3(1.48, 0.35, 0.51)
-material = SubResource("Stone")
-
-[node name="QuarryPierRemnant" type="CSGBox3D" parent="."]
-position = Vector3(-9.07, 0.48, 5.45)
-rotation_degrees = Vector3(0, -12, 0)
-size = Vector3(0.63, 0.94, 0.68)
-material = SubResource("Stone")
-
 [node name="MeadowSign" parent="." instance=ExtResource("Sign")]
 position = Vector3(11.4, 0, 8.8)
 
@@ -195,17 +125,6 @@ font_size = 32
 billboard = 1
 modulate = Color(0.98, 0.89, 0.65, 1)
 text = "BIRCHWATER / RIDGE ↑"
-
-[node name="CampSign" parent="." instance=ExtResource("Sign")]
-position = Vector3(5.5, 0, -6.7)
-
-[node name="CampSignLabel" type="Label3D" parent="."]
-position = Vector3(5.5, 2.4, -6.7)
-pixel_size = 0.019
-font_size = 32
-billboard = 1
-modulate = Color(0.98, 0.89, 0.65, 1)
-text = "← CAMPSITE"
 
 [node name="WatchpostPine" parent="." instance=ExtResource("Pine")]
 position = Vector3(-5.8, 0, 10.7)

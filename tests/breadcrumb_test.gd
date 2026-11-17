@@ -98,12 +98,13 @@ func run() -> void:
 	world.queue_free()
 	await process_frame
 
-	world = load("res://scenes/stonewatch_vale.tscn").instantiate()
+	world = load("res://scenes/watchpost_playtest.tscn").instantiate()
 	root.add_child(world)
 	player = world.get_node("Player")
 	trail = world.get_node("PathBreadcrumbs")
+	var wolf: ValeWolf = world.get_node("Wolf")
 	await frames(5)
-	check(click(Vector3(6, 0.8, 1)), "Clicking the wolf accepts an approach route")
+	check(click(wolf.global_position + Vector3.UP * 0.8), "Clicking the wolf accepts an approach route")
 	await frames(2)
 	check(not points().is_empty(), "Combat approach also displays breadcrumbs")
 	for i in 300:
@@ -111,11 +112,11 @@ func run() -> void:
 		if not player.moving:
 			break
 	await frames(2)
-	check(player.selected_target == world.wolf and points().is_empty(), "Entering melee clears movement breadcrumbs while preserving the combat target")
+	check(player.selected_target == wolf and points().is_empty(), "Entering melee clears movement breadcrumbs while preserving the combat target")
 	click(Vector3(0, 0, 8))
 	await frames(2)
 	check(not points().is_empty(), "Ground cancellation displays a new movement trail")
-	player.receive_hit(999, world.wolf)
+	player.receive_hit(999, wolf)
 	await frames(2)
 	check(points().is_empty(), "Player death clears the trail")
 	player.reset_combat()

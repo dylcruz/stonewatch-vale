@@ -1,0 +1,103 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/vale/town_cottage.tscn" id="Cottage"]
+
+[sub_resource type="StandardMaterial3D" id="Paving"]
+albedo_color = Color(0.53, 0.5, 0.41, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Timber"]
+albedo_color = Color(0.28, 0.19, 0.13, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Slate"]
+albedo_color = Color(0.2, 0.3, 0.36, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="WellStone"]
+albedo_color = Color(0.44, 0.46, 0.44, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="WellWater"]
+albedo_color = Color(0.16, 0.29, 0.31, 1)
+roughness = 0.6
+
+[node name="StartingTown" type="Node3D"]
+
+[node name="Square" type="CSGBox3D" parent="."]
+position = Vector3(0, 0.019, 6.95)
+size = Vector3(10, 0.02, 5.1)
+material = SubResource("Paving")
+
+[node name="HallWalk" type="CSGBox3D" parent="."]
+position = Vector3(0, 0.021, 3.76)
+size = Vector3(2, 0.02, 1.6)
+material = SubResource("Paving")
+
+[node name="TownHall" type="Node3D" parent="."]
+
+[node name="Roof" type="CSGPolygon3D" parent="TownHall"]
+position = Vector3(0, 2.5, 3.24)
+polygon = PackedVector2Array(-2.76, 0, 2.76, 0, 0, 1.45)
+depth = 6.48
+material = SubResource("Slate")
+use_collision = true
+collision_layer = 2
+collision_mask = 4
+
+[node name="Doors" type="CSGBox3D" parent="TownHall"]
+position = Vector3(0, 0.95, 3.06)
+size = Vector3(1.4, 1.9, 0.15)
+material = SubResource("Timber")
+
+[node name="Signboard" type="CSGBox3D" parent="TownHall"]
+position = Vector3(0, 2.2, 3.23)
+rotation_degrees = Vector3(-52, 0, 0)
+size = Vector3(2.5, 0.42, 0.12)
+material = SubResource("Timber")
+
+[node name="Sign" type="Label3D" parent="TownHall/Signboard"]
+position = Vector3(0, 0, 0.065)
+pixel_size = 0.011
+font_size = 32
+modulate = Color(0.98, 0.89, 0.65, 1)
+text = "TOWN HALL"
+
+[node name="WestCottage" parent="." instance=ExtResource("Cottage")]
+position = Vector3(-11.5, 0, 10.75)
+rotation_degrees = Vector3(0, 180, 0)
+
+[node name="EastCottage" parent="." instance=ExtResource("Cottage")]
+position = Vector3(12.4, 0, 1.5)
+rotation_degrees = Vector3(0, -90, 0)
+
+[node name="NorthCottage" parent="." instance=ExtResource("Cottage")]
+position = Vector3(-1.55, 0, -10.3)
+scale = Vector3(1.2, 1, 1)
+
+[node name="WestLaneCottage" parent="." instance=ExtResource("Cottage")]
+position = Vector3(-11.6, 0, 2.35)
+
+[node name="Well" type="CSGCylinder3D" parent="."]
+position = Vector3(2.75, 0.45, 5.08)
+radius = 0.66
+height = 0.9
+sides = 12
+material = SubResource("WellStone")
+use_collision = true
+collision_layer = 2
+collision_mask = 4
+
+[node name="Basin" type="CSGCylinder3D" parent="Well"]
+position = Vector3(0, 0.48, 0)
+operation = 2
+radius = 0.49
+height = 0.6
+sides = 12
+
+[node name="Water" type="CSGCylinder3D" parent="."]
+position = Vector3(2.75, 0.69, 5.08)
+radius = 0.49
+height = 0.025
+sides = 12
+material = SubResource("WellWater")
