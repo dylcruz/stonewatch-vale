@@ -1,6 +1,7 @@
 extends "res://scripts/player.gd"
 
 signal combat_message(message: String)
+signal equipment_changed
 
 const PURSUIT_UPDATE_INTERVAL := 0.15
 const PURSUIT_UPDATE_DISTANCE := 0.4
@@ -122,13 +123,18 @@ func equip_item(item_id: StringName) -> bool:
 	if item == null:
 		return false
 	if item.slot == ValeItem.Slot.WEAPON:
+		if item == equipped_weapon:
+			return true
 		equipped_weapon = item
 		blade_material.albedo_color = item.blade_color
 	else:
+		if item == equipped_armor:
+			return true
 		equipped_armor = item
 		if hit_tween:
 			hit_tween.kill()
 		body_material.albedo_color = _coat_color()
+	equipment_changed.emit()
 	return true
 
 func sword_damage() -> int:

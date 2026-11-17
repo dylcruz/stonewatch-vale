@@ -11,6 +11,7 @@ const PURSUIT_UPDATE_INTERVAL := 0.2
 @export var aggro_range := 5.0
 @export var leash_range := 10.0
 @export var speed := 4.0
+@export var encounter_id: StringName
 @export_range(0.0, 600.0, 0.1, "or_greater", "suffix:s") var respawn_delay := 30.0
 @onready var health: ValeHealth = $Health
 @onready var visual: Node3D = $Visual
@@ -25,6 +26,7 @@ var spawn_position: Vector3
 var hit_tween: Tween
 var body_material: StandardMaterial3D
 var resting_color: Color
+var defeat_reward_claimed := false
 var _respawn_remaining := -1.0
 
 func _ready() -> void:
@@ -190,6 +192,16 @@ func _update_respawn(delta: float) -> void:
 		return
 	reset_combat()
 	respawned.emit()
+
+func encounter_checkpoint() -> Dictionary:
+	return {"respawn_remaining": _respawn_remaining, "reward_claimed": defeat_reward_claimed}
+
+func restore_encounter(checkpoint: Dictionary) -> void:
+	defeat_reward_claimed = checkpoint.get("reward_claimed") == true
+	var remaining: Variant = checkpoint.get("respawn_remaining")
+	if remaining is float and is_finite(remaining) and remaining >= 0.0:
+		health.take_damage(health.current)
+		_respawn_remaining = minf(remaining, respawn_delay)
 
 func reset_combat() -> void:
 	_respawn_remaining = -1.0

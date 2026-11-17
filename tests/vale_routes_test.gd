@@ -108,8 +108,7 @@ func press_key(key: Key) -> void:
 
 func check_starting_town() -> void:
 	var square := Vector3(0, 0, 7)
-	check(ProjectSettings.get_setting("application/run/main_scene") == MAIN_SCENE.resource_path
-		and region.has_node("StartingTown/TownHall") and region.has_node("StartingTown/WestCottage")
+	check(region.has_node("StartingTown/TownHall") and region.has_node("StartingTown/WestCottage")
 		and region.has_node("StartingTown/EastCottage") and player.global_position.distance_to(square) < 0.05
 		and world.status.text == "Town square",
 		"A fresh game opens in the town square at the original spawn")
