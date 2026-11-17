@@ -26,7 +26,8 @@ func check(condition: bool, message: String) -> void:
 func frames(count: int) -> void:
 	for i in count:
 		await physics_frame
-	await process_frame
+	# A slow renderer can process several physics ticks before updating the draw buffer.
+	await RenderingServer.frame_post_draw
 
 func points() -> PackedVector3Array:
 	var result := PackedVector3Array()
@@ -104,6 +105,7 @@ func run() -> void:
 	trail = world.get_node("PathBreadcrumbs")
 	var wolf: ValeWolf = world.get_node("Wolf")
 	await frames(5)
+	await NAVIGATION.wait_for_spawn(world, player)
 	check(click(wolf.global_position + Vector3.UP * 0.8), "Clicking the wolf accepts an approach route")
 	await frames(2)
 	check(not points().is_empty(), "Combat approach also displays breadcrumbs")
