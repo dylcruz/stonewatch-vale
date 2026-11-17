@@ -2,7 +2,7 @@
 
 [Issues #13 and #15](https://github.com/dylcruz/stonewatch-vale/issues/13) require a release candidate that contains the starter quests and a clean-save entry flow. The baseline already opens in town. Its complete quest route runs in the separate developer scene. The [playtest record](playtest.md#windows-release-verification-baseline) has the graphical Watchpost results and the current `dev` executable smoke test.
 
-The final release world still needs a decision about where the starter quest giver, campsite, Quarry Gate, and corresponding encounters should live. The save and inventory branches also both change quest rewards and equipment. When combining them, capture the equipped bag, stored items, and waiting rewards in the same snapshot as progression. The map branch retains exploration during a run. If discovery should carry through Continue, include its revealed cells in the integrated checkpoint.
+The final release world still needs placements for the starter quest giver, campsite, Quarry Gate, and corresponding encounters. The integrated checkpoint preserves the equipped bag, stored items, and waiting rewards alongside progression. The exploration map retains discoveries during the active session.
 
 After those decisions and the feature review, run this checklist against a single candidate commit and its matching CI export.
 

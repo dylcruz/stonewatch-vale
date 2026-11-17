@@ -270,10 +270,17 @@ func time_crossing() -> void:
 	var start_point := mark("MeadowLoop/HeatherRest")
 	var lookout := mark("LookoutRidgeLoop/Lookout")
 	await place(mark("MeadowLoop/SouthConnection"))
-	check(await walk_steps([start_point]), "The town entrance reaches Heather Rest entirely on foot")
+	# Click on the open trail on both sides of the pine at (124, 0, 28).
+	# A click on a navigation corner behind its trunk can be occluded from the follow camera.
+	var reached_start := await walk_steps([Vector3(120, 0, 21), Vector3(130, 0, 21), start_point])
+	check(reached_start, "The town entrance reaches Heather Rest entirely on foot")
+	if not reached_start:
+		return
 	var start_frame := Engine.get_physics_frames()
 	var length := 0.0
 	for destination in [
+		Vector3(56, 0, -49),
+		Vector3(46, 0, -49),
 		mark("MeadowLoop/NorthConnection"),
 		mark("NorthRoad/SouthRidgeConnection"),
 		Vector3(-17, 0, -256),

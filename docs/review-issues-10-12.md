@@ -6,6 +6,6 @@ The compact Watchpost remains a fresh **F6** scene. To exercise the same save co
 
 Automated Windows checks relaunch Godot at each step and verify a missing and corrupt slot, replacement confirmation, mid-quest progress, both Captain defeat paths, both gear upgrades, and a completed chain without a second turn-in.
 
-The older issues describe the Watchpost as the player-facing starting zone and one-time Captain kill XP. Please confirm that the town spawn and accepted repeat XP rule carry forward when the release quest locations are chosen. The current branch leaves the release quest placements for that decision.
+The town square is the accepted player-facing spawn. The recurring Captain playtest established repeat kill XP and a one-time coat. Final release quest placements remain open.
 
 For [#14](https://github.com/dylcruz/stonewatch-vale/issues/14), the README now explains New Game, Continue, and the developer quest route. Update the quest directions for the release world once the final placements are authored. All artwork added in this branch uses Godot's built-in controls.

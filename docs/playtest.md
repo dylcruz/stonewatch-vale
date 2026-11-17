@@ -129,3 +129,9 @@ The baseline was `6a92fe4bd4cf83bfe640da64eea57b7cdc8238c7` on Windows with Godo
 The SHA-256 of the local baseline executable is `87ce05891eaf579dee44d41820989a075a9d8f8d3854a7d60bac6f3808717957`. The sandbox reported user-data and shader-cache write errors during the local smoke tests.
 
 See [the release review notes](review-issues-13-15.md) for the final candidate checklist.
+
+## Integrated issue branches
+
+**Automated on Windows with Godot 4.7.2 Standard.** All eight regression suites passed. The relaunch suite verifies the equipped bag, stored gear, and unclaimed rewards through Continue, including a checkpoint from before bags were introduced.
+
+The route suite passed 55 checks with `--pace` enabled. It walked from the town entrance to Heather Rest, then measured 623.1 meters and 127.3 seconds of simulation time from Heather Rest to Signal Ridge via North Road. The scripted clicks use the open trail around two newly solid meadow pines.
