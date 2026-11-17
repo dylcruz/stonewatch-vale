@@ -18,7 +18,25 @@ material = SubResource("Shale")
 size = Vector3(1.8, 1.25, 1.2)
 left_to_right = 0.28
 
+[sub_resource type="ConvexPolygonShape3D" id="SlabCollision"]
+points = PackedVector3Array(-1.6, -1.2, -1.25, -1.6, -1.2, 1.25, 1.6, -1.2, -1.25, 1.6, -1.2, 1.25, -0.704, 1.2, -1.25, -0.704, 1.2, 1.25)
+
+[sub_resource type="ConvexPolygonShape3D" id="ChipCollision"]
+points = PackedVector3Array(-0.9, -0.625, -0.6, -0.9, -0.625, 0.6, 0.9, -0.625, -0.6, 0.9, -0.625, 0.6, -0.396, 0.625, -0.6, -0.396, 0.625, 0.6)
+
 [node name="Outcrop" type="Node3D"]
+
+[node name="SolidRock" type="StaticBody3D" parent="."]
+collision_layer = 2
+collision_mask = 4
+
+[node name="SlabCollision" type="CollisionShape3D" parent="SolidRock"]
+position = Vector3(0, 1, 0)
+shape = SubResource("SlabCollision")
+
+[node name="ChipCollision" type="CollisionShape3D" parent="SolidRock"]
+position = Vector3(1.35, 0.45, 0)
+shape = SubResource("ChipCollision")
 
 [node name="Slab" type="MeshInstance3D" parent="."]
 position = Vector3(0, 1, 0)

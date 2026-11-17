@@ -1,0 +1,361 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/vale/woodland_stand.tscn" id="Stand"]
+
+[sub_resource type="StandardMaterial3D" id="ForestFloor"]
+albedo_color = Color(0.17, 0.27, 0.2, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="Water"]
+albedo_color = Color(0.1, 0.3, 0.4, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Stone"]
+albedo_color = Color(0.27, 0.34, 0.34, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="FarStone"]
+albedo_color = Color(0.34, 0.39, 0.42, 1)
+roughness = 1.0
+
+[sub_resource type="CylinderMesh" id="NearPeak"]
+material = SubResource("Stone")
+top_radius = 0.15
+bottom_radius = 1.0
+height = 1.0
+radial_segments = 6
+
+[sub_resource type="CylinderMesh" id="DistantPeak"]
+material = SubResource("FarStone")
+top_radius = 0.04
+bottom_radius = 1.0
+height = 1.0
+radial_segments = 5
+
+[node name="ValeBackdrop" type="Node3D"]
+
+[node name="ForestFloor" type="CSGPolygon3D" parent="."]
+position = Vector3(0, -1.92, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(-325, -110, 320, -110, 349, 481, 126, 522, -335, 478)
+depth = 0.4
+material = SubResource("ForestFloor")
+cast_shadow = 0
+
+[node name="BirchwaterDownstream" type="CSGPolygon3D" parent="."]
+position = Vector3(0, -1.44, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(29, 91, 33, 67, 43, 50, 53, 38, 65, 41, 52, 60, 57, 78, 66, 92)
+depth = 0.1
+material = SubResource("Water")
+
+[node name="BirchwaterUpstream" type="CSGPolygon3D" parent="."]
+position = Vector3(0, -1.44, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(36, 241, 57, 241, 57, 256, 62, 274, 72, 289, 65, 299, 54, 284, 45, 266)
+depth = 0.1
+material = SubResource("Water")
+
+[node name="MeadowWoodland" type="Node3D" parent="."]
+
+[node name="Stand01" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(27, -1.92, 17)
+rotation_degrees = Vector3(0, 10, 0)
+scale = Vector3(1.05, 1.05, 1.05)
+
+[node name="Stand02" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(48, -1.92, 24)
+rotation_degrees = Vector3(0, 65, 0)
+scale = Vector3(0.95, 0.95, 0.95)
+
+[node name="Stand03" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(69, -1.92, 31)
+rotation_degrees = Vector3(0, 131, 0)
+scale = Vector3(1.12, 1.12, 1.12)
+
+[node name="Stand04" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(92, -1.92, 40)
+rotation_degrees = Vector3(0, 190, 0)
+scale = Vector3(0.98, 0.98, 0.98)
+
+[node name="Stand05" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(116, -1.92, 44)
+rotation_degrees = Vector3(0, 36, 0)
+scale = Vector3(1.19, 1.19, 1.19)
+
+[node name="Stand06" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(140, -1.92, 55)
+rotation_degrees = Vector3(0, 67, 0)
+scale = Vector3(1.1, 1.1, 1.1)
+
+[node name="Stand07" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(166, -1.92, 56)
+rotation_degrees = Vector3(0, 95, 0)
+scale = Vector3(1.06, 1.06, 1.06)
+
+[node name="Stand08" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(191, -1.92, 50)
+rotation_degrees = Vector3(0, 21, 0)
+scale = Vector3(1.15, 1.15, 1.15)
+
+[node name="Stand09" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(215, -1.92, 40)
+rotation_degrees = Vector3(0, 126, 0)
+scale = Vector3(0.98, 0.98, 0.98)
+
+[node name="Stand10" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(235, -1.92, 25)
+rotation_degrees = Vector3(0, 153, 0)
+scale = Vector3(1.08, 1.08, 1.08)
+
+[node name="Stand11" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(242, -1.92, 0)
+rotation_degrees = Vector3(0, 39, 0)
+scale = Vector3(1.16, 1.16, 1.16)
+
+[node name="Stand12" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(232, -1.92, -28)
+rotation_degrees = Vector3(0, 88, 0)
+scale = Vector3(1.02, 1.02, 1.02)
+
+[node name="Stand13" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(216, -1.92, -54)
+rotation_degrees = Vector3(0, 17, 0)
+scale = Vector3(1.09, 1.09, 1.09)
+
+[node name="Stand14" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(190, -1.92, -62)
+rotation_degrees = Vector3(0, 100, 0)
+scale = Vector3(1, 1, 1)
+
+[node name="Stand15" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(164, -1.92, -69)
+rotation_degrees = Vector3(0, 155, 0)
+scale = Vector3(1.12, 1.12, 1.12)
+
+[node name="Stand16" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(134, -1.92, -70)
+rotation_degrees = Vector3(0, 39, 0)
+scale = Vector3(1.06, 1.06, 1.06)
+
+[node name="Stand17" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(105, -1.92, -81)
+rotation_degrees = Vector3(0, 76, 0)
+scale = Vector3(1.15, 1.15, 1.15)
+
+[node name="Stand18" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(79, -1.92, -88)
+rotation_degrees = Vector3(0, 122, 0)
+scale = Vector3(0.93, 0.93, 0.93)
+
+[node name="Stand19" parent="MeadowWoodland" instance=ExtResource("Stand")]
+position = Vector3(55, -1.92, -80)
+rotation_degrees = Vector3(0, 166, 0)
+scale = Vector3(1.07, 1.07, 1.07)
+
+[node name="NorthRoadWoodland" type="Node3D" parent="."]
+
+[node name="Stand01" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(-13, -1.92, -38)
+rotation_degrees = Vector3(0, 44, 0)
+scale = Vector3(0.9, 0.9, 0.9)
+
+[node name="Stand02" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(-20, -1.92, -56)
+rotation_degrees = Vector3(0, 172, 0)
+scale = Vector3(1.08, 1.08, 1.08)
+
+[node name="Stand03" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(-16, -1.92, -79)
+rotation_degrees = Vector3(0, 63, 0)
+scale = Vector3(0.92, 0.92, 0.92)
+
+[node name="Stand04" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(-18, -1.92, -102)
+rotation_degrees = Vector3(0, 87, 0)
+scale = Vector3(1.09, 1.09, 1.09)
+
+[node name="Stand05" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(-16, -1.92, -125)
+rotation_degrees = Vector3(0, 134, 0)
+scale = Vector3(1.03, 1.03, 1.03)
+
+[node name="Stand06" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(-17, -1.92, -149)
+rotation_degrees = Vector3(0, 18, 0)
+scale = Vector3(1.2, 1.2, 1.2)
+
+[node name="Stand07" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(-14, -1.92, -172)
+rotation_degrees = Vector3(0, 144, 0)
+scale = Vector3(0.99, 0.99, 0.99)
+
+[node name="Stand08" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(-19, -1.92, -197)
+rotation_degrees = Vector3(0, 90, 0)
+scale = Vector3(1.16, 1.16, 1.16)
+
+[node name="Stand09" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(-23, -1.92, -220)
+rotation_degrees = Vector3(0, 60, 0)
+scale = Vector3(1.19, 1.19, 1.19)
+
+[node name="Stand10" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(-24, -1.92, -247)
+rotation_degrees = Vector3(0, 127, 0)
+scale = Vector3(0.8, 0.8, 0.8)
+
+[node name="Stand11" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(-30, -1.92, -279)
+rotation_degrees = Vector3(0, 52, 0)
+scale = Vector3(1.13, 1.13, 1.13)
+
+[node name="Stand12" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(-23, -1.92, -305)
+rotation_degrees = Vector3(0, 174, 0)
+scale = Vector3(1.14, 1.14, 1.14)
+
+[node name="Stand13" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(-30, -1.92, -353)
+rotation_degrees = Vector3(0, 91, 0)
+scale = Vector3(0.98, 0.98, 0.98)
+
+[node name="Stand14" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(-19, -1.92, -376)
+rotation_degrees = Vector3(0, 63, 0)
+scale = Vector3(1.05, 1.05, 1.05)
+
+[node name="Stand15" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(10, -1.92, -387)
+rotation_degrees = Vector3(0, 137, 0)
+scale = Vector3(1.05, 1.05, 1.05)
+
+[node name="Stand16" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(32, -1.92, -369)
+rotation_degrees = Vector3(0, 91, 0)
+scale = Vector3(1.1, 1.1, 1.1)
+
+[node name="Stand17" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(40, -1.92, -342)
+rotation_degrees = Vector3(0, 22, 0)
+scale = Vector3(1.02, 1.02, 1.02)
+
+[node name="Stand18" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(41, -1.92, -315)
+rotation_degrees = Vector3(0, 114, 0)
+scale = Vector3(1.01, 1.01, 1.01)
+
+[node name="Stand19" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(35, -1.92, -289)
+rotation_degrees = Vector3(0, 159, 0)
+scale = Vector3(1.09, 1.09, 1.09)
+
+[node name="Stand20" parent="NorthRoadWoodland" instance=ExtResource("Stand")]
+position = Vector3(28, -1.92, -265)
+rotation_degrees = Vector3(0, 81, 0)
+scale = Vector3(0.9, 0.9, 0.9)
+
+[node name="BirchwaterWoodland" type="Node3D" parent="."]
+
+[node name="Stand01" parent="BirchwaterWoodland" instance=ExtResource("Stand")]
+position = Vector3(104, -1.92, -106)
+rotation_degrees = Vector3(0, 61, 0)
+scale = Vector3(1.08, 1.08, 1.08)
+
+[node name="Stand02" parent="BirchwaterWoodland" instance=ExtResource("Stand")]
+position = Vector3(111, -1.92, -125)
+rotation_degrees = Vector3(0, 123, 0)
+scale = Vector3(1, 1, 1)
+
+[node name="Stand03" parent="BirchwaterWoodland" instance=ExtResource("Stand")]
+position = Vector3(108, -1.92, -150)
+rotation_degrees = Vector3(0, 166, 0)
+scale = Vector3(0.99, 0.99, 0.99)
+
+[node name="Stand04" parent="BirchwaterWoodland" instance=ExtResource("Stand")]
+position = Vector3(116, -1.92, -171)
+rotation_degrees = Vector3(0, 80, 0)
+scale = Vector3(1.13, 1.13, 1.13)
+
+[node name="Stand05" parent="BirchwaterWoodland" instance=ExtResource("Stand")]
+position = Vector3(105, -1.92, -193)
+rotation_degrees = Vector3(0, 40, 0)
+scale = Vector3(0.96, 0.96, 0.96)
+
+[node name="Stand06" parent="BirchwaterWoodland" instance=ExtResource("Stand")]
+position = Vector3(106, -1.92, -215)
+rotation_degrees = Vector3(0, 111, 0)
+scale = Vector3(1.13, 1.13, 1.13)
+
+[node name="Stand07" parent="BirchwaterWoodland" instance=ExtResource("Stand")]
+position = Vector3(93, -1.92, -239)
+rotation_degrees = Vector3(0, 179, 0)
+scale = Vector3(0.95, 0.95, 0.95)
+
+[node name="Stand08" parent="BirchwaterWoodland" instance=ExtResource("Stand")]
+position = Vector3(70, -1.92, -255)
+rotation_degrees = Vector3(0, 130, 0)
+scale = Vector3(1.04, 1.04, 1.04)
+
+[node name="Stand09" parent="BirchwaterWoodland" instance=ExtResource("Stand")]
+position = Vector3(78, -1.92, -91)
+rotation_degrees = Vector3(0, 25, 0)
+scale = Vector3(1.11, 1.11, 1.11)
+
+[node name="RidgePeaks" type="Node3D" parent="."]
+
+[node name="WestScree" type="MeshInstance3D" parent="RidgePeaks"]
+position = Vector3(-213, 5, -322)
+rotation_degrees = Vector3(0, 21, 0)
+scale = Vector3(34, 18, 31)
+mesh = SubResource("NearPeak")
+cast_shadow = 0
+
+[node name="LookoutShoulder" type="MeshInstance3D" parent="RidgePeaks"]
+position = Vector3(-222, 10, -353)
+rotation_degrees = Vector3(0, 9, 0)
+scale = Vector3(38, 30, 31)
+mesh = SubResource("NearPeak")
+cast_shadow = 0
+
+[node name="NorthScree" type="MeshInstance3D" parent="RidgePeaks"]
+position = Vector3(-195, 6, -391)
+rotation_degrees = Vector3(0, 28, 0)
+scale = Vector3(30, 16, 24)
+mesh = SubResource("NearPeak")
+cast_shadow = 0
+
+[node name="SouthButtress" type="MeshInstance3D" parent="RidgePeaks"]
+position = Vector3(-161, 3, -226)
+rotation_degrees = Vector3(0, 49, 0)
+scale = Vector3(31, 21, 24)
+mesh = SubResource("NearPeak")
+cast_shadow = 0
+
+[node name="SouthPeak" type="MeshInstance3D" parent="RidgePeaks"]
+position = Vector3(-201, 8, -251)
+rotation_degrees = Vector3(0, 12, 0)
+scale = Vector3(38, 31, 32)
+mesh = SubResource("DistantPeak")
+cast_shadow = 0
+
+[node name="WesternHorn" type="MeshInstance3D" parent="RidgePeaks"]
+position = Vector3(-259, 14, -328)
+rotation_degrees = Vector3(0, 29, 0)
+scale = Vector3(34, 43, 45)
+mesh = SubResource("DistantPeak")
+cast_shadow = 0
+
+[node name="NorthPeak" type="MeshInstance3D" parent="RidgePeaks"]
+position = Vector3(-237, 15, -402)
+rotation_degrees = Vector3(0, 55, 0)
+scale = Vector3(44, 44, 37)
+mesh = SubResource("DistantPeak")
+cast_shadow = 0
+
+[node name="FarSaddle" type="MeshInstance3D" parent="RidgePeaks"]
+position = Vector3(-173, 12, -427)
+rotation_degrees = Vector3(0, 17, 0)
+scale = Vector3(54, 38, 47)
+mesh = SubResource("DistantPeak")
+cast_shadow = 0

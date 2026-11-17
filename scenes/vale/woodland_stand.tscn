@@ -1,0 +1,123 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="Boughs"]
+albedo_color = Color(0.13, 0.25, 0.19, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="Tips"]
+albedo_color = Color(0.18, 0.32, 0.22, 1)
+roughness = 1.0
+
+[sub_resource type="CylinderMesh" id="Lower"]
+material = SubResource("Boughs")
+top_radius = 0.08
+bottom_radius = 1.12
+height = 0.66
+radial_segments = 6
+
+[sub_resource type="CylinderMesh" id="Upper"]
+material = SubResource("Tips")
+top_radius = 0.01
+bottom_radius = 0.83
+height = 0.62
+radial_segments = 6
+
+[node name="WoodlandStand" type="Node3D"]
+
+[node name="YoungFir" type="Node3D" parent="."]
+position = Vector3(-4.5, 0, -2.2)
+scale = Vector3(1.2, 4.6, 1.3)
+
+[node name="Boughs" type="MeshInstance3D" parent="YoungFir"]
+position = Vector3(0, 0.34, 0)
+mesh = SubResource("Lower")
+cast_shadow = 0
+
+[node name="Crown" type="MeshInstance3D" parent="YoungFir"]
+position = Vector3(0, 0.66, 0)
+mesh = SubResource("Upper")
+cast_shadow = 0
+
+[node name="TallFir" type="Node3D" parent="."]
+position = Vector3(-0.9, 0, 1.8)
+scale = Vector3(1.5, 6.4, 1.55)
+
+[node name="Boughs" type="MeshInstance3D" parent="TallFir"]
+position = Vector3(0, 0.34, 0)
+mesh = SubResource("Lower")
+cast_shadow = 0
+
+[node name="Crown" type="MeshInstance3D" parent="TallFir"]
+position = Vector3(0, 0.66, 0)
+mesh = SubResource("Upper")
+cast_shadow = 0
+
+[node name="RidgeFir" type="Node3D" parent="."]
+position = Vector3(3.2, 0, -3.4)
+scale = Vector3(1.45, 5.15, 1.4)
+
+[node name="Boughs" type="MeshInstance3D" parent="RidgeFir"]
+position = Vector3(0, 0.34, 0)
+mesh = SubResource("Lower")
+cast_shadow = 0
+
+[node name="Crown" type="MeshInstance3D" parent="RidgeFir"]
+position = Vector3(0, 0.66, 0)
+mesh = SubResource("Upper")
+cast_shadow = 0
+
+[node name="EastFir" type="Node3D" parent="."]
+position = Vector3(5.1, 0, 1.6)
+scale = Vector3(1.12, 4, 1.2)
+
+[node name="Boughs" type="MeshInstance3D" parent="EastFir"]
+position = Vector3(0, 0.34, 0)
+mesh = SubResource("Lower")
+cast_shadow = 0
+
+[node name="Crown" type="MeshInstance3D" parent="EastFir"]
+position = Vector3(0, 0.66, 0)
+mesh = SubResource("Upper")
+cast_shadow = 0
+
+[node name="SouthFir" type="Node3D" parent="."]
+position = Vector3(1.9, 0, 5.1)
+scale = Vector3(1.25, 4.8, 1.22)
+
+[node name="Boughs" type="MeshInstance3D" parent="SouthFir"]
+position = Vector3(0, 0.34, 0)
+mesh = SubResource("Lower")
+cast_shadow = 0
+
+[node name="Crown" type="MeshInstance3D" parent="SouthFir"]
+position = Vector3(0, 0.66, 0)
+mesh = SubResource("Upper")
+cast_shadow = 0
+
+[node name="Sapling" type="Node3D" parent="."]
+position = Vector3(-4.2, 0, 4.8)
+scale = Vector3(0.73, 2.6, 0.7)
+
+[node name="Boughs" type="MeshInstance3D" parent="Sapling"]
+position = Vector3(0, 0.34, 0)
+mesh = SubResource("Lower")
+cast_shadow = 0
+
+[node name="Crown" type="MeshInstance3D" parent="Sapling"]
+position = Vector3(0, 0.66, 0)
+mesh = SubResource("Upper")
+cast_shadow = 0
+
+[node name="OuterFir" type="Node3D" parent="."]
+position = Vector3(0.2, 0, -6)
+scale = Vector3(0.98, 3.8, 0.9)
+
+[node name="Boughs" type="MeshInstance3D" parent="OuterFir"]
+position = Vector3(0, 0.34, 0)
+mesh = SubResource("Lower")
+cast_shadow = 0
+
+[node name="Crown" type="MeshInstance3D" parent="OuterFir"]
+position = Vector3(0, 0.66, 0)
+mesh = SubResource("Upper")
+cast_shadow = 0

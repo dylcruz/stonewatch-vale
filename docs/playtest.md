@@ -87,3 +87,12 @@ The Watchpost developer scene now ends at the arena walls. It keeps the original
 
 - [ ] Press **F5**, start **New Game**, stop the game, and select **Continue** after relaunching. Verify the Warrior starts in the town square.
 - [ ] Run `godot --path . -- --watchpost-save`, accept a quest, advance the objective, and relaunch. Verify Continue returns to the refuge with the same journal progress and equipped gear.
+
+## Vale scenery and collision
+
+Pine trunks, outcrops, and the two Birchwater bridge rails have obstacle collision. Lower woodland fills the view beyond Pine Meadow and North Road. Birchwater continues into the woods, and stone peaks frame the Signal Ridge cliffs. [Issue #20](https://github.com/dylcruz/stonewatch-vale/issues/20), [issue #21](https://github.com/dylcruz/stonewatch-vale/issues/21)
+
+**Automated on Windows with Godot 4.7.2 Standard.** The Watchpost and town bakes saved 52 and 1,880 polygons respectively. The route suite verifies both bridge directions, walking around a trunk and an outcrop, physical collision at both rails, and command preservation when clicking solid objects or scenic boundaries. The Compatibility renderer was used to inspect North Road, Heather Rest, the timber bridge, and the Signal Ridge lookout.
+
+- [ ] Walk across the timber bridge both ways and click each rail while moving down the deck.
+- [ ] At Heather Rest and Signal Ridge, check the woodland and peaks from the trail. Click beyond the edge while moving and verify the original destination remains active.
