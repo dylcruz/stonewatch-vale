@@ -6,7 +6,7 @@
 script = ExtResource("1")
 display_name = "Raider"
 enemy_id = &"raider"
-defeat_xp = 15
+defeat_xp = 5
 max_health = 28
 damage = 7
 melee_range = 2.0

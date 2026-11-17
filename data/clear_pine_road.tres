@@ -13,5 +13,5 @@ return_objective = "Return to Captain Mara"
 turn_in_dialogue = "Pine Road is clear. Thank you, Warrior."
 target_enemy = &"road_wolf"
 required_kills = 3
-reward_xp = 55
+reward_xp = 85
 reward_item = ExtResource("2")

@@ -59,21 +59,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _record_defeat(enemy: ValeEnemy) -> void:
 	var stats := enemy.stats
-	var credited := false
 	for progress in quest_chain:
-		if progress.record_defeat(stats.enemy_id):
-			credited = true
-	var grant_rewards := true
-	if enemy.respawn_policy == ValeEnemy.RespawnPolicy.UNTIL_QUEST_CREDIT:
-		if not credited:
-			enemy.schedule_respawn()
-		grant_rewards = not enemy.defeat_rewards_claimed
-		enemy.defeat_rewards_claimed = true
-	if grant_rewards:
-		player.award_experience(stats.defeat_xp)
-		if player.grant_item(stats.defeat_item):
-			loot_notice.text = "%s added to Gear (I)" % stats.defeat_item.display_name
-			loot_notice.show()
+		progress.record_defeat(stats.enemy_id)
+	player.award_experience(stats.defeat_xp)
+	if player.grant_item(stats.defeat_item):
+		loot_notice.text = "%s added to Gear (I)" % stats.defeat_item.display_name
+		loot_notice.show()
 	_refresh_progress()
 
 func _use_quest_object(object: ValeInteractable) -> void:

@@ -23,13 +23,13 @@ A single-player 3D action RPG prototype. Captain Mara sends the Warrior to clear
 - HUD panels consume clicks and preserve the active movement command.
 - Scenery, void, and the disconnected platform reject movement clicks and preserve the current command. Close the window or press **F8** in the editor to stop.
 
-Three road wolves are east of the watchpost. They award 15 XP each, and turning in the quest grants another 55 XP. At 100 XP the Warrior reaches level 2, gains 15 max HP, and can use Cleave. Equipping the Iron Sword raises basic sword damage from 8 to 12. An extra wolf northwest of the ruin gives you a target for the upgrade.
+Three road wolves are east of the watchpost. They award 5 XP each, and turning in the quest grants 85 XP. At 100 XP the Warrior reaches level 2, gains 15 max HP, and can use Cleave. Equipping the Iron Sword raises basic sword damage from 8 to 12. An extra wolf northwest of the ruin gives you a target for the upgrade.
 
-For **Recover the Supplies**, take Pine Road north and follow it west around the ruin to the abandoned campsite. Click the marked crate to approach and collect it. Each raider is worth 15 XP if defeated. Returning the crate to Mara grants 55 XP.
+For **Recover the Supplies**, take Pine Road north and follow it west around the ruin to the abandoned campsite. Click the marked crate to approach and collect it. Each raider is worth 5 XP if defeated. Returning the crate to Mara grants 55 XP.
 
-For **Break the Blockade**, take the south road west to Quarry Gate. Move out of the Raider Captain’s red circle to avoid the heavy hit or use Guard to halve it. The first Captain defeat awards 50 XP and the Warden’s Coat. Equipping it adds 2 armor. Returning to Mara grants 35 XP, which brings the required route to 240 XP, level 3, and 90 max HP.
+For **Break the Blockade**, take the south road west to Quarry Gate. Move out of the Raider Captain’s red circle to avoid the heavy hit or use Guard to halve it. Each Captain defeat awards 15 XP, and the first also grants the Warden’s Coat. Equipping it adds 2 armor. Turning in the quest grants 70 XP. The watchpost quests and their objectives give the Warrior one way to reach 240 XP, level 3, and 90 max HP.
 
-Kill objectives count defeats while their quest is active. Regular wolves and raiders can respawn 30 seconds after defeat. To let them return, move beyond their leash radius or wait in the green watchpost refuge. If you defeat the Captain before accepting Break the Blockade, leave Quarry Gate and return after the delay to fight him for quest credit.
+Kill objectives count defeats while their quest is active. Wolves, raiders, and the Captain can respawn 30 seconds after any defeat. To let them return, move beyond their leash radius or wait in the green watchpost refuge. The Captain remains available for rematches after Break the Blockade is complete.
 
 ## Edit and bake
 
