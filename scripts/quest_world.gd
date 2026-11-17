@@ -13,7 +13,10 @@ enum JournalView { CLOSED, DIALOGUE, QUEST_LOG, GEAR }
 @onready var journal: PanelContainer = $HUD/Journal
 @onready var journal_title: Label = $HUD/Journal/Margin/Content/Title
 @onready var journal_body: Label = $HUD/Journal/Margin/Content/Body
-@onready var gear_options: VBoxContainer = $HUD/Journal/Margin/Content/GearOptions
+@onready var bag_heading: Label = $HUD/Journal/Margin/Content/BagHeading
+@onready var bag_scroll: ScrollContainer = $HUD/Journal/Margin/Content/BagScroll
+@onready var gear_options: VBoxContainer = $HUD/Journal/Margin/Content/BagScroll/GearOptions
+@onready var bag_feedback: Label = $HUD/Journal/Margin/Content/BagFeedback
 @onready var quest_options: VBoxContainer = $HUD/Journal/Margin/Content/QuestOptions
 @onready var dialogue_action: Button = $HUD/Journal/Margin/Content/Action
 var tracked_quest: ValeQuestProgress
@@ -21,26 +24,121 @@ var quest_chain: Array[ValeQuestProgress] = []
 var quest_objects: Array[ValeInteractable] = []
 var dialogue_quest: ValeQuestProgress
 var panel_mode := JournalView.CLOSED
+var save_slot: ValeSaveSlot
+var pending_checkpoint: Dictionary
+
+func configure_checkpoint(slot: ValeSaveSlot, checkpoint: Dictionary) -> void:
+	save_slot = slot
+	pending_checkpoint = checkpoint
 
 func _ready() -> void:
 	super._ready()
+	var is_new_game := pending_checkpoint.is_empty()
 	if quest_definition:
 		quest_chain.append(ValeQuestProgress.new(quest_definition))
 	for follow_up in follow_up_quests:
 		quest_chain.append(ValeQuestProgress.new(follow_up))
+	if not is_new_game:
+		_restore_checkpoint(pending_checkpoint)
+		pending_checkpoint = {}
 	for enemy in enemies:
 		enemy.health.died.connect(_record_defeat.bind(enemy))
-		enemy.respawned.connect(_refresh_enemy_marker.bind(enemy))
+		enemy.respawned.connect(_enemy_respawned.bind(enemy))
 	for child in get_children():
 		if child is ValeInteractable and child.objective_id != &"":
 			quest_objects.append(child)
 			child.interacted.connect(_use_quest_object.bind(child))
+			if quest_chain.any(func(progress: ValeQuestProgress):
+				return progress.definition.target_object == child.objective_id \
+					and progress.state >= ValeQuestProgress.State.READY
+			):
+				child.collect()
 	if mara and not quest_chain.is_empty():
 		mara.interacted.connect(_talk_to_mara)
 	player.health.died.connect(_close_panel)
+	player.health.changed.connect(func(_current: int, _maximum: int): _refresh_character_stats())
+	player.progression_changed.connect(_on_progression_changed)
 	dialogue_action.pressed.connect(_perform_dialogue_action)
 	$HUD/Journal/Margin/Content/Close.pressed.connect(_close_panel)
+	player.equipment_changed.connect(_save_checkpoint)
 	_refresh_progress()
+	if is_new_game:
+		_save_checkpoint()
+
+func _save_checkpoint() -> void:
+	if save_slot == null:
+		return
+	var quests := {}
+	for progress in quest_chain:
+		quests[progress.definition.id] = {"state": progress.state, "kills": progress.kills}
+	var encounters := {}
+	for enemy in enemies:
+		if enemy.encounter_id != &"":
+			encounters[enemy.encounter_id] = enemy.encounter_checkpoint()
+	var checkpoint := {
+		"level": player.level,
+		"experience": player.experience,
+		"owned_items": PackedStringArray(player.owned_items.keys()),
+		"waiting_rewards": PackedStringArray(player.waiting_rewards.keys()),
+		"weapon": player.equipped_weapon.id as StringName,
+		"armor": player.equipped_armor.id as StringName,
+		"bag": player.equipped_bag.id as StringName,
+		"quests": quests,
+		"tracked_quest": tracked_quest.definition.id if tracked_quest else &"",
+		"encounters": encounters,
+	}
+	var error := save_slot.write(checkpoint)
+	if error != OK:
+		status.text = "Could not save progress"
+		push_warning("Checkpoint save failed: " + error_string(error))
+
+func _restore_checkpoint(checkpoint: Dictionary) -> void:
+	var available_items: Array[ValeItem] = []
+	var quests: Dictionary = checkpoint.quests
+	for progress in quest_chain:
+		var definition := progress.definition
+		available_items.append(definition.reward_item)
+		var recorded: Variant = quests.get(definition.id)
+		if recorded is Dictionary:
+			var state: Variant = recorded.get("state")
+			var kills: Variant = recorded.get("kills")
+			if state is int and state >= ValeQuestProgress.State.AVAILABLE and state <= ValeQuestProgress.State.COMPLETED:
+				progress.state = state
+			if kills is int:
+				progress.kills = clampi(kills, 0, definition.required_kills)
+		if definition.id == checkpoint.get("tracked_quest"):
+			tracked_quest = progress
+	var encounters: Dictionary = checkpoint.encounters
+	for enemy in enemies:
+		available_items.append(enemy.stats.defeat_item)
+		var recorded: Variant = encounters.get(enemy.encounter_id)
+		if enemy.encounter_id != &"" and recorded is Dictionary:
+			enemy.restore_encounter(recorded)
+	_restore_inventory(checkpoint, available_items)
+	player.level = clampi(checkpoint.level, 1, 3)
+	player.award_experience(checkpoint.experience)
+	player.reset_combat()
+
+func _restore_inventory(checkpoint: Dictionary, available_items: Array[ValeItem]) -> void:
+	var owned: PackedStringArray = checkpoint.owned_items
+	var waiting: Variant = checkpoint.get("waiting_rewards")
+	for item in available_items:
+		if not item:
+			continue
+		if String(item.id) in owned:
+			player.owned_items[item.id] = item
+		elif waiting is PackedStringArray and String(item.id) in waiting and not player.owned_items.has(item.id):
+			player.waiting_rewards[item.id] = item
+	var saved_weapon := player.owned_items.get(checkpoint.weapon) as ValeItem
+	var saved_armor := player.owned_items.get(checkpoint.armor) as ValeItem
+	var bag_id: Variant = checkpoint.get("bag")
+	var saved_bag := player.owned_items.get(bag_id) as ValeItem if bag_id is StringName else null
+	if saved_weapon and saved_weapon.slot == ValeItem.Slot.WEAPON:
+		player.equip_item(saved_weapon.id)
+	if saved_armor and saved_armor.slot == ValeItem.Slot.ARMOR:
+		player.equip_item(saved_armor.id)
+	if saved_bag and saved_bag.slot == ValeItem.Slot.BAG:
+		player.equip_item(saved_bag.id)
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
@@ -64,10 +162,27 @@ func _record_defeat(enemy: ValeEnemy) -> void:
 	for progress in quest_chain:
 		progress.record_defeat(stats.enemy_id)
 	player.award_experience(stats.defeat_xp)
-	if player.grant_item(stats.defeat_item):
-		loot_notice.text = "%s added to Gear (I)" % stats.defeat_item.display_name
-		loot_notice.show()
+	if stats.defeat_item and not enemy.defeat_reward_claimed:
+		enemy.defeat_reward_claimed = true
+		_grant_reward_item(stats.defeat_item, true)
 	_refresh_progress()
+	_save_checkpoint()
+
+func _enemy_respawned(enemy: ValeEnemy) -> void:
+	_refresh_enemy_marker(enemy)
+	if enemy.encounter_id != &"":
+		_save_checkpoint()
+
+func _grant_reward_item(item: ValeItem, announce: bool = false) -> void:
+	if not item:
+		return
+	var was_waiting: bool = player.waiting_rewards.has(item.id)
+	if player.grant_item(item) and announce:
+		loot_notice.text = "%s added to Character (I)" % item.display_name
+		loot_notice.show()
+	elif not was_waiting and player.waiting_rewards.has(item.id):
+		loot_notice.text = player.bag_feedback
+		loot_notice.show()
 
 func _use_quest_object(object: ValeInteractable) -> void:
 	if object.collision_layer == 0 or not player.is_alive() or not object.is_in_range(player):
@@ -82,6 +197,7 @@ func _use_quest_object(object: ValeInteractable) -> void:
 	object.collect()
 	status.text = "%s recovered" % object.display_name
 	_refresh_progress()
+	_save_checkpoint()
 
 func _talk_to_mara() -> void:
 	dialogue_quest = _first_mara_quest()
@@ -112,9 +228,12 @@ func _perform_dialogue_action() -> void:
 	if _can_accept_quest(dialogue_quest) and dialogue_quest.accept():
 		_close_panel()
 	elif dialogue_quest.complete():
-		player.grant_item(dialogue_quest.definition.reward_item)
+		_grant_reward_item(dialogue_quest.definition.reward_item)
 		player.award_experience(dialogue_quest.definition.reward_xp)
+	else:
+		return
 	_refresh_progress()
+	_save_checkpoint()
 
 func _objective_text(progress: ValeQuestProgress) -> String:
 	var definition := progress.definition
@@ -148,11 +267,7 @@ func _refresh_progress() -> void:
 		objective_label.text = _objective_text(objective)
 		if objective == tracked_quest and objective.state == ValeQuestProgress.State.READY:
 			objective_label.text = "%s · %s" % [objective.definition.title, objective_label.text]
-	var next_xp: int = player.next_level_experience()
-	if next_xp > 0:
-		progression_label.text = "XP %d / %d" % [player.experience, next_xp]
-	else:
-		progression_label.text = "XP %d · Max level" % player.experience
+	_refresh_xp()
 	for object in quest_objects:
 		object.set_objective_hint(quest_chain.any(func(progress: ValeQuestProgress):
 			return progress.state == ValeQuestProgress.State.ACTIVE and progress.definition.target_object == object.objective_id
@@ -166,6 +281,17 @@ func _refresh_progress() -> void:
 		elif _can_accept_quest(mara_quest):
 			quest_marker.text = "!"
 	_refresh_panel()
+
+func _on_progression_changed() -> void:
+	_refresh_xp()
+	_refresh_character_stats()
+
+func _refresh_xp() -> void:
+	var next_xp: int = player.next_level_experience()
+	if next_xp > 0:
+		progression_label.text = "XP %d / %d" % [player.experience, next_xp]
+	else:
+		progression_label.text = "XP %d · Max level" % player.experience
 
 func _refresh_enemy_marker(enemy: ValeEnemy) -> void:
 	var marker := enemy.get_node_or_null("QuestMarker") as Label3D
@@ -200,7 +326,9 @@ func _refresh_panel() -> void:
 	for option in quest_options.get_children():
 		quest_options.remove_child(option)
 		option.queue_free()
-	gear_options.visible = panel_mode == JournalView.GEAR
+	bag_heading.visible = panel_mode == JournalView.GEAR
+	bag_scroll.visible = panel_mode == JournalView.GEAR
+	bag_feedback.hide()
 	match panel_mode:
 		JournalView.DIALOGUE:
 			_show_dialogue()
@@ -234,6 +362,7 @@ func _add_quest_option(label: String, action: Callable) -> void:
 func _track_quest(progress: ValeQuestProgress) -> void:
 	tracked_quest = progress
 	_refresh_progress()
+	_save_checkpoint()
 
 func _select_dialogue_quest(progress: ValeQuestProgress) -> void:
 	dialogue_quest = progress
@@ -259,30 +388,69 @@ func _show_dialogue() -> void:
 		ValeQuestProgress.State.COMPLETED:
 			journal_body.text = "%s complete\n\nReward earned · %s" % [definition.title, reward]
 			if definition.reward_item:
-				journal_body.text += "\nOpen Gear (I) to equip your reward."
+				journal_body.text += "\nOpen Character (I) to manage your reward."
 	for progress in quest_chain:
 		if progress != dialogue_quest and (progress.is_in_progress() or _can_accept_quest(progress)):
 			_add_quest_option("View " + progress.definition.title, _select_dialogue_quest.bind(progress))
 
+func _refresh_character_stats() -> void:
+	if panel_mode != JournalView.GEAR:
+		return
+	var next_xp: int = player.next_level_experience()
+	var xp_status := "%d / %d XP" % [player.experience, next_xp] if next_xp else "%d XP · Max level" % player.experience
+	var weapon := player.equipped_weapon as ValeItem
+	var coat := player.equipped_armor as ValeItem
+	var bag := player.equipped_bag as ValeItem
+	var cleave := "Cleave %d damage" % player.cleave_damage if player.has_cleave() else "Cleave unlocks at Lv. 2"
+	journal_body.text = "\n".join([
+		"Level %d   ·   %s" % [player.level, xp_status],
+		"Health   %d / %d" % [player.health.current, player.health.maximum],
+		"",
+		"Weapon   %s" % (weapon.display_name if weapon else "Empty"),
+		"Armor     %s" % (coat.display_name if coat else "Empty"),
+		"Bag        %s" % (bag.display_name if bag else "Empty"),
+		"",
+		"Sword damage %d   ·   Armor %d" % [player.sword_damage(), player.armor_value()],
+		"%s   ·   Guard %d%%" % [cleave, roundi(player.guard_reduction * 100.0)],
+	])
+
 func _show_gear() -> void:
-	journal_title.text = "Gear"
-	journal_body.text = "%s equipped\n%s equipped\n\nSword damage  %d\nArmor  %d" % [
-		player.equipped_weapon.display_name, player.equipped_armor.display_name,
-		player.sword_damage(), player.armor_value()]
+	journal_title.text = "Character"
+	_refresh_character_stats()
+	var available: int = player.free_bag_slots()
+	var capacity: int = player.bag_capacity()
+	bag_heading.text = "Inventory   %d / %d used   ·   %d free" % [capacity - available, capacity, available]
+	bag_feedback.text = player.bag_feedback
+	bag_feedback.visible = not bag_feedback.text.is_empty()
 	for option in gear_options.get_children():
 		gear_options.remove_child(option)
 		option.queue_free()
-	for item: ValeItem in player.owned_items.values():
-		if item == player.equipped_weapon or item == player.equipped_armor:
+	for item: ValeItem in player.stored_items():
+		if item.slot == ValeItem.Slot.MISC:
+			var label := Label.new()
+			label.text = item.display_name
+			gear_options.add_child(label)
 			continue
-		var option := Button.new()
 		var effect := "%d armor" % item.armor
 		if item.slot == ValeItem.Slot.WEAPON:
 			effect = "%d sword damage" % (player.stats.damage + item.bonus_damage)
-		option.text = "Equip %s · %s" % [item.display_name, effect]
-		option.pressed.connect(_equip.bind(item.id))
-		gear_options.add_child(option)
+		elif item.slot == ValeItem.Slot.BAG:
+			effect = "%d slots" % item.bag_slots
+		_add_inventory_button("Equip %s · %s" % [item.display_name, effect], _equip.bind(item.id))
+	for item: ValeItem in player.waiting_rewards.values():
+		_add_inventory_button("Claim %s · Waiting reward" % item.display_name, _claim.bind(item.id))
+
+func _add_inventory_button(label: String, action: Callable) -> void:
+	var option := Button.new()
+	option.text = label
+	option.pressed.connect(action)
+	gear_options.add_child(option)
 
 func _equip(item_id: StringName) -> void:
-	if player.equip_item(item_id):
-		_refresh_panel()
+	player.equip_item(item_id)
+	_refresh_panel()
+
+func _claim(item_id: StringName) -> void:
+	if player.claim_reward(item_id):
+		_save_checkpoint()
+	_refresh_panel()

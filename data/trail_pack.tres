@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ValeItem" format=3]
+
+[ext_resource type="Script" path="res://scripts/item.gd" id="Item"]
+
+[resource]
+script = ExtResource("Item")
+id = &"trail_pack"
+display_name = "Trail Pack"
+slot = 2
+bag_slots = 6

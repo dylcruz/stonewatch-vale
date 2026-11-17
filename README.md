@@ -6,7 +6,8 @@ A single-player 3D action RPG prototype set in Stonewatch Vale. Explore the Vale
 
 1. Use **Godot 4.7.2 Standard** (`4.7.2.stable.official.ed1daf0bf`) with the Compatibility renderer.
 2. Import `project.godot` in Godot Project Manager and allow the initial import to finish.
-3. Press **F5** to start a fresh level 1 run in the town square. Follow the road east to explore the Vale.
+3. Press **F5** to open the title screen. Choose **New Game** to start a fresh level 1 run in the town square. Follow the road east to explore the Vale.
+4. On your next launch, choose **Continue** to resume from the town square with your saved progress. The game keeps one local slot at `user://stonewatch-slot.save`. Choosing **New Game** again asks before replacing it.
 
 ## Controls
 
@@ -18,7 +19,8 @@ A single-player 3D action RPG prototype set in Stonewatch Vale. Explore the Vale
 - **1 — Cleave:** deal 12 damage to enemies in front of the Warrior within 2.8 m. Unlocks at level 2 and has a 4-second cooldown.
 - **2 — Guard:** halve incoming damage for 1.25 seconds. A blue ring and the HUD show when Guard is active. The 6-second cooldown starts on activation.
 - **J — Quest log:** check each accepted quest’s progress and turn-in status, review completed quests, and choose which objective the HUD tracks.
-- **I — Gear:** inspect equipment, sword damage, and armor. Equip the Iron Sword and Warden’s Coat after earning them.
+- **I — Character:** inspect level, XP, health, effective combat stats, and gear by slot. Equip the Iron Sword and Warden’s Coat from the inventory after earning them. The equipped bag controls capacity. Claim waiting rewards once you have a free slot.
+- **M — World map:** view the terrain and landmarks you have explored during the current run in the main Vale.
 - **After defeat:** wait two seconds to recover in the town square at full health.
 - HUD panels consume clicks and preserve the active movement command.
 - Scenery, void, and the disconnected platform reject movement clicks and preserve the current command. Close the window or press **F8** in the editor to stop.
@@ -26,6 +28,8 @@ A single-player 3D action RPG prototype set in Stonewatch Vale. Explore the Vale
 ## Watchpost developer playtest
 
 Stop the running game with **F8**. In Godot's FileSystem panel, double-click `res://scenes/watchpost_playtest.tscn` to make it the active scene, then press **F6**. The HUD reads **WATCHPOST PLAYTEST**. The scene is bounded by the walls of the original Watchpost area. You can also launch it directly with `godot --path . res://scenes/watchpost_playtest.tscn`.
+
+For save testing in the Watchpost, run `godot --path . -- --watchpost-save` with Godot Standard or a debug build. This opens the title screen with a separate playtest slot. The developer run autosaves as you advance quests, gain rewards, or change equipment. Continue returns to the Watchpost refuge.
 
 Speak to Captain Mara for **Clear Pine Road** and **Recover the Supplies**. Turn in both to unlock **Break the Blockade**. Progress stays in the current run, including through defeat and recovery.
 
@@ -69,8 +73,11 @@ Import once before running the automated checks.
 godot --headless --editor --path . --import --quit
 godot --headless --path . --script res://tests/movement_test.gd
 godot --headless --path . --script res://tests/combat_test.gd
+godot --headless --path . --script res://tests/character_inventory_test.gd
+godot --headless --path . --script res://tests/exploration_map_test.gd
 godot --headless --path . --script res://tests/quest_chain_test.gd
 godot --headless --path . --script res://tests/vale_routes_test.gd
+godot --headless --path . --script res://tests/save_checkpoint_test.gd
 ```
 
 Run the breadcrumb draw-buffer checks with a graphical renderer:

@@ -7,10 +7,22 @@
 [ext_resource type="PackedScene" path="res://scenes/vale/meadow_loop.tscn" id="MeadowLoop"]
 [ext_resource type="PackedScene" path="res://scenes/vale/birchwater_loop.tscn" id="BirchwaterLoop"]
 [ext_resource type="PackedScene" path="res://scenes/vale/lookout_ridge_loop.tscn" id="LookoutRidgeLoop"]
+[ext_resource type="PackedScene" path="res://scenes/vale/vale_backdrop.tscn" id="Backdrop"]
+[ext_resource type="PackedScene" path="res://scenes/vale/world_map.tscn" id="WorldMap"]
+[ext_resource type="Script" path="res://scripts/vale_world.gd" id="ValeWorld"]
 
 [node name="StonewatchVale" instance=ExtResource("World")]
+script = ExtResource("ValeWorld")
 ready_text = "Town square"
 recovery_location = "the town square"
+map_landmarks = Dictionary[String, NodePath]({
+"Birchwater Ford": NodePath("NavigationRegion3D/BirchwaterLoop/Ford"),
+"Heather Rest": NodePath("NavigationRegion3D/MeadowLoop/HeatherRest"),
+"North Road": NodePath("NavigationRegion3D/NorthRoad/MeadowConnection"),
+"Signal Ridge": NodePath("NavigationRegion3D/LookoutRidgeLoop/Lookout"),
+"Timber Bridge": NodePath("NavigationRegion3D/BirchwaterLoop/Bridge"),
+"Town Square": NodePath("Watchpost")
+})
 
 [node name="NavigationRegion3D" parent="."]
 navigation_mesh = ExtResource("TownNav")
@@ -25,6 +37,8 @@ navigation_mesh = ExtResource("TownNav")
 
 [node name="StartingTown" parent="NavigationRegion3D" instance=ExtResource("Town")]
 
+[node name="ValeBackdrop" parent="." instance=ExtResource("Backdrop")]
+
 [node name="RuinLabel" parent="."]
 visible = false
 
@@ -32,7 +46,9 @@ visible = false
 visible = false
 
 [node name="Help" parent="HUD/Panel/Margin/VBox"]
-text = "Click to move.\nJ · Quest log     I · Gear"
+text = "Click to move.\nJ · Quest log     I · Character     M · Map"
 
 [node name="CombatPanel" parent="HUD"]
 offset_top = -160.0
+
+[node name="WorldMap" parent="HUD" instance=ExtResource("WorldMap")]

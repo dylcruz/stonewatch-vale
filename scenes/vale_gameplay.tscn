@@ -9,6 +9,10 @@
 [ext_resource type="Resource" path="res://data/warrior.tres" id="WarriorStats"]
 [ext_resource type="Resource" path="res://data/training_sword.tres" id="TrainingSword"]
 [ext_resource type="Resource" path="res://data/travel_coat.tres" id="TravelCoat"]
+[ext_resource type="Resource" path="res://data/warrior_identity.tres" id="WarriorIdentity"]
+[ext_resource type="Resource" path="res://data/trail_pack.tres" id="TrailPack"]
+[ext_resource type="Resource" path="res://data/scout_pouch.tres" id="ScoutPouch"]
+[ext_resource type="Script" path="res://scripts/item.gd" id="Item"]
 
 [sub_resource type="StandardMaterial3D" id="Gold"]
 albedo_color = Color(0.95, 0.67, 0.26, 1)
@@ -118,6 +122,9 @@ stats = ExtResource("WarriorStats")
 health_per_level = 15
 starting_weapon = ExtResource("TrainingSword")
 starting_armor = ExtResource("TravelCoat")
+identity = ExtResource("WarriorIdentity")
+starting_bag = ExtResource("TrailPack")
+starting_supplies = Array[ExtResource("Item")]([ExtResource("ScoutPouch")])
 recovery_point = NodePath("../Watchpost")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1233115970]
@@ -188,7 +195,7 @@ text = "STONEWATCH VALE"
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Click to move, talk, or attack.
-J · Quest log     I · Gear"
+J · Quest log     I · Character"
 
 [node name="Status" type="Label" parent="HUD/Panel/Margin/VBox" unique_id=314850506]
 layout_mode = 2
@@ -347,9 +354,27 @@ theme_override_font_sizes/font_size = 22
 layout_mode = 2
 autowrap_mode = 3
 
-[node name="GearOptions" type="VBoxContainer" parent="HUD/Journal/Margin/Content"]
+[node name="BagHeading" type="Label" parent="HUD/Journal/Margin/Content"]
 visible = false
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.82, 0.47, 1)
+
+[node name="BagScroll" type="ScrollContainer" parent="HUD/Journal/Margin/Content"]
+visible = false
+custom_minimum_size = Vector2(0, 134)
+layout_mode = 2
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="GearOptions" type="VBoxContainer" parent="HUD/Journal/Margin/Content/BagScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BagFeedback" type="Label" parent="HUD/Journal/Margin/Content"]
+visible = false
+layout_mode = 2
+autowrap_mode = 3
+theme_override_colors/font_color = Color(1, 0.82, 0.47, 1)
 
 [node name="Action" type="Button" parent="HUD/Journal/Margin/Content"]
 visible = false

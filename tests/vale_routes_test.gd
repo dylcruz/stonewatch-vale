@@ -108,8 +108,7 @@ func press_key(key: Key) -> void:
 
 func check_starting_town() -> void:
 	var square := Vector3(0, 0, 7)
-	check(ProjectSettings.get_setting("application/run/main_scene") == MAIN_SCENE.resource_path
-		and region.has_node("StartingTown/TownHall") and region.has_node("StartingTown/WestCottage")
+	check(region.has_node("StartingTown/TownHall") and region.has_node("StartingTown/WestCottage")
 		and region.has_node("StartingTown/EastCottage") and player.global_position.distance_to(square) < 0.05
 		and world.status.text == "Town square",
 		"A fresh game opens in the town square at the original spawn")
@@ -128,8 +127,8 @@ func check_starting_town() -> void:
 	check(world.journal.visible and world.journal_body.text == "No quests accepted",
 		"The empty town journal opens with J")
 	await press_key(KEY_I)
-	check(world.journal.visible and world.journal_title.text == "Gear",
-		"The town gear panel opens with I")
+	check(world.journal.visible and world.journal_title.text == "Character",
+		"The town character panel opens with I")
 	await press_key(KEY_I)
 	check(camera_click(Vector3(8, 0, 7)), "Pine Road accepts a move from the town square")
 	var destination := player.destination
@@ -190,6 +189,53 @@ func check_river() -> void:
 	check(not camera_click(mark("BirchwaterLoop/DeepWaterPool")) and player.destination == destination and player.moving,
 		"A deep-water click preserves the active movement command")
 
+func check_solid_scenery() -> void:
+	var tree := mark("BirchwaterLoop/BankPine02")
+	var rock := mark("BirchwaterLoop/BankSlab4")
+	await place(tree + Vector3(-3, 0, 0))
+	var collision := KinematicCollision3D.new()
+	check(player.test_move(player.global_transform, Vector3(5, 0, 0), collision)
+		and collision.get_collider() == region.get_node("BirchwaterLoop/BankPine02/SolidTrunk"),
+		"The Warrior collides with solid tree trunks")
+	check(camera_click(tree + Vector3(3, 0, 0)), "The bank accepts a move to the far side of the tree")
+	var destination := player.destination
+	check(not camera_click(tree + Vector3.UP * 0.7) and player.destination == destination and player.moving,
+		"Clicking the tree trunk preserves the active movement command")
+	check(await walk_steps([tree + Vector3(3, 0, 0)]), "The baked path routes around the tree")
+	await place(rock + Vector3(0, 0, 5))
+	check(player.test_move(player.global_transform, Vector3(0, 0, -7), collision)
+		and collision.get_collider() == region.get_node("BirchwaterLoop/BankSlab4/SolidRock"),
+		"The Warrior collides with the outcrop")
+	check(camera_click(rock + Vector3(4, 0, 0)), "A ground click beside the outcrop is accepted")
+	destination = player.destination
+	check(not camera_click(rock + Vector3.UP * 0.6) and player.destination == destination and player.moving,
+		"Clicking the boulder preserves the active movement command")
+	check(await walk_steps([rock + Vector3(0, 0, -5)]), "The baked path routes around the outcrop")
+	var bridge := mark("BirchwaterLoop/Bridge")
+	await place(bridge)
+	for side in [-1, 1]:
+		check(player.test_move(player.global_transform, Vector3(0, 0, 4 * side), collision)
+			and collision.get_collider() == region.get_node("BirchwaterLoop/Railings"),
+			"The railing physically blocks the Warrior on bridge side %d" % side)
+	check(camera_click(bridge + Vector3(7, 0, 0)), "A move down the bridge is accepted")
+	destination = player.destination
+	check(not camera_click(Vector3(49, 0.76, -198.83)) and player.destination == destination and player.moving,
+		"Clicking the railing preserves the active movement command")
+
+func check_backdrop_edges() -> void:
+	check(world.has_node("ValeBackdrop/ForestFloor") and world.has_node("ValeBackdrop/RidgePeaks"),
+		"The Vale loads woodland and mountain scenery beyond the routes")
+	for edge in [
+		[Vector3(0, 0, -67), Vector3(3, 0, -70), Vector3(-11.5, -1.92, -67)],
+		[Vector3(217, 0.012, 12), Vector3(211, 0.012, 12), Vector3(238, -1.92, 12)],
+		[Vector3(-183, 12, -332), Vector3(-178, 12, -333), Vector3(-206, 7, -330)],
+	]:
+		await place(edge[0])
+		check(camera_click(edge[1]), "Ground next to the scenic boundary accepts a move")
+		var destination := player.destination
+		check(not camera_click(edge[2]) and player.destination == destination and player.moving,
+			"Clicking beyond the scenic boundary preserves movement")
+
 func check_ridge() -> void:
 	var lookout := mark("LookoutRidgeLoop/Lookout")
 	check(connected(mark("NorthRoad/SouthRidgeConnection"), lookout)
@@ -224,10 +270,17 @@ func time_crossing() -> void:
 	var start_point := mark("MeadowLoop/HeatherRest")
 	var lookout := mark("LookoutRidgeLoop/Lookout")
 	await place(mark("MeadowLoop/SouthConnection"))
-	check(await walk_steps([start_point]), "The town entrance reaches Heather Rest entirely on foot")
+	# Click on the open trail on both sides of the pine at (124, 0, 28).
+	# A click on a navigation corner behind its trunk can be occluded from the follow camera.
+	var reached_start := await walk_steps([Vector3(120, 0, 21), Vector3(130, 0, 21), start_point])
+	check(reached_start, "The town entrance reaches Heather Rest entirely on foot")
+	if not reached_start:
+		return
 	var start_frame := Engine.get_physics_frames()
 	var length := 0.0
 	for destination in [
+		Vector3(56, 0, -49),
+		Vector3(46, 0, -49),
 		mark("MeadowLoop/NorthConnection"),
 		mark("NorthRoad/SouthRidgeConnection"),
 		Vector3(-17, 0, -256),
@@ -254,7 +307,9 @@ func run() -> void:
 	await check_main_road()
 	await check_meadow()
 	await check_river()
+	await check_solid_scenery()
 	await check_ridge()
+	await check_backdrop_edges()
 	if "--pace" in OS.get_cmdline_user_args():
 		await time_crossing()
 	world.queue_free()

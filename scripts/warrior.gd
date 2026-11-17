@@ -1,6 +1,8 @@
 extends "res://scripts/player.gd"
 
 signal combat_message(message: String)
+signal equipment_changed
+signal progression_changed
 
 const PURSUIT_UPDATE_INTERVAL := 0.15
 const PURSUIT_UPDATE_DISTANCE := 0.4
@@ -10,10 +12,13 @@ const LEVEL_TWO_XP := 100
 const LEVEL_THREE_XP := 240
 
 @export var stats: ValeCombatStats
+@export var identity: ValePlayerIdentity
 @export var level := 1
 @export var health_per_level := 0
 @export var starting_weapon: ValeItem
 @export var starting_armor: ValeItem
+@export var starting_bag: ValeItem
+@export var starting_supplies: Array[ValeItem] = []
 @export var recovery_point: Node3D
 @export var refuge_radius := 2.5
 @export var cleave_damage := 12
@@ -45,6 +50,9 @@ var experience := 0
 var owned_items: Dictionary[StringName, ValeItem] = {}
 var equipped_weapon: ValeItem
 var equipped_armor: ValeItem
+var equipped_bag: ValeItem
+var waiting_rewards: Dictionary[StringName, ValeItem] = {}
+var bag_feedback := ""
 
 func _ready() -> void:
 	spawn_position = global_position
@@ -52,9 +60,12 @@ func _ready() -> void:
 	$Visual/Body.material_override = body_material
 	blade_material = blade.mesh.material.duplicate()
 	blade.material_override = blade_material
-	for item in [starting_weapon, starting_armor]:
-		if grant_item(item):
+	for item: ValeItem in [starting_bag, starting_weapon, starting_armor]:
+		if item and item.id != &"":
+			owned_items[item.id] = item
 			equip_item(item.id)
+	for item in starting_supplies:
+		grant_item(item)
 	health.died.connect(_die)
 	_build_cleave_arc()
 	reset_combat()
@@ -92,12 +103,15 @@ func has_cleave() -> bool:
 	return level >= CLEAVE_UNLOCK_LEVEL
 
 func award_experience(amount: int) -> void:
+	var previous_experience := experience
 	experience = clampi(experience + maxi(0, amount), 0, LEVEL_THREE_XP)
 	if experience >= LEVEL_THREE_XP:
 		level = 3
 	elif experience >= LEVEL_TWO_XP:
 		level = maxi(level, 2)
 	health.increase_maximum(maximum_health())
+	if experience != previous_experience:
+		progression_changed.emit()
 
 func next_level_experience() -> int:
 	match level:
@@ -112,23 +126,65 @@ func maximum_health() -> int:
 	return stats.max_health + (level - 1) * health_per_level
 
 func grant_item(item: ValeItem) -> bool:
-	if item == null or item.id == &"" or owned_items.has(item.id):
+	if item == null or item.id == &"" or owned_items.has(item.id) or waiting_rewards.has(item.id):
+		return false
+	if free_bag_slots() <= 0:
+		waiting_rewards[item.id] = item
+		bag_feedback = "Bag is full. %s is waiting to be claimed." % item.display_name
 		return false
 	owned_items[item.id] = item
 	return true
+
+func claim_reward(item_id: StringName) -> bool:
+	var item := waiting_rewards.get(item_id) as ValeItem
+	if item == null:
+		return false
+	if free_bag_slots() <= 0:
+		bag_feedback = "Bag is full. %s is waiting to be claimed." % item.display_name
+		return false
+	waiting_rewards.erase(item_id)
+	owned_items[item_id] = item
+	bag_feedback = "%s added to your bag." % item.display_name
+	return true
+
+func stored_items() -> Array[ValeItem]:
+	var items: Array[ValeItem] = []
+	for item in owned_items.values():
+		if item != equipped_weapon and item != equipped_armor and item != equipped_bag:
+			items.append(item)
+	return items
+
+func bag_capacity() -> int:
+	return equipped_bag.bag_slots if equipped_bag else 0
+
+func free_bag_slots() -> int:
+	return bag_capacity() - stored_items().size()
 
 func equip_item(item_id: StringName) -> bool:
 	var item := owned_items.get(item_id) as ValeItem
 	if item == null:
 		return false
-	if item.slot == ValeItem.Slot.WEAPON:
+	bag_feedback = ""
+	if item == equipped_weapon or item == equipped_armor or item == equipped_bag:
+		return true
+	if item.slot == ValeItem.Slot.BAG:
+		var slots_after_swap := stored_items().size() - (0 if equipped_bag else 1)
+		if slots_after_swap > item.bag_slots:
+			bag_feedback = "%s has %d slots. Your stored items need %d." % [
+				item.display_name, item.bag_slots, slots_after_swap]
+			return false
+		equipped_bag = item
+	elif item.slot == ValeItem.Slot.WEAPON:
 		equipped_weapon = item
 		blade_material.albedo_color = item.blade_color
-	else:
+	elif item.slot == ValeItem.Slot.ARMOR:
 		equipped_armor = item
 		if hit_tween:
 			hit_tween.kill()
 		body_material.albedo_color = _coat_color()
+	else:
+		return false
+	equipment_changed.emit()
 	return true
 
 func sword_damage() -> int:

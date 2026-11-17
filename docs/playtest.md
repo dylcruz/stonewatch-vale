@@ -80,3 +80,58 @@ The Watchpost developer scene now ends at the arena walls. It keeps the original
 **Automated on Windows with Godot 4.7.2 Standard.** Both bakes and all five regression suites passed. The Watchpost bake has 40 polygons, and all 75 quest checks passed. The route suite verified the two closed exits and completed the timed crossing in the main game with the same baked mesh.
 
 - [ ] Open `scenes/watchpost_playtest.tscn` and press **F6**. Walk to the east and north walls, then return to Captain Mara in the square. Press **F5** after stopping the playtest to verify that Pine Meadow and North Road are open from town.
+
+## Save checkpoint
+
+**Automated on Windows with Godot 4.7.2 Standard.** All six regression suites passed. The save suite launched seven separate Godot processes and checked town recovery, unreadable-slot handling, a mid-quest relaunch, both Captain defeat paths, and equipment and progress after the final turn-in.
+
+- [ ] Press **F5**, start **New Game**, stop the game, and select **Continue** after relaunching. Verify the Warrior starts in the town square.
+- [ ] Run `godot --path . -- --watchpost-save`, accept a quest, advance the objective, and relaunch. Verify Continue returns to the refuge with the same journal progress and equipped gear.
+
+## Vale scenery and collision
+
+Pine trunks, outcrops, and the two Birchwater bridge rails have obstacle collision. Lower woodland fills the view beyond Pine Meadow and North Road. Birchwater continues into the woods, and stone peaks frame the Signal Ridge cliffs. [Issue #20](https://github.com/dylcruz/stonewatch-vale/issues/20), [issue #21](https://github.com/dylcruz/stonewatch-vale/issues/21)
+
+**Automated on Windows with Godot 4.7.2 Standard.** The Watchpost and town bakes saved 52 and 1,880 polygons respectively. The route suite verifies both bridge directions, walking around a trunk and an outcrop, physical collision at both rails, and command preservation when clicking solid objects or scenic boundaries. The Compatibility renderer was used to inspect North Road, Heather Rest, the timber bridge, and the Signal Ridge lookout.
+
+- [ ] Walk across the timber bridge both ways and click each rail while moving down the deck.
+- [ ] At Heather Rest and Signal Ridge, check the woodland and peaks from the trail. Click beyond the edge while moving and verify the original destination remains active.
+
+## Character and inventory
+
+**I** opens the character panel. Equipped weapon, armor, and bag appear above the stored items. The Trail Pack holds six items and the Scout Pouch holds two. A bag change that would overflow is refused. Rewards wait for a free slot and can be claimed from the panel. [Issue #22](https://github.com/dylcruz/stonewatch-vale/issues/22), [issue #23](https://github.com/dylcruz/stonewatch-vale/issues/23)
+
+**Automated on Windows with Godot 4.7.2 Standard.** The character and inventory suite passed 15 checks, including live health and level updates, both gear upgrades, full-bag feedback, waiting rewards, and safe bag changes.
+
+- [ ] In the Watchpost developer scene, equip the Scout Pouch. Earn the Iron Sword and the Warden’s Coat. One reward should wait until you equip the Trail Pack and claim it. Attempt to equip the Scout Pouch again while storing three items.
+
+## World map
+
+Press **M** in the main Vale to see the route cells you have entered. Landmarks appear when their area is explored. A fresh run starts with only the town square area revealed. Exploration stays visible while traveling elsewhere in the same run. [Issue #24](https://github.com/dylcruz/stonewatch-vale/issues/24)
+
+**Automated on Windows with Godot 4.7.2 Standard.** All six suites passed. The map suite passed 16 checks covering concealed terrain, different orders, walking into a new area, revisits, and HUD input. The fresh and partially explored views were checked with the Compatibility renderer.
+
+- [ ] Open the map in town, then walk to Heather Rest or Birchwater first. Verify only the traveled area and discovered landmarks are shown. Leave and reopen the map to check that the first area remains visible.
+
+## Windows release verification baseline
+
+The baseline was `6a92fe4bd4cf83bfe640da64eea57b7cdc8238c7` on Windows with Godot Standard `4.7.2.stable.official.ed1daf0bf` and the Compatibility renderer. [Issue #13](https://github.com/dylcruz/stonewatch-vale/issues/13), [issue #15](https://github.com/dylcruz/stonewatch-vale/issues/15)
+
+| Check | Observed result |
+| --- | --- |
+| Five existing regression suites | Passed on Windows. |
+| Fresh Watchpost route with graphics | 75 automated checks passed. All three turn-ins succeeded with the optional enemies alive. |
+| Sword, coat, and level | The Iron Sword dealt 12 damage, the coat added 2 armor, and the required route reached level 3 at 240 XP. |
+| Captain heavy attack | Moving clear avoided the hit. Guard halved it to 10 damage. |
+| Windows x86_64 baseline export | Built from a clean copy of the baseline with the official 4.7.2 release template. The staged preset pointed at the downloaded template and declared an empty include filter. |
+| Clean-directory graphical launch | `builds/windows-verification-6a92fe4/clean/StonewatchVale.exe` started with Compatibility and exited successfully after 120 frames. Its directory contained only the executable. |
+
+The SHA-256 of the local baseline executable is `87ce05891eaf579dee44d41820989a075a9d8f8d3854a7d60bac6f3808717957`. The sandbox reported user-data and shader-cache write errors during the local smoke tests.
+
+See [the release review notes](review-issues-13-15.md) for the final candidate checklist.
+
+## Integrated issue branches
+
+**Automated on Windows with Godot 4.7.2 Standard.** All eight regression suites passed. The relaunch suite verifies the equipped bag, stored gear, and unclaimed rewards through Continue, including a checkpoint from before bags were introduced.
+
+The route suite passed 55 checks with `--pace` enabled. It walked from the town entrance to Heather Rest, then measured 623.1 meters and 127.3 seconds of simulation time from Heather Rest to Signal Ridge via North Road. The scripted clicks use the open trail around two newly solid meadow pines.
