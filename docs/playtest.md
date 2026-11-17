@@ -38,9 +38,7 @@ From a fresh **F5** run, speak to Mara. The opening dialogue shows **Clear Pine 
 
 **Automated on Windows with Godot 4.7.2 Standard.** All five suites passed on the build with the Vale routes and revised XP. The quest suite passed 75 assertions, including both starting offers, independent objectives, both turn-in orders, and HUD tracking. Both offers and the two accepted quests were visible with the Compatibility renderer.
 
-- [ ] Accept both quests before turning either in. Use **Track** in **J** to switch the HUD objective during a movement command.
-- [ ] Defeat one road wolf and recover the crate. Confirm that Clear Pine Road shows `1 / 3` and Recover the Supplies is ready to turn in.
-- [ ] Return with both quests ready. Turn in either one and verify that the other stays ready. Turn in both and confirm Break the Blockade becomes available at 155 XP.
+**Windows user playtest passed.**
 
 ## Vale routes checkpoint
 
