@@ -1,7 +1,5 @@
 [gd_scene format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/vale/trail_sign.tscn" id="Sign"]
-
 [ext_resource type="PackedScene" path="res://scenes/vale/pine.tscn" id="Pine"]
 
 [sub_resource type="StandardMaterial3D" id="Trail"]
@@ -18,13 +16,6 @@ roughness = 0.95
 position = Vector3(0, 0.023, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 polygon = PackedVector2Array(1.5, -8.2, 7.57116, -8.2, 9.50792, -5.81631, 9.40077, -0.03023, 9.80393, 5.81571, 9.39621, 10.09682, 9.19734, 13.07982, 6.80266, 12.92018, 7.00379, 9.90318, 7.39607, 5.78429, 6.99923, 0.03023, 7.09208, -4.98369, 6.42884, -5.8, 1.5, -5.8)
-depth = 0.012
-material = SubResource("Trail")
-
-[node name="MeadowApproach" type="CSGPolygon3D" parent="."]
-position = Vector3(0, 0.027, 0)
-rotation_degrees = Vector3(-90, 0, 0)
-polygon = PackedVector2Array(7.38261, -7.42899, 9.66762, -8.8, 13, -8.8, 13, -6.4, 10.33238, -6.4, 8.61739, -5.37101)
 depth = 0.012
 material = SubResource("Trail")
 
@@ -103,28 +94,6 @@ material = SubResource("Oak")
 position = Vector3(0.468, 0.55, 10)
 size = Vector3(0.27, 1.1, 0.27)
 material = SubResource("Oak")
-
-[node name="MeadowSign" parent="." instance=ExtResource("Sign")]
-position = Vector3(11.4, 0, 8.8)
-
-[node name="MeadowSignLabel" type="Label3D" parent="."]
-position = Vector3(11.4, 2.4, 8.8)
-pixel_size = 0.019
-font_size = 32
-billboard = 1
-modulate = Color(0.98, 0.89, 0.65, 1)
-text = "PINE MEADOW →"
-
-[node name="NorthRoadSign" parent="." instance=ExtResource("Sign")]
-position = Vector3(11.4, 0, -10.5)
-
-[node name="NorthRoadSignLabel" type="Label3D" parent="."]
-position = Vector3(11.4, 2.4, -10.5)
-pixel_size = 0.019
-font_size = 32
-billboard = 1
-modulate = Color(0.98, 0.89, 0.65, 1)
-text = "BIRCHWATER / RIDGE ↑"
 
 [node name="WatchpostPine" parent="." instance=ExtResource("Pine")]
 position = Vector3(-5.8, 0, 10.7)

@@ -273,6 +273,13 @@ func run() -> void:
 		and region.has_node("WatchpostLandmarks/QuarryGate")
 		and region.has_node("WatchpostLandmarks/CartBed") and region.has_node("WatchpostLandmarks/CampSignLabel"),
 		"The developer scene keeps the original landmarks and their dressing")
+	check(not region.has_node("NorthRoad") and not region.has_node("MeadowLoop")
+		and not region.has_node("BirchwaterLoop") and not region.has_node("LookoutRidgeLoop"),
+		"The outer Vale routes are absent from the Watchpost developer scene")
+	var watchpost_spawn := player.global_position
+	check(not connected(watchpost_spawn, Vector3(16.5, 0, 7.5))
+		and not connected(watchpost_spawn, Vector3(8, 0, -17)),
+		"The old east and north exits terminate at the Watchpost boundary")
 
 	print("Vale route checks complete; assertions: ", assertions, "; failures: ", failures)
 	world.queue_free()

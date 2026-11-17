@@ -72,3 +72,11 @@ A fresh game starts in the town square on the old Watchpost site. The town hall,
 **Automated on Windows with Godot 4.7.2 Standard.** Both navigation bakes and all five regression suites passed. The route suite walked around the new cottages and out to Pine Meadow, opened the empty journal and gear panel, and verified town square recovery. The separate Watchpost scene retained both landmarks and passed all 75 quest checks.
 
 **Windows user playtest passed.** The user confirmed the starting town checkpoint on November 16, 2026.
+
+## Compact Watchpost developer scene
+
+The Watchpost developer scene now ends at the arena walls. It keeps the original encounters, campsite, Quarry Gate, and the three quests. The main game loads the larger Vale routes.
+
+**Automated on Windows with Godot 4.7.2 Standard.** Both bakes and all five regression suites passed. The Watchpost bake has 40 polygons, and all 75 quest checks passed. The route suite verified the two closed exits and completed the timed crossing in the main game with the same baked mesh.
+
+- [ ] Open `scenes/watchpost_playtest.tscn` and press **F6**. Walk to the east and north walls, then return to Captain Mara in the square. Press **F5** after stopping the playtest to verify that Pine Meadow and North Road are open from town.

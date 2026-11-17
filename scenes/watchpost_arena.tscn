@@ -1,9 +1,5 @@
 [gd_scene format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/vale/birchwater_loop.tscn" id="BirchwaterLoop"]
-[ext_resource type="PackedScene" path="res://scenes/vale/lookout_ridge_loop.tscn" id="LookoutRidgeLoop"]
-[ext_resource type="PackedScene" path="res://scenes/vale/meadow_loop.tscn" id="MeadowLoop"]
-[ext_resource type="PackedScene" path="res://scenes/vale/north_road.tscn" id="NorthRoad"]
 [ext_resource type="PackedScene" path="res://scenes/vale/watchpost_dressing.tscn" id="WatchpostDressing"]
 
 [sub_resource type="Environment" id="Env"]
@@ -215,14 +211,6 @@ mesh = SubResource("UnreachableIslandMesh")
 shape = SubResource("UnreachableIslandShape")
 
 [node name="WatchpostDressing" type="Node3D" parent="NavigationRegion3D" unique_id=871076187 instance=ExtResource("WatchpostDressing")]
-
-[node name="NorthRoad" type="Node3D" parent="NavigationRegion3D" unique_id=1940482134 instance=ExtResource("NorthRoad")]
-
-[node name="MeadowLoop" type="Node3D" parent="NavigationRegion3D" unique_id=119685581 instance=ExtResource("MeadowLoop")]
-
-[node name="BirchwaterLoop" type="Node3D" parent="NavigationRegion3D" unique_id=1588250954 instance=ExtResource("BirchwaterLoop")]
-
-[node name="LookoutRidgeLoop" type="Node3D" parent="NavigationRegion3D" unique_id=403337571 instance=ExtResource("LookoutRidgeLoop")]
 
 [node name="WestPath" type="MeshInstance3D" parent="." unique_id=1522729427]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.012, 0)

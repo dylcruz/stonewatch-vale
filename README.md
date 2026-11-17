@@ -25,7 +25,7 @@ A single-player 3D action RPG prototype set in Stonewatch Vale. Explore the Vale
 
 ## Watchpost developer playtest
 
-Stop the running game with **F8**. In Godot's FileSystem panel, double-click `res://scenes/watchpost_playtest.tscn` to make it the active scene, then press **F6**. The HUD reads **WATCHPOST PLAYTEST**. You can also launch it directly with `godot --path . res://scenes/watchpost_playtest.tscn`.
+Stop the running game with **F8**. In Godot's FileSystem panel, double-click `res://scenes/watchpost_playtest.tscn` to make it the active scene, then press **F6**. The HUD reads **WATCHPOST PLAYTEST**. The scene is bounded by the walls of the original Watchpost area. You can also launch it directly with `godot --path . res://scenes/watchpost_playtest.tscn`.
 
 Speak to Captain Mara for **Clear Pine Road** and **Recover the Supplies**. Turn in both to unlock **Break the Blockade**. Progress stays in the current run, including through defeat and recovery.
 
@@ -49,7 +49,7 @@ The three loops are accessible from a fresh game.
 
 ## Edit and bake
 
-`scenes/stonewatch_vale.tscn` and `scenes/watchpost_playtest.tscn` both inherit `scenes/vale_gameplay.tscn`, which holds the shared player and HUD. The terrain and routes come from `scenes/watchpost_arena.tscn`. The main scene adds `scenes/vale/starting_town.tscn`. The Watchpost developer scene adds `scenes/vale/watchpost_landmarks.tscn` and the original quest and combat fixtures. Each scene has its own baked navigation mesh. Quest, combat, and item definitions live under `data/`. Player movement lives in `scripts/player.gd`, ray picking in `scripts/world_input.gd`, and camera following in `scripts/follow_camera.gd`.
+`scenes/stonewatch_vale.tscn` and `scenes/watchpost_playtest.tscn` both inherit `scenes/vale_gameplay.tscn`. The shared scene holds the player and HUD on the local terrain from `scenes/watchpost_arena.tscn`. The main scene adds the starting town, North Road, Pine Meadow, Birchwater, and Signal Ridge. The Watchpost developer scene adds `scenes/vale/watchpost_landmarks.tscn` and the original quest and combat fixtures. Each scene has its own baked navigation mesh. Quest, combat, and item definitions live under `data/`. Player movement lives in `scripts/player.gd`, ray picking in `scripts/world_input.gd`, and camera following in `scripts/follow_camera.gd`.
 
 Warrior abilities live in `scripts/warrior.gd`. The wolf and raiders share aggro, navigation, and basic attack timing through `scripts/enemy.gd`. The Captain inherits `scenes/raider.tscn` and enables the heavy attack in `scripts/raider.gd`. Tune HP, basic damage, reach, windup, and attack intervals in the actor resources under `data/`. Ability and pursuit settings are exported on the actor nodes. The `Watchpost` marker sets the recovery position and the center of the refuge.
 
