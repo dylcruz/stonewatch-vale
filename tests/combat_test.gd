@@ -75,6 +75,17 @@ func run() -> void:
 	await frames(5)
 	await NAVIGATION.wait_for_spawn(world, warrior)
 	check(warrior.health.current == 60 and wolf.health.current == 40, "Actors start at their tuned maximum health")
+	var identity: ValePlayerIdentity = warrior.identity
+	check(identity != null and identity.faction == "Dawnward Compact"
+		and identity.race == "Human" and identity.player_class == "Warrior",
+		"The shared player scene loads its authored faction, race, and class")
+	var alternate: ValePlayerIdentity = identity.duplicate()
+	alternate.faction = "Alternate faction"
+	check(alternate.race == "Human" and alternate.player_class == "Warrior"
+		and identity.faction == "Dawnward Compact", "Faction can be authored independently of race and class")
+	check(warrior.level == 1 and warrior.equipped_weapon == warrior.starting_weapon
+		and warrior.equipped_armor == warrior.starting_armor and warrior.sword_damage() == 8,
+		"The Warrior still starts with the training sword and travel coat")
 	press_key(KEY_1)
 	check(not warrior.has_cleave() and warrior.cleave_cooldown_remaining == 0.0,
 		"Level 1 Warrior cannot cast Cleave")
