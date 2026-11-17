@@ -1,0 +1,374 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/vale/trail_sign.tscn" id="Sign"]
+
+[ext_resource type="PackedScene" path="res://scenes/vale/pine.tscn" id="Pine"]
+
+[ext_resource type="PackedScene" path="res://scenes/vale/outcrop.tscn" id="Rock"]
+
+[sub_resource type="StandardMaterial3D" id="RidgeGrass"]
+albedo_color = Color(0.33, 0.37, 0.28, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="RidgeSlope"]
+albedo_color = Color(0.36, 0.37, 0.29, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Trail"]
+albedo_color = Color(0.48, 0.41, 0.29, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Slate"]
+albedo_color = Color(0.4, 0.44, 0.43, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Timber"]
+albedo_color = Color(0.39, 0.27, 0.17, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Signal"]
+albedo_color = Color(0.77, 0.38, 0.18, 1)
+roughness = 0.95
+
+[node name="LookoutRidgeLoop" type="Node3D"]
+
+[node name="RidgePlateau" type="CSGPolygon3D" parent="." groups=["walkable"]]
+position = Vector3(0, 12, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(-68, 246, -79, 231, -105, 225, -136, 234, -155, 249, -174, 272, -187, 300, -202, 327, -201, 347, -187, 369, -161, 378, -135, 367, -116, 368, -88, 354, -69, 355, -61, 347, -61, 324, -70, 308, -81, 283, -68, 269)
+depth = 15
+material = SubResource("RidgeGrass")
+use_collision = true
+collision_layer = 1
+collision_mask = 4
+
+[node name="SouthClimb" type="CSGPolygon3D" parent="." groups=["walkable"]]
+transform = Transform3D(0.97038, 0, 0.24159, -0.24159, 0, 0.97038, 0, -1, 0, -19.8, 0, -256)
+polygon = PackedVector2Array(-50.02132, 5.2, 0, 5.95, 0.6, -5.95, -50.02132, -5.2)
+depth = 2.8
+material = SubResource("RidgeSlope")
+use_collision = true
+collision_layer = 1
+collision_mask = 4
+
+[node name="SouthClimbTrail" type="CSGPolygon3D" parent="."]
+transform = Transform3D(0.97038, 0, 0.24159, -0.24159, 0, 0.97038, 0, -1, 0, -19.8, 0.024, -256)
+polygon = PackedVector2Array(-49.98132, 2, 0.2, 2, 0.2, -2, -49.98132, -2)
+depth = 0.01
+material = SubResource("Trail")
+
+[node name="SouthClimbApproach" type="CSGPolygon3D" parent="."]
+position = Vector3(0, 0.021, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(6.17202, 256.8922, -4.91381, 257.9, -20.3, 257.9, -20.3, 254.1, -5.08619, 254.1, 5.82798, 253.1078)
+depth = 0.012
+material = SubResource("Trail")
+
+[node name="SouthClimbSouthCut" type="CSGPolygon3D" parent="."]
+position = Vector3(0, 1.65, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(-15.9, 251.45, -18.3, 252.05, -24.1, 251.9, -27, 250.65, -25.6, 248.8, -17.7, 249.1)
+depth = 2.5
+material = SubResource("Slate")
+use_collision = true
+collision_layer = 2
+collision_mask = 4
+
+[node name="SouthClimbNorthCut" type="CSGPolygon3D" parent="."]
+position = Vector3(0, 1.8, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(-16.7, 260.55, -20.5, 259.95, -25.8, 260.2, -27, 262.2, -21.4, 263.4, -17.5, 262.6)
+depth = 2.7
+material = SubResource("Slate")
+use_collision = true
+collision_layer = 2
+collision_mask = 4
+
+[node name="NorthClimb" type="CSGPolygon3D" parent="." groups=["walkable"]]
+transform = Transform3D(0.9601, 0, 0.27964, -0.27964, 0, 0.9601, 0, -1, 0, -19.8, 0, -336)
+polygon = PackedVector2Array(-43.262, 4.8, 0, 5.55, 0.6, -5.55, -43.262, -4.8)
+depth = 2.8
+material = SubResource("RidgeSlope")
+use_collision = true
+collision_layer = 1
+collision_mask = 4
+
+[node name="NorthClimbTrail" type="CSGPolygon3D" parent="."]
+transform = Transform3D(0.9601, 0, 0.27964, -0.27964, 0, 0.9601, 0, -1, 0, -19.8, 0.024, -336)
+polygon = PackedVector2Array(-43.222, 2, 0.2, 2, 0.2, -2, -43.222, -2)
+depth = 0.01
+material = SubResource("Trail")
+
+[node name="NorthClimbApproach" type="CSGPolygon3D" parent="."]
+position = Vector3(0, 0.021, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(6.17202, 336.8922, -4.91381, 337.9, -20.3, 337.9, -20.3, 334.1, -5.08619, 334.1, 5.82798, 333.1078)
+depth = 0.012
+material = SubResource("Trail")
+
+[node name="NorthClimbSouthCut" type="CSGPolygon3D" parent="."]
+position = Vector3(0, 1.65, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(-15.9, 331.45, -18.3, 332.05, -24.1, 331.9, -27, 330.65, -25.6, 328.8, -17.7, 329.1)
+depth = 2.5
+material = SubResource("Slate")
+use_collision = true
+collision_layer = 2
+collision_mask = 4
+
+[node name="NorthClimbNorthCut" type="CSGPolygon3D" parent="."]
+position = Vector3(0, 1.8, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(-16.7, 340.55, -20.5, 339.95, -25.8, 340.2, -27, 342.2, -21.4, 343.4, -17.5, 342.6)
+depth = 2.7
+material = SubResource("Slate")
+use_collision = true
+collision_layer = 2
+collision_mask = 4
+
+[node name="RidgeCrestPath" type="CSGPolygon3D" parent="."]
+position = Vector3(0, 12.025, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(-67.9, 257.6, -82.90434, 257.6, -107.44803, 260.54524, -129.08916, 274.31687, -148.89681, 289.17261, -165.72047, 308.96515, -181.26779, 332.28612, -177.67152, 345.77215, -161.89592, 351.34, -139.42415, 346.45484, -118.39224, 339.4442, -95.13809, 335.4, -77.04964, 335.4, -60.99919, 334.40308, -60.80081, 337.59692, -76.95036, 338.6, -94.86191, 338.6, -117.60776, 342.5558, -138.57585, 349.54516, -162.10408, 354.66, -180.32848, 348.22785, -184.73221, 331.71388, -168.27953, 307.03485, -151.10319, 286.82739, -130.91084, 271.68313, -108.55197, 257.45476, -83.09566, 254.4, -67.9, 254.4)
+depth = 0.012
+material = SubResource("Trail")
+
+[node name="HighCut" type="CSGPolygon3D" parent="."]
+position = Vector3(0, 12.019, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+polygon = PackedVector2Array(-107.9427, 259.22027, -112.97324, 283.36684, -124.95699, 306.33571, -127.95414, 327.3157, -138.02491, 348.46433, -139.97509, 347.53567, -130.04586, 326.6843, -127.04301, 305.66429, -115.02676, 282.63316, -110.0573, 258.77973)
+depth = 0.012
+material = SubResource("Trail")
+
+[node name="SouthClimbSign" parent="." instance=ExtResource("Sign")]
+position = Vector3(-16, 0, -251.1)
+
+[node name="SouthClimbSignLabel" type="Label3D" parent="."]
+position = Vector3(-16, 2.4, -251.1)
+pixel_size = 0.019
+font_size = 32
+billboard = 1
+modulate = Color(0.98, 0.89, 0.65, 1)
+text = "← SIGNAL RIDGE CLIMB"
+
+[node name="NorthClimbSign" parent="." instance=ExtResource("Sign")]
+position = Vector3(-16, 0, -331.5)
+
+[node name="NorthClimbSignLabel" type="Label3D" parent="."]
+position = Vector3(-16, 2.4, -331.5)
+pixel_size = 0.019
+font_size = 32
+billboard = 1
+modulate = Color(0.98, 0.89, 0.65, 1)
+text = "← SIGNAL RIDGE CLIMB"
+
+[node name="HighCutSign" parent="." instance=ExtResource("Sign")]
+position = Vector3(-110, 12, -263.5)
+
+[node name="HighCutSignLabel" type="Label3D" parent="."]
+position = Vector3(-110, 14.4, -263.5)
+pixel_size = 0.019
+font_size = 32
+billboard = 1
+modulate = Color(0.98, 0.89, 0.65, 1)
+text = "RIDGE PATH"
+
+[node name="LookoutLabel" type="Label3D" parent="."]
+position = Vector3(-183, 17.9, -347)
+pixel_size = 0.025
+font_size = 32
+billboard = 1
+modulate = Color(0.98, 0.89, 0.65, 1)
+text = "SIGNAL RIDGE LOOKOUT"
+
+[node name="SignalPlinth" type="CSGBox3D" parent="."]
+position = Vector3(-183, 12.45, -349.5)
+rotation_degrees = Vector3(0, 11, 0)
+size = Vector3(3.5, 0.9, 2.6)
+material = SubResource("Slate")
+use_collision = true
+collision_layer = 2
+collision_mask = 4
+
+[node name="SignalMast" type="CSGBox3D" parent="."]
+position = Vector3(-183, 14.75, -349.5)
+size = Vector3(0.31, 4.5, 0.31)
+material = SubResource("Timber")
+
+[node name="SignalFlag" type="CSGBox3D" parent="."]
+position = Vector3(-182.15, 16.7, -349.5)
+rotation_degrees = Vector3(0, -8, 0)
+size = Vector3(1.6, 0.9, 0.09)
+material = SubResource("Signal")
+
+[node name="LookoutRail" type="CSGBox3D" parent="."]
+position = Vector3(-188, 12.7, -344)
+rotation_degrees = Vector3(0, -13, 0)
+size = Vector3(0.18, 0.22, 8.7)
+material = SubResource("Timber")
+
+[node name="LookoutRailPost1" type="CSGBox3D" parent="."]
+position = Vector3(-187.05, 12.45, -348.1)
+size = Vector3(0.24, 0.9, 0.24)
+material = SubResource("Timber")
+
+[node name="LookoutRailPost2" type="CSGBox3D" parent="."]
+position = Vector3(-188, 12.45, -344)
+size = Vector3(0.24, 0.9, 0.24)
+material = SubResource("Timber")
+
+[node name="LookoutRailPost3" type="CSGBox3D" parent="."]
+position = Vector3(-188.95, 12.45, -339.9)
+size = Vector3(0.24, 0.9, 0.24)
+material = SubResource("Timber")
+
+[node name="RidgePine01" parent="." instance=ExtResource("Pine")]
+position = Vector3(-80, 12, -249)
+scale = Vector3(0.88, 0.88, 0.88)
+
+[node name="RidgePine02" parent="." instance=ExtResource("Pine")]
+position = Vector3(-87, 12, -264)
+scale = Vector3(1.07, 1.07, 1.07)
+
+[node name="RidgePine03" parent="." instance=ExtResource("Pine")]
+position = Vector3(-105, 12, -241)
+scale = Vector3(1.24, 1.24, 1.24)
+
+[node name="RidgePine04" parent="." instance=ExtResource("Pine")]
+position = Vector3(-115, 12, -249)
+scale = Vector3(0.86, 0.86, 0.86)
+
+[node name="RidgePine05" parent="." instance=ExtResource("Pine")]
+position = Vector3(-126, 12, -258)
+scale = Vector3(1.2, 1.2, 1.2)
+
+[node name="RidgePine06" parent="." instance=ExtResource("Pine")]
+position = Vector3(-141, 12, -268)
+scale = Vector3(0.97, 0.97, 0.97)
+
+[node name="RidgePine07" parent="." instance=ExtResource("Pine")]
+position = Vector3(-145, 12, -278)
+scale = Vector3(0.82, 0.82, 0.82)
+
+[node name="RidgePine08" parent="." instance=ExtResource("Pine")]
+position = Vector3(-164, 12, -289)
+scale = Vector3(1.15, 1.15, 1.15)
+
+[node name="RidgePine09" parent="." instance=ExtResource("Pine")]
+position = Vector3(-154, 12, -304)
+scale = Vector3(1.16, 1.16, 1.16)
+
+[node name="RidgePine10" parent="." instance=ExtResource("Pine")]
+position = Vector3(-173, 12, -320)
+scale = Vector3(1.15, 1.15, 1.15)
+
+[node name="RidgePine11" parent="." instance=ExtResource("Pine")]
+position = Vector3(-175, 12, -331)
+scale = Vector3(0.9, 0.9, 0.9)
+
+[node name="RidgePine12" parent="." instance=ExtResource("Pine")]
+position = Vector3(-194, 12, -330)
+scale = Vector3(0.96, 0.96, 0.96)
+
+[node name="RidgePine13" parent="." instance=ExtResource("Pine")]
+position = Vector3(-193, 12, -354)
+scale = Vector3(1.19, 1.19, 1.19)
+
+[node name="RidgePine14" parent="." instance=ExtResource("Pine")]
+position = Vector3(-170, 12, -360)
+scale = Vector3(0.95, 0.95, 0.95)
+
+[node name="RidgePine15" parent="." instance=ExtResource("Pine")]
+position = Vector3(-150, 12, -355)
+scale = Vector3(1.08, 1.08, 1.08)
+
+[node name="RidgePine16" parent="." instance=ExtResource("Pine")]
+position = Vector3(-143, 12, -339)
+scale = Vector3(0.94, 0.94, 0.94)
+
+[node name="RidgePine17" parent="." instance=ExtResource("Pine")]
+position = Vector3(-126, 12, -350)
+scale = Vector3(1.22, 1.22, 1.22)
+
+[node name="RidgePine18" parent="." instance=ExtResource("Pine")]
+position = Vector3(-108, 12, -347)
+scale = Vector3(0.89, 0.89, 0.89)
+
+[node name="RidgePine19" parent="." instance=ExtResource("Pine")]
+position = Vector3(-93, 12, -346)
+scale = Vector3(1.15, 1.15, 1.15)
+
+[node name="RidgePine20" parent="." instance=ExtResource("Pine")]
+position = Vector3(-82, 12, -343)
+scale = Vector3(1.18, 1.18, 1.18)
+
+[node name="RidgePine21" parent="." instance=ExtResource("Pine")]
+position = Vector3(-71, 12, -331)
+scale = Vector3(0.84, 0.84, 0.84)
+
+[node name="RidgeStack01" parent="." instance=ExtResource("Rock")]
+position = Vector3(-81, 12, -242)
+rotation_degrees = Vector3(0, 29, 0)
+scale = Vector3(1.9, 1.9, 1.9)
+
+[node name="RidgeStack02" parent="." instance=ExtResource("Rock")]
+position = Vector3(-97, 12, -248)
+rotation_degrees = Vector3(0, 58, 0)
+scale = Vector3(1.5, 1.5, 1.5)
+
+[node name="RidgeStack03" parent="." instance=ExtResource("Rock")]
+position = Vector3(-124, 12, -254)
+rotation_degrees = Vector3(0, 87, 0)
+scale = Vector3(2.4, 2.4, 2.4)
+
+[node name="RidgeStack04" parent="." instance=ExtResource("Rock")]
+position = Vector3(-151, 12, -277)
+rotation_degrees = Vector3(0, 116, 0)
+scale = Vector3(2, 2, 2)
+
+[node name="RidgeStack05" parent="." instance=ExtResource("Rock")]
+position = Vector3(-168, 12, -297)
+rotation_degrees = Vector3(0, 145, 0)
+scale = Vector3(1.7, 1.7, 1.7)
+
+[node name="RidgeStack06" parent="." instance=ExtResource("Rock")]
+position = Vector3(-181, 12, -319)
+rotation_degrees = Vector3(0, 174, 0)
+scale = Vector3(2.3, 2.3, 2.3)
+
+[node name="RidgeStack07" parent="." instance=ExtResource("Rock")]
+position = Vector3(-191, 12, -338)
+rotation_degrees = Vector3(0, 203, 0)
+scale = Vector3(1.4, 1.4, 1.4)
+
+[node name="RidgeStack08" parent="." instance=ExtResource("Rock")]
+position = Vector3(-173, 12, -360)
+rotation_degrees = Vector3(0, 232, 0)
+scale = Vector3(1.9, 1.9, 1.9)
+
+[node name="RidgeStack09" parent="." instance=ExtResource("Rock")]
+position = Vector3(-128, 12, -339)
+rotation_degrees = Vector3(0, 261, 0)
+scale = Vector3(1.6, 1.6, 1.6)
+
+[node name="RidgeStack10" parent="." instance=ExtResource("Rock")]
+position = Vector3(-92, 12, -345)
+rotation_degrees = Vector3(0, 290, 0)
+scale = Vector3(1.6, 1.6, 1.6)
+
+[node name="RidgeStack11" parent="." instance=ExtResource("Rock")]
+position = Vector3(-69, 12, -344)
+rotation_degrees = Vector3(0, 319, 0)
+scale = Vector3(1.35, 1.35, 1.35)
+
+[node name="SouthRamp" type="Marker3D" parent="."]
+position = Vector3(-43, 5.775, -256)
+
+[node name="NorthRamp" type="Marker3D" parent="."]
+position = Vector3(-40, 5.8835, -336)
+
+[node name="Lookout" type="Marker3D" parent="."]
+position = Vector3(-179, 12, -344)
+
+[node name="CliffFace" type="Marker3D" parent="."]
+position = Vector3(-95, 5, -227.3)

@@ -185,7 +185,7 @@ mesh = SubResource("FacingMesh")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="Player" unique_id=926327933]
 path_desired_distance = 0.25
-target_desired_distance = 0.3
+target_desired_distance = 0.4
 height = 1.8
 radius = 0.35
 

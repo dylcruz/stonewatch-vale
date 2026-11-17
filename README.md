@@ -31,9 +31,19 @@ For **Break the Blockade**, take the south road west to Quarry Gate. Move out of
 
 Kill objectives count defeats while their quest is active. Wolves, raiders, and the Captain can respawn 30 seconds after any defeat. To let them return, move beyond their leash radius or wait in the green watchpost refuge. The Captain remains available for rematches after Break the Blockade is complete.
 
+## Explore the vale
+
+Follow Pine Road north to the abandoned campsite and its supply cart. Continue west around the ruin to Quarry Gate or take the south road there from the watchpost.
+
+- **Pine Meadow.** Take the east opening at the watchpost, follow the meadow trail to Heather Rest, and take the north trail back to North Road.
+- **Birchwater.** Follow North Road to the signed stone ford or timber bridge. The east-bank trail joins the two crossings.
+- **Signal Ridge.** Follow the signed climbs west of North Road to the signal mast. Take either climb back down to the road.
+
+The three loops are accessible as soon as you leave the watchpost.
+
 ## Edit and bake
 
-`scenes/stonewatch_vale.tscn` contains the playable watchpost, encounters, and HUD. Open its base `scenes/watchpost_arena.tscn` to edit the shared floor, walls, ruin, and baked navigation. Quest, combat, and item definitions live under `data/`. Player movement lives in `scripts/player.gd`, ray picking in `scripts/world_input.gd`, and camera following in `scripts/follow_camera.gd`.
+`scenes/stonewatch_vale.tscn` contains the watchpost encounters and HUD. Its base `scenes/watchpost_arena.tscn` holds the common navigation region and instances the terrain and route scenes under `scenes/vale/`. Edit a route in its own scene, then bake navigation from the base scene. Quest, combat, and item definitions live under `data/`. Player movement lives in `scripts/player.gd`, ray picking in `scripts/world_input.gd`, and camera following in `scripts/follow_camera.gd`.
 
 Warrior abilities live in `scripts/warrior.gd`. The wolf and raiders share aggro, navigation, and basic attack timing through `scripts/enemy.gd`. The Captain inherits `scenes/raider.tscn` and enables the heavy attack in `scripts/raider.gd`. Tune HP, basic damage, reach, windup, and attack intervals in the actor resources under `data/`. Ability and pursuit settings are exported on the actor nodes. The `Watchpost` marker sets the recovery position and the center of the refuge.
 
@@ -56,6 +66,7 @@ godot --headless --editor --path . --import --quit
 godot --headless --path . --script res://tests/movement_test.gd
 godot --headless --path . --script res://tests/combat_test.gd
 godot --headless --path . --script res://tests/quest_chain_test.gd
+godot --headless --path . --script res://tests/vale_routes_test.gd
 ```
 
 Run the breadcrumb draw-buffer checks with a graphical renderer:

@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="Slate"]
+albedo_color = Color(0.34, 0.39, 0.39, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Shale"]
+albedo_color = Color(0.44, 0.44, 0.39, 1)
+roughness = 0.95
+
+[sub_resource type="PrismMesh" id="Slab"]
+material = SubResource("Slate")
+size = Vector3(3.2, 2.4, 2.5)
+left_to_right = 0.28
+
+[sub_resource type="PrismMesh" id="Chip"]
+material = SubResource("Shale")
+size = Vector3(1.8, 1.25, 1.2)
+left_to_right = 0.28
+
+[node name="Outcrop" type="Node3D"]
+
+[node name="Slab" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1, 0)
+mesh = SubResource("Slab")
+
+[node name="Chip" type="MeshInstance3D" parent="."]
+position = Vector3(1.35, 0.45, 0)
+mesh = SubResource("Chip")

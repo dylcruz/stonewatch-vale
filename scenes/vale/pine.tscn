@@ -1,0 +1,48 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="Bark"]
+albedo_color = Color(0.3, 0.22, 0.15, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Needles"]
+albedo_color = Color(0.15, 0.29, 0.22, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Tips"]
+albedo_color = Color(0.22, 0.38, 0.25, 1)
+roughness = 0.95
+
+[sub_resource type="CylinderMesh" id="Trunk"]
+material = SubResource("Bark")
+top_radius = 0.17
+bottom_radius = 0.25
+height = 1.9
+radial_segments = 7
+
+[sub_resource type="CylinderMesh" id="LowerNeedles"]
+material = SubResource("Needles")
+top_radius = 0.18
+bottom_radius = 1.35
+height = 2.5
+radial_segments = 7
+
+[sub_resource type="CylinderMesh" id="Crown"]
+material = SubResource("Tips")
+top_radius = 0.03
+bottom_radius = 1.06
+height = 2.2
+radial_segments = 7
+
+[node name="Pine" type="Node3D"]
+
+[node name="Trunk" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.9, 0)
+mesh = SubResource("Trunk")
+
+[node name="LowerNeedles" type="MeshInstance3D" parent="."]
+position = Vector3(0, 2.3, 0)
+mesh = SubResource("LowerNeedles")
+
+[node name="Crown" type="MeshInstance3D" parent="."]
+position = Vector3(0, 3.64, 0)
+mesh = SubResource("Crown")

@@ -47,3 +47,32 @@ The Captain now follows the same exit and timer rules as regular enemies, includ
 ## Quest journal follow-up
 
 - [ ] Accept two eligible quests before either turn-in. Verify the journal shows both and that turning in one preserves the other’s progress and turn-in state.
+
+## Vale routes checkpoint
+
+The terrain now connects the fenced watchpost, Pine Road, the campsite and supply cart, and Quarry Gate. Pine Meadow rejoins North Road at the north meadow junction. Birchwater has a stone ford and timber bridge linked by an east-bank trail. Two climbs connect Signal Ridge and its lookout to North Road. All three loops are open on a fresh run. [Issue #4](https://github.com/dylcruz/stonewatch-vale/issues/4), [issue #5](https://github.com/dylcruz/stonewatch-vale/issues/5), [issue #6](https://github.com/dylcruz/stonewatch-vale/issues/6), [issue #7](https://github.com/dylcruz/stonewatch-vale/issues/7)
+
+The Windows Godot 4.7.2 bake saved 360 navigation polygons. All five regression suites passed. The route suite passed 22 checks with the timed crossing enabled, including two-way portal, river, and ridge movement, matching placements across fresh runs, and command preservation when clicking deep water or a cliff. The route and landmark views were checked with the Compatibility renderer.
+
+### Recorded timings
+
+Times are 60 Hz simulation time from scripted gameplay clicks on Windows. The watchpost run started from a fresh instance and included combat and turn-ins with zero recoveries. The crossing used camera clicks and walked each leg from Heather Rest onward.
+
+| Route | Measured time |
+| --- | ---: |
+| Watchpost → three road wolves → Mara | 21.7 s |
+| Watchpost run through the supply crate turn-in | 33.4 s cumulative |
+| Watchpost run through the Captain turn-in, optional encounters alive | 42.1 s cumulative |
+| Heather Rest → north meadow junction → North Road → south ridge climb → Signal Ridge lookout, 613.9 m | 124.6 s |
+
+The direct watchpost run is below the 10–15 minute benchmark. Time an exploratory run during the Windows playtest to see where discovery, combat, and optional content can add time. The three existing quest placements are close to Mara. [Issue #8](https://github.com/dylcruz/stonewatch-vale/issues/8)
+
+To rerun the automated crossing, append `-- --pace` to the `vale_routes_test.gd` command.
+
+### Windows user playtest
+
+- [ ] From the watchpost, follow Pine Road to the supply cart and continue on foot to Quarry Gate. Return by the south road and check the junction signs and map edges from the gameplay camera.
+- [ ] On a fresh run, take the east opening into Pine Meadow. Pass through Heather Rest and use the north trail to reach North Road.
+- [ ] Cross Birchwater using the stone ford and return using the timber bridge. Try a deep-water click while moving and verify the original destination stays active.
+- [ ] Climb Signal Ridge to the signal mast and descend the other climb. Try clicking a steep face while moving on the trail.
+- [ ] Time a fresh watchpost quest run and a crossing from Heather Rest to the lookout via North Road. Record detours, combat, and stops that affect the times.

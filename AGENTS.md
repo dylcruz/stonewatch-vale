@@ -21,6 +21,7 @@ godot --headless --editor --path . --import --quit
 godot --headless --path . --script res://tests/movement_test.gd
 godot --headless --path . --script res://tests/combat_test.gd
 godot --headless --path . --script res://tests/quest_chain_test.gd
+godot --headless --path . --script res://tests/vale_routes_test.gd
 godot --path . --script res://tests/breadcrumb_test.gd
 git diff --check
 ```
