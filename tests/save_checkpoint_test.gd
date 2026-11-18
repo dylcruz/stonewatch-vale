@@ -119,34 +119,81 @@ func run_checkpoint(phase: String) -> void:
 			dialogue_action(world, 2)
 			check(not world.dialogue_action.visible, "The completed Captain turn-in remains unavailable")
 		"bag_waiting":
-			world._equip(&"scout_pouch")
+			press_menu_key(KEY_B)
+			await click_bag_action(world, "Equip Scout Pouch")
 			dialogue_action(world, 0)
 			for wolf_name in ["Wolf", "WolfSecond", "WolfThird"]:
 				var wolf: ValeEnemy = world.get_node(wolf_name)
 				wolf.receive_hit(wolf.health.current, warrior)
 			dialogue_action(world, 0)
-			world._equip(&"iron_sword")
+			press_menu_key(KEY_B)
+			await click_bag_action(world, "Equip Iron Sword")
 			var captain: ValeEnemy = world.get_node("RaiderCaptain")
 			captain.receive_hit(captain.health.current, warrior)
+			check(world.bag_heading.text.contains("2 / 2 used") and world.bag_feedback.is_visible_in_tree()
+				and world.bag_feedback.text.contains("Bag is full"), "The Bag shows why the coat is waiting")
 			var saved := slot.read()
 			check(saved.bag == &"scout_pouch" and saved.waiting_rewards == PackedStringArray(["wardens_coat"])
 				and saved.encounters[&"watchpost_quarry_captain"].reward_claimed,
 				"The full-bag reward and Captain claim are written with the same checkpoint")
 		"resume_waiting":
+			press_menu_key(KEY_B)
 			check(warrior.equipped_bag.id == &"scout_pouch" and warrior.sword_damage() == 12
 				and warrior.free_bag_slots() == 0 and warrior.waiting_rewards.has(&"wardens_coat")
 				and not warrior.owned_items.has(&"wardens_coat"),
 				"Continue restores the equipped bag, stored gear, and unclaimed reward")
-			world._equip(&"trail_pack")
-			world._claim(&"wardens_coat")
+			check(world.journal.visible and world.journal_title.text == "Bag" and world.journal_body.text == "Scout Pouch"
+				and world.bag_heading.text.contains("0 free"), "The reopened Bag shows the restored pouch is full")
+			await click_bag_action(world, "Claim Warden's Coat")
+			check(world.bag_feedback.is_visible_in_tree() and world.bag_feedback.text.contains("Bag is full")
+				and warrior.waiting_rewards.has(&"wardens_coat"), "A failed claim keeps the reward and explains why")
+			await click_bag_action(world, "Equip Trail Pack")
+			check(world.bag_heading.text.contains("2 / 6 used"), "Switching packs makes room for the waiting reward")
+			await click_bag_action(world, "Claim Warden's Coat")
 			var claimed := slot.read()
 			check(claimed.waiting_rewards.is_empty() and "wardens_coat" in claimed.owned_items,
 				"Claiming the reward autosaves the updated inventory")
-			world._equip(&"wardens_coat")
+			await click_bag_action(world, "Equip Warden's Coat")
 		"resume_claimed":
 			check(warrior.equipped_bag.id == &"trail_pack" and warrior.sword_damage() == 12
 				and warrior.armor_value() == 2 and warrior.waiting_rewards.is_empty()
 				and warrior.free_bag_slots() == 3, "Continue restores the claimed and equipped coat exactly once")
+			press_menu_key(KEY_B)
+			check(world.journal_body.text == "Trail Pack" and world.bag_heading.text.contains("3 / 6 used"),
+				"The Bag displays the restored pack and used capacity")
+			var stored_items: Array[ValeItem] = warrior.stored_items()
+			await click_bag_action(world, "Equip Scout Pouch")
+			check(world.bag_feedback.is_visible_in_tree() and world.bag_feedback.text.contains("Your stored items need 3")
+				and world.journal_body.text == "Trail Pack" and warrior.stored_items() == stored_items,
+				"The Bag rejects the undersized pouch and keeps the stored items")
+			press_menu_key(KEY_I)
+			check(world.journal_title.text == "Character" and world.journal_body.text.contains("Warden's Coat")
+				and world.journal_body.text.contains("Sword damage 12") and world.journal_body.text.contains("Armor 2"),
+				"Character displays the equipped coat and effective stats after Continue")
+
+func press_menu_key(code: Key) -> void:
+	var event := InputEventKey.new()
+	event.physical_keycode = code
+	event.pressed = true
+	root.push_input(event, true)
+	event = event.duplicate()
+	event.pressed = false
+	root.push_input(event, true)
+
+func click_bag_action(world: Node, label: String) -> void:
+	await process_frame
+	for option in world.gear_options.get_children():
+		if option is Button and option.is_visible_in_tree() and option.text.begins_with(label):
+			var event := InputEventMouseButton.new()
+			event.position = option.get_global_rect().get_center()
+			event.button_index = MOUSE_BUTTON_LEFT
+			event.pressed = true
+			root.push_input(event, true)
+			event = event.duplicate()
+			event.pressed = false
+			root.push_input(event, true)
+			return
+	check(false, "Bag action was missing: " + label)
 
 func verify_early_defeat(world: Node, player: ValePlayer) -> void:
 	var captain: ValeEnemy = world.get_node("RaiderCaptain")
