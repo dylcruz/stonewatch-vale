@@ -48,7 +48,7 @@ collision_mask = 4
 text = "WATCHPOST PLAYTEST"
 
 [node name="LastHit" parent="HUD/CombatPanel/Margin/VBox"]
-text = "Press 2 during a bite windup to reduce damage."
+text = "Use Guard during a bite windup to reduce damage."
 
 [node name="Wolf" parent="." instance=ExtResource("Wolf")]
 position = Vector3(6, 0.02, 1)

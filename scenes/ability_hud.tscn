@@ -1,0 +1,135 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ability_hud.gd" id="AbilityHUD"]
+
+[sub_resource type="StyleBoxFlat" id="Panel"]
+bg_color = Color(0.06, 0.085, 0.088, 0.97)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.42, 0.34, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="AbilityHUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("AbilityHUD")
+
+[node name="BottomBars" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -205.0
+offset_top = -131.0
+offset_right = 205.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 5
+
+[node name="Bar" type="PanelContainer" parent="BottomBars"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("Panel")
+
+[node name="Margin" type="MarginContainer" parent="BottomBars/Bar"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Slots" type="HBoxContainer" parent="BottomBars/Bar/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="MenuBar" type="PanelContainer" parent="BottomBars"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("Panel")
+
+[node name="Margin" type="MarginContainer" parent="BottomBars/MenuBar"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 4
+
+[node name="MenuButtons" type="HBoxContainer" parent="BottomBars/MenuBar/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Book" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -417.0
+offset_top = 20.0
+offset_right = -20.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("Panel")
+
+[node name="Margin" type="MarginContainer" parent="Book"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14
+
+[node name="Content" type="VBoxContainer" parent="Book/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Book/Margin/Content"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Book/Margin/Content/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.94, 0.82, 0.58, 1)
+theme_override_font_sizes/font_size = 24
+text = "Ability book"
+
+[node name="CloseBook" type="Button" parent="Book/Margin/Content/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Close"
+
+[node name="Entries" type="VBoxContainer" parent="Book/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 17
+
+[node name="Separator" type="HSeparator" parent="Book/Margin/Content"]
+layout_mode = 2
+
+[node name="Edit" type="HBoxContainer" parent="Book/Margin/Content"]
+layout_mode = 2
+
+[node name="SlotSummary" type="Label" parent="Book/Margin/Content/Edit"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.94, 0.82, 0.58, 1)
+
+[node name="ClearSlot" type="Button" parent="Book/Margin/Content/Edit"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Clear slot"
+
+[node name="Help" type="Label" parent="Book/Margin/Content"]
+layout_mode = 2
+text = "Click a slot on the bar to edit it."

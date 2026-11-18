@@ -89,13 +89,13 @@ func choose_quest_option(label: String) -> bool:
 	return true
 
 func equip_from_panel(item_name: String) -> bool:
-	await press_key(KEY_I)
+	await press_key(KEY_B)
 	for button: Button in world.gear_options.get_children():
 		if button.text.begins_with("Equip " + item_name):
 			await click_button(button)
-			await press_key(KEY_I)
+			await press_key(KEY_B)
 			return true
-	await press_key(KEY_I)
+	await press_key(KEY_B)
 	return false
 
 func restart() -> void:

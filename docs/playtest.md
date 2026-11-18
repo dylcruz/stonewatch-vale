@@ -103,7 +103,7 @@ Pine trunks, outcrops, and the two Birchwater bridge rails have obstacle collisi
 
 **Automated on Windows with Godot 4.7.2 Standard.** The character and inventory suite passed 15 checks, including live health and level updates, both gear upgrades, full-bag feedback, waiting rewards, and safe bag changes.
 
-- [ ] In the Watchpost developer scene, equip the Scout Pouch. Earn the Iron Sword and the Warden’s Coat. One reward should wait until you equip the Trail Pack and claim it. Attempt to equip the Scout Pouch again while storing three items.
+- [ ] In the Watchpost developer scene, open the bag and equip the Scout Pouch. Earn the Iron Sword and the Warden’s Coat. One reward should wait until you equip the Trail Pack and claim it. Attempt to equip the Scout Pouch again while storing three items.
 
 ## World map
 
@@ -135,3 +135,13 @@ See [the release review notes](review-issues-13-15.md) for the final candidate c
 **Automated on Windows with Godot 4.7.2 Standard.** All eight regression suites passed. The relaunch suite verifies the equipped bag, stored gear, and unclaimed rewards through Continue, including a checkpoint from before bags were introduced.
 
 The route suite passed 55 checks with `--pace` enabled. It walked from the town entrance to Heather Rest, then measured 623.1 meters and 127.3 seconds of simulation time from Heather Rest to Signal Ridge via North Road. The scripted clicks use the open trail around two newly solid meadow pines.
+
+## Ability book and bar
+
+Open the ability book with **K** or from the menu row below the ability bar. Click a bar slot to select it, then assign an unlocked ability or clear the slot. Close the book to activate abilities with a bar click. Shortcuts **1–4** follow the slot arrangement. The menu row also opens the quest log, character sheet, bag, and main Vale map. [Issue #30](https://github.com/dylcruz/stonewatch-vale/issues/30), [issue #38](https://github.com/dylcruz/stonewatch-vale/issues/38)
+
+**Automated on Windows with Godot 4.7.2 Standard.** The ability UI suite checks keyboard and mouse input, menu switching, locked Cleave, Guard activation after a swap, clearing and restoring slots, and movement command preservation. Guard and Cleave cooldowns are exercised by the combat suite. The bars and book were inspected with the Compatibility renderer.
+
+- [ ] Open the Watchpost developer scene with **F6**. Press **K**, select slot **3**, and assign Guard. Close the book and press **3** during a wolf bite windup. Verify the Guard ring and cooldown.
+- [ ] Reach level 2 and verify Cleave becomes assignable with the book open. Swap or clear slots, then try the updated shortcuts.
+- [ ] Use **F5** and change the layout in a saved town run. Relaunch with **Continue** and verify the layout is restored.

@@ -1,4 +1,5 @@
-extends "res://scripts/player.gd"
+class_name ValeWarrior
+extends ValePlayer
 
 signal combat_message(message: String)
 signal equipment_changed

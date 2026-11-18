@@ -68,6 +68,7 @@ func run() -> void:
 	root.add_child(world)
 	warrior = world.get_node("Player")
 	wolf = world.get_node("Wolf")
+	var guard_slot: Button = world.ability_hud.slots_row.get_child(1)
 	for enemy in world.enemies:
 		if enemy != wolf:
 			enemy.set_physics_process(false)
@@ -148,7 +149,7 @@ func run() -> void:
 	warrior.global_position = wolf.global_position + Vector3(0, 0, 1.4)
 	check(await until(func(): return wolf.biting, 30), "Wolf starts a bite against an untargeting Warrior")
 	press_key(KEY_2)
-	check(await until(func(): return world.guard_status.text.contains("Guard active"), 10)
+	check(await until(func(): return guard_slot.text.contains("Active"), 10)
 		and warrior.guard_ring.visible, "Pressing 2 activates Guard and shows its HUD and world cues")
 	var guard_time: float = warrior.guard_remaining
 	press_key(KEY_2)
@@ -156,14 +157,14 @@ func run() -> void:
 	check(await until(func(): return warrior.health.current < 60, 40), "A bite lands during the Guard window")
 	check(warrior.health.current == 57 and world.combat_hud.get_node("LastHit").text.contains("Guard blocked 3"),
 		"Guard halves the bite damage and reports the blocked amount")
-	check(await until(func(): return world.guard_status.text.contains("Guard cooldown"), 90)
+	check(await until(func(): return guard_slot.text.contains("s left"), 90)
 		and not warrior.guard_ring.visible, "Guard expires and the HUD switches to its cooldown")
 	press_key(KEY_2)
 	check(warrior.guard_remaining == 0.0, "Guard cannot activate a second time during cooldown")
 	var guarded_health: int = warrior.health.current
 	check(await until(func(): return warrior.health.current < guarded_health, 110)
 		and warrior.health.current == guarded_health - 6, "Bite damage returns to normal once Guard expires")
-	check(await until(func(): return world.guard_status.text.contains("Guard ready"), 400), "Guard becomes ready when its cooldown finishes")
+	check(await until(func(): return guard_slot.text.ends_with("Ready"), 400), "Guard becomes ready when its cooldown finishes")
 	press_key(KEY_2)
 	check(warrior.guard_remaining > 0.0, "Guard can be activated again after cooldown")
 
@@ -222,6 +223,7 @@ func run() -> void:
 	quit(1 if failures else 0)
 
 func test_cleave() -> void:
+	var cleave_slot: Button = world.ability_hud.slots_row.get_child(0)
 	var raider: ValeRaider = world.get_node("CampRaider")
 	var other_raider: ValeRaider = world.get_node("CampRaiderSecond")
 	wolf.set_physics_process(false)
@@ -240,8 +242,8 @@ func test_cleave() -> void:
 		"Cleave displays its arc and reports targets hit")
 	press_key(KEY_1)
 	check(raider.health.current == 16 and other_raider.health.current == 16, "Cleave deals no damage during cooldown")
-	check(await until(func(): return world.cleave_status.text.contains("Cleave cooldown"), 10), "Cleave shows cooldown")
-	check(await until(func(): return world.cleave_status.text == "1 · Cleave ready", 260)
+	check(await until(func(): return cleave_slot.text.contains("s left"), 10), "Cleave shows cooldown")
+	check(await until(func(): return cleave_slot.text.ends_with("Ready"), 260)
 		and not warrior.cleave_arc.visible, "Cleave becomes ready and the arc clears")
 
 	warrior.global_position = Vector3(-1.7, 0.02, 3.7)
