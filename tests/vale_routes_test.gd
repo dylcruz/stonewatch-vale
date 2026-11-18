@@ -112,7 +112,8 @@ func check_starting_town() -> void:
 		and region.has_node("StartingTown/EastCottage") and player.global_position.distance_to(square) < 0.05
 		and world.status.text == "Town square",
 		"A fresh game opens in the town square at the original spawn")
-	check(world.enemies.is_empty() and world.quest_chain.is_empty()
+	check(world.enemies.has(region.get_node("BirchwaterLoop/BankWolf")) and world.quest_chain.size() == 1
+		and world.quest_chain[0].definition.id == &"birchwater_delivery"
 		and not world.has_node("CaptainMara") and not world.has_node("SupplyCrate"),
 		"The main game has no Watchpost encounters or quest fixtures")
 	check(region.has_node("StartingTown/NorthCottage") and region.has_node("StartingTown/WestLaneCottage")
@@ -298,6 +299,88 @@ func time_crossing() -> void:
 	check(player.global_position.distance_to(lookout) < 0.75, "The Warrior walked the full-zone crossing")
 	print("Heather Rest to Signal Ridge via North Road: %.1f m of navigation, %.1f s on foot" % [length, elapsed])
 
+func check_delivery() -> void:
+	var zone := region.get_node("BirchwaterLoop")
+	var giver: ValeInteractable = zone.get_node("Ferryman")
+	var bundle: ValeInteractable = zone.get_node("LostBundle")
+	var wolf: ValeEnemy = zone.get_node("BankWolf")
+	var cargo: Node3D = zone.get_node("Cart/Cargo")
+	var path := OS.get_temp_dir().path_join("birchwater-%d.save" % OS.get_process_id())
+	var slot := ValeSaveSlot.new(path)
+	world.configure_checkpoint(slot, {})
+	check(connected(player.spawn_position, giver.global_position) and connected(giver.global_position, bundle.global_position),
+		"The ford offer and bridge bundle connect to town")
+	check(giver.global_position.distance_to(mark("BirchwaterLoop/Ford")) < 20.0
+		and bundle.global_position.distance_to(mark("BirchwaterLoop/Bridge")) < 20.0,
+		"The first crossing offers the delivery and the second holds the bundle")
+	var timed := "--pace" in OS.get_cmdline_user_args()
+	var started := Engine.get_physics_frames()
+	var giver_approach := giver.global_position + Vector3(0, 0, 1.25)
+	var bundle_approach := bundle.global_position + Vector3(0, 0, 1.3)
+	var east_bridge := Vector3(66, 0, -202)
+	var east_ford := Vector3(66, 0, -123)
+	if timed:
+		check(await walk_steps([Vector3(8, 0, 7), Vector3(8, 0, -10), mark("NorthRoad/FordConnection"), giver_approach]),
+			"Walk from town square to the ferryman")
+	else:
+		await place(giver_approach)
+	check(camera_click(giver.global_position + Vector3.UP), "The ferryman can be selected from the gameplay camera")
+	await frames(15)
+	check(world.journal_title.text == giver.display_name and world.dialogue_action.visible and not cargo.visible,
+		"The ferryman offers the delivery beside an empty cart")
+	world.dialogue_action.pressed.emit()
+	check(world.tracked_quest == world.quest_chain[0] and bundle.objective_marker.visible, "Acceptance tracks the bridge bundle")
+	if timed:
+		check(await walk_steps([east_ford, east_bridge, Vector3(34, 0, -202), bundle_approach]), "Follow the east bank to the bridge")
+	else:
+		await place(bundle_approach)
+	check(camera_click(bundle.global_position + Vector3.UP * 0.45), "The bridge bundle accepts a world click")
+	await frames(15)
+	check(not bundle.visible and world.quest_chain[0].state == ValeQuestProgress.State.READY and wolf.is_alive(),
+		"The bundle readies the delivery with the bank wolf alive")
+	if timed:
+		check(await walk_steps([Vector3(34, 0, -202), east_bridge, east_ford, giver_approach]) and player.health.current == player.health.maximum,
+			"Return by the quiet bank without taking damage")
+	else:
+		await place(giver_approach)
+	camera_click(giver.global_position + Vector3.UP)
+	await frames(15)
+	world.dialogue_action.pressed.emit()
+	world.dialogue_action.pressed.emit()
+	check(cargo.visible and player.experience == 85, "Delivery loads the cart and pays its XP once")
+	if timed:
+		print("Town square through quiet-bank delivery: %.1f s of simulation" % (
+			float(Engine.get_physics_frames() - started) / Engine.physics_ticks_per_second))
+	world.queue_free()
+	await process_frame
+	var menu := preload("res://scenes/checkpoint_menu.tscn").instantiate()
+	menu.slot = slot
+	root.add_child(menu)
+	menu.continue_game.pressed.emit()
+	await process_frame
+	world = current_scene
+	region = world.get_node("NavigationRegion3D")
+	player = world.player
+	check(region.get_node("BirchwaterLoop/Cart/Cargo").visible and not region.get_node("BirchwaterLoop/LostBundle").visible
+		and player.experience == 85, "Continue restores the delivered bundle on the cart")
+	wolf = region.get_node("BirchwaterLoop/BankWolf")
+	wolf.respawn_delay = 0.5
+	await place(wolf.spawn_position + Vector3(0, 0, 3))
+	await frames(15)
+	check(wolf.opponent == player, "The west bank wolf initiates combat")
+	camera_click(wolf.global_position + Vector3.UP * 0.85)
+	for frame in 400:
+		await physics_frame
+		if not wolf.is_alive():
+			break
+	check(not wolf.is_alive() and player.experience == 90, "Click-to-attack defeats the wolf and earns 5 XP")
+	await frames(40)
+	check(not wolf.is_alive(), "The wolf waits for the player to leave its encounter")
+	await place(giver_approach)
+	await frames(40)
+	check(wolf.is_alive() and wolf.health.current == wolf.health.maximum, "The zone wolf respawns on leaving the area")
+	check(DirAccess.remove_absolute(path) == OK, "Temporary delivery save was removed")
+
 func run() -> void:
 	await start()
 	var initial_layout := layout()
@@ -316,6 +399,7 @@ func run() -> void:
 	await process_frame
 	await start()
 	check(initial_layout == layout(), "Two fresh games load identical terrain and props")
+	await check_delivery()
 	world.queue_free()
 	await process_frame
 	await start(WATCHPOST_SCENE)

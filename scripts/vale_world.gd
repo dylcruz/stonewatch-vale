@@ -45,3 +45,9 @@ func _show_panel(mode: JournalView) -> void:
 func _open_ability_book() -> void:
 	map_panel.hide()
 	super._open_ability_book()
+
+func _refresh_progress() -> void:
+	super._refresh_progress()
+	for progress in quest_chain:
+		if progress.definition.id == &"birchwater_delivery":
+			$NavigationRegion3D/BirchwaterLoop/Cart/Cargo.visible = progress.state == ValeQuestProgress.State.COMPLETED

@@ -158,3 +158,19 @@ Run `godot --path . -- --watchpost-save` in a Windows debug build, then select *
 | [Character (#36)](https://github.com/dylcruz/stonewatch-vale/issues/36) | Leave Character open for the first wolf fight. Check level, XP, and maximum health after the road turn-in. Equip the sword and coat through Bag, then reopen Character and verify their names, sword damage 12, and armor 2. | The open sheet updated from 60/60 to 42/60 health and from 0 to 5 XP during the first fight. The road turn-in raised the Warrior to level 2 at 100 XP with 75 maximum health. Automated checks verified the updated sheet at level-up and after changing equipment and resuming through Continue. |
 
 The interactive run used Godot Standard 4.7.2 and the Compatibility renderer with an isolated developer save. Mouse controls were used for the observed results. The regression suites exercised the keyboard shortcuts through Godot input events. The live run ended after the road turn-in, so a player should finish the bag, gear, and Continue steps in the same Windows playtest and confirm the shortcuts on a physical keyboard before proceeding to Birchwater.
+
+## Birchwater delivery checkpoint
+
+**First-time Windows playtest.** From the main menu choose **New Game**. Ask the player to leave town, find an adventure, and finish it. Let them choose the route without showing them the screenshot or the tester notes below. After turn-in, relaunch and select **Continue**.
+
+| Record during the session | First-time player observation |
+| --- | --- |
+| New Game to discovering the offer | Pending |
+| Time reading the offer and clues, whether the player noticed the cloth, and where they hesitated | Pending |
+| Route chosen and time spent in combat | Pending |
+| Return and turn-in time, total adventure time, and what changed at the cart after Continue | Pending |
+| Full-zone crossing time on foot and route taken | Pending |
+
+**Tester notes.** The ferryman at Birchwater Ford offers the delivery. The player can cross the ford, follow the east bank to the timber bridge, and collect the bundle with the west-bank wolf alive. The shorter west-bank approach passes the wolf. Turn-in awards 85 XP once and loads the cart.
+
+The Windows Godot 4.7.2 route regression walked from the town square through the quiet-bank delivery in 95.8 seconds of simulation. Heather Rest to Signal Ridge via North Road covered 623.1 meters in 127.3 seconds. The scripted run reads and accepts dialogue immediately. Compare first-time observations with the 10–15 minute adventure benchmark before tuning the clues or distances. [Birchwater delivery](https://github.com/dylcruz/stonewatch-vale/issues/44) · [Travel pacing](https://github.com/dylcruz/stonewatch-vale/issues/8)

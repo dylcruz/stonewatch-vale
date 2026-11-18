@@ -17,7 +17,8 @@
 albedo_color = Color(0.4, 0.46, 0.48, 1)
 roughness = 0.85
 
-[node name="WatchpostPlaytest" instance=ExtResource("World")]
+[node name="WatchpostPlaytest" node_paths=PackedStringArray("idle_preview_enemy") instance=ExtResource("World")]
+idle_preview_enemy = NodePath("Wolf")
 ready_text = "Watchpost"
 quest_definition = ExtResource("PineRoad")
 follow_up_quests = Array[ExtResource("QuestDefinition")]([ExtResource("Supplies"), ExtResource("Blockade")])
@@ -55,6 +56,7 @@ position = Vector3(6, 0.02, 1)
 
 [node name="CaptainMara" parent="." instance=ExtResource("Mara")]
 position = Vector3(-2.0, 0.02, 6.0)
+offered_quests = Array[StringName]([&"clear_pine_road", &"recover_the_supplies", &"break_the_blockade"])
 
 [node name="WolfSecond" parent="." instance=ExtResource("Wolf")]
 position = Vector3(10.0, 0.02, -1.5)
