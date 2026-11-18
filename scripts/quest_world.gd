@@ -22,6 +22,8 @@ enum JournalView { CLOSED, DIALOGUE, QUEST_LOG, CHARACTER, BAG }
 var tracked_quest: ValeQuestProgress
 var quest_chain: Array[ValeQuestProgress] = []
 var quest_objects: Array[ValeInteractable] = []
+var sources: Array[ValeInteractable] = []
+var speaker: ValeInteractable
 var dialogue_quest: ValeQuestProgress
 var panel_mode := JournalView.CLOSED
 var save_slot: ValeSaveSlot
@@ -44,7 +46,10 @@ func _ready() -> void:
 	for enemy in enemies:
 		enemy.health.died.connect(_record_defeat.bind(enemy))
 		enemy.respawned.connect(_enemy_respawned.bind(enemy))
-	for child in get_children():
+	for child in find_children("*", "StaticBody3D", true, false):
+		if child is ValeInteractable and not child.offered_quests.is_empty():
+			sources.append(child)
+			child.interacted.connect(_talk_to.bind(child))
 		if child is ValeInteractable and child.objective_id != &"":
 			quest_objects.append(child)
 			child.interacted.connect(_use_quest_object.bind(child))
@@ -53,8 +58,6 @@ func _ready() -> void:
 					and progress.state >= ValeQuestProgress.State.READY
 			):
 				child.collect()
-	if mara and not quest_chain.is_empty():
-		mara.interacted.connect(_talk_to_mara)
 	player.health.died.connect(_close_panel)
 	player.health.changed.connect(func(_current: int, _maximum: int): _refresh_character_stats())
 	player.progression_changed.connect(_on_progression_changed)
@@ -149,7 +152,7 @@ func _restore_inventory(checkpoint: Dictionary, available_items: Array[ValeItem]
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
-	if panel_mode == JournalView.DIALOGUE and not mara.is_in_range(player):
+	if panel_mode == JournalView.DIALOGUE and not speaker.is_in_range(player):
 		_close_panel()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -216,7 +219,12 @@ func _use_quest_object(object: ValeInteractable) -> void:
 		if progress.record_interaction(object.objective_id):
 			credited = true
 	if not credited:
-		status.text = "Ask Captain Mara about the %s" % object.display_name.to_lower()
+		for progress in quest_chain:
+			if progress.definition.target_object == object.objective_id:
+				for source in sources:
+					if progress.definition.id in source.offered_quests:
+						status.text = "Ask %s about the %s" % [source.display_name, object.display_name.to_lower()]
+						return
 		return
 	object.collect()
 	status.text = "%s recovered" % object.display_name
@@ -224,7 +232,13 @@ func _use_quest_object(object: ValeInteractable) -> void:
 	_save_checkpoint()
 
 func _talk_to_mara() -> void:
-	dialogue_quest = _first_mara_quest()
+	_talk_to(mara)
+
+func _talk_to(source: ValeInteractable) -> void:
+	speaker = source
+	dialogue_quest = _first_source_quest(source)
+	if not dialogue_quest:
+		return
 	_show_panel(JournalView.DIALOGUE)
 
 func _can_accept_quest(progress: ValeQuestProgress) -> bool:
@@ -237,17 +251,22 @@ func _can_accept_quest(progress: ValeQuestProgress) -> bool:
 			return false
 	return true
 
-func _first_mara_quest() -> ValeQuestProgress:
-	if quest_chain.is_empty():
+func _first_source_quest(source: ValeInteractable) -> ValeQuestProgress:
+	if not source:
 		return null
 	for state in [ValeQuestProgress.State.READY, ValeQuestProgress.State.AVAILABLE, ValeQuestProgress.State.ACTIVE]:
 		for progress in quest_chain:
-			if progress.state == state and (state != ValeQuestProgress.State.AVAILABLE or _can_accept_quest(progress)):
+			if progress.definition.id not in source.offered_quests or progress.state != state:
+				continue
+			if state != ValeQuestProgress.State.AVAILABLE or _can_accept_quest(progress):
 				return progress
-	return quest_chain.back()
+	for progress in quest_chain:
+		if progress.definition.id in source.offered_quests and progress.state == ValeQuestProgress.State.COMPLETED:
+			return progress
+	return null
 
 func _perform_dialogue_action() -> void:
-	if panel_mode != JournalView.DIALOGUE or not player.is_alive() or not mara.is_in_range(player):
+	if panel_mode != JournalView.DIALOGUE or not player.is_alive() or not speaker.is_in_range(player):
 		return
 	if _can_accept_quest(dialogue_quest) and dialogue_quest.accept():
 		_close_panel()
@@ -284,7 +303,7 @@ func _refresh_tracked_quest() -> void:
 
 func _refresh_progress() -> void:
 	_refresh_tracked_quest()
-	var mara_quest := _first_mara_quest()
+	var mara_quest := _first_source_quest(mara)
 	var objective := tracked_quest if tracked_quest else mara_quest
 	objective_label.visible = objective != null
 	if objective:
@@ -298,12 +317,15 @@ func _refresh_progress() -> void:
 		))
 	for enemy in enemies:
 		_refresh_enemy_marker(enemy)
-	if quest_marker and mara_quest:
-		quest_marker.text = ""
-		if mara_quest.state == ValeQuestProgress.State.READY:
-			quest_marker.text = "?"
-		elif _can_accept_quest(mara_quest):
-			quest_marker.text = "!"
+	for source in sources:
+		var offer := _first_source_quest(source)
+		var marker := source.objective_marker
+		if marker:
+			marker.text = ""
+			if offer and offer.state == ValeQuestProgress.State.READY:
+				marker.text = "?"
+			elif offer and _can_accept_quest(offer):
+				marker.text = "!"
 	_refresh_panel()
 
 func _on_progression_changed() -> void:
@@ -397,7 +419,7 @@ func _select_dialogue_quest(progress: ValeQuestProgress) -> void:
 	_refresh_panel()
 
 func _show_dialogue() -> void:
-	journal_title.text = mara.display_name
+	journal_title.text = speaker.display_name
 	var definition := dialogue_quest.definition
 	var reward := "%d XP" % definition.reward_xp
 	if definition.reward_item:
@@ -418,7 +440,7 @@ func _show_dialogue() -> void:
 			if definition.reward_item:
 				journal_body.text += "\nOpen Bag (B) to manage your reward."
 	for progress in quest_chain:
-		if progress != dialogue_quest and (progress.is_in_progress() or _can_accept_quest(progress)):
+		if progress.definition.id in speaker.offered_quests and progress != dialogue_quest and (progress.is_in_progress() or _can_accept_quest(progress)):
 			_add_quest_option("View " + progress.definition.title, _select_dialogue_quest.bind(progress))
 
 func _refresh_character_stats() -> void:

@@ -1,5 +1,6 @@
 extends "res://scripts/world_input.gd"
 
+@export var idle_preview_enemy: ValeEnemy
 @export var recovery_delay := 2.0
 @export var recovery_location := "the watchpost"
 @export var ready_text := "Ready"
@@ -15,7 +16,7 @@ var recovery_remaining := 0.0
 func _ready() -> void:
 	super._ready()
 	ability_hud.bind_player(player as ValeWarrior)
-	for child in get_children():
+	for child in find_children("*", "CharacterBody3D", true, false):
 		if child is ValeEnemy:
 			enemies.append(child)
 			child.aggro_target = player
@@ -67,7 +68,7 @@ func _focused_enemy() -> ValeEnemy:
 			return enemy
 	if is_instance_valid(last_focused_enemy):
 		return last_focused_enemy
-	return enemies.front() if not enemies.is_empty() else null
+	return idle_preview_enemy
 
 func _enemy_status(enemy: ValeEnemy) -> String:
 	var display_name := enemy.stats.display_name
