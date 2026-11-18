@@ -309,37 +309,40 @@ func check_delivery() -> void:
 	var slot := ValeSaveSlot.new(path)
 	world.configure_checkpoint(slot, {})
 	check(connected(player.spawn_position, giver.global_position) and connected(giver.global_position, bundle.global_position),
-		"The bridge offer and ford bundle connect to town")
+		"The ford offer and bridge bundle connect to town")
+	check(giver.global_position.distance_to(mark("BirchwaterLoop/Ford")) < 20.0
+		and bundle.global_position.distance_to(mark("BirchwaterLoop/Bridge")) < 20.0,
+		"The first crossing offers the delivery and the second holds the bundle")
 	var timed := "--pace" in OS.get_cmdline_user_args()
 	var started := Engine.get_physics_frames()
-	var bridge_approach := giver.global_position + Vector3(0, 0, 1.25)
-	var ford_approach := bundle.global_position + Vector3(0, 0, 1.3)
+	var giver_approach := giver.global_position + Vector3(0, 0, 1.25)
+	var bundle_approach := bundle.global_position + Vector3(0, 0, 1.3)
 	var east_bridge := Vector3(66, 0, -202)
 	var east_ford := Vector3(66, 0, -123)
 	if timed:
-		check(await walk_steps([Vector3(8, 0, 7), Vector3(8, 0, -10), mark("NorthRoad/BridgeConnection"), bridge_approach]),
+		check(await walk_steps([Vector3(8, 0, 7), Vector3(8, 0, -10), mark("NorthRoad/FordConnection"), giver_approach]),
 			"Walk from town square to the ferryman")
 	else:
-		await place(bridge_approach)
+		await place(giver_approach)
 	check(camera_click(giver.global_position + Vector3.UP), "The ferryman can be selected from the gameplay camera")
 	await frames(15)
 	check(world.journal_title.text == giver.display_name and world.dialogue_action.visible and not cargo.visible,
 		"The ferryman offers the delivery beside an empty cart")
 	world.dialogue_action.pressed.emit()
-	check(world.tracked_quest == world.quest_chain[0] and bundle.objective_marker.visible, "Acceptance tracks the ford bundle")
+	check(world.tracked_quest == world.quest_chain[0] and bundle.objective_marker.visible, "Acceptance tracks the bridge bundle")
 	if timed:
-		check(await walk_steps([east_bridge, east_ford, ford_approach]), "Follow the east bank to the ford")
+		check(await walk_steps([east_ford, east_bridge, Vector3(34, 0, -202), bundle_approach]), "Follow the east bank to the bridge")
 	else:
-		await place(ford_approach)
-	check(camera_click(bundle.global_position + Vector3.UP * 0.45), "The ford bundle accepts a world click")
+		await place(bundle_approach)
+	check(camera_click(bundle.global_position + Vector3.UP * 0.45), "The bridge bundle accepts a world click")
 	await frames(15)
 	check(not bundle.visible and world.quest_chain[0].state == ValeQuestProgress.State.READY and wolf.is_alive(),
 		"The bundle readies the delivery with the bank wolf alive")
 	if timed:
-		check(await walk_steps([east_ford, east_bridge, Vector3(34, 0, -202), bridge_approach]) and player.health.current == player.health.maximum,
+		check(await walk_steps([Vector3(34, 0, -202), east_bridge, east_ford, giver_approach]) and player.health.current == player.health.maximum,
 			"Return by the quiet bank without taking damage")
 	else:
-		await place(bridge_approach)
+		await place(giver_approach)
 	camera_click(giver.global_position + Vector3.UP)
 	await frames(15)
 	world.dialogue_action.pressed.emit()
@@ -373,7 +376,7 @@ func check_delivery() -> void:
 	check(not wolf.is_alive() and player.experience == 90, "Click-to-attack defeats the wolf and earns 5 XP")
 	await frames(40)
 	check(not wolf.is_alive(), "The wolf waits for the player to leave its encounter")
-	await place(bridge_approach)
+	await place(giver_approach)
 	await frames(40)
 	check(wolf.is_alive() and wolf.health.current == wolf.health.maximum, "The zone wolf respawns on leaving the area")
 	check(DirAccess.remove_absolute(path) == OK, "Temporary delivery save was removed")

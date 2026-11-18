@@ -444,7 +444,7 @@ position = Vector3(49, 0, -202)
 position = Vector3(48, -1.4, -133)
 
 [node name="Ferryman" parent="." instance=ExtResource("NPC")]
-position = Vector3(33, 0.02, -200)
+position = Vector3(33, 0.02, -121)
 display_name = "Birchwater ferryman"
 offered_quests = Array[StringName]([&"birchwater_delivery"])
 
@@ -452,7 +452,7 @@ offered_quests = Array[StringName]([&"birchwater_delivery"])
 text = "BIRCHWATER FERRYMAN"
 
 [node name="LostBundle" parent="." instance=ExtResource("Bundle")]
-position = Vector3(36, 0.02, -121)
+position = Vector3(34, 0.02, -200)
 display_name = "Lost bundle"
 objective_id = &"birchwater_bundle"
 
@@ -474,7 +474,7 @@ depth = 0.035
 material = SubResource("Cloth")
 
 [node name="Cart" type="Node3D" parent="."]
-position = Vector3(32, 0.55, -202.7)
+position = Vector3(32, 0.55, -125.7)
 
 [node name="Bed" type="CSGBox3D" parent="Cart"]
 size = Vector3(2.1, 0.22, 1.4)
