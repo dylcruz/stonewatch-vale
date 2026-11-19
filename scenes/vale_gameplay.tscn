@@ -15,6 +15,8 @@
 [ext_resource type="Resource" path="res://data/scout_pouch.tres" id="ScoutPouch"]
 [ext_resource type="Script" path="res://scripts/item.gd" id="Item"]
 
+[ext_resource type="PackedScene" path="res://scenes/health_frame.tscn" id="HealthFrame"]
+
 [sub_resource type="StandardMaterial3D" id="Gold"]
 albedo_color = Color(0.95, 0.67, 0.26, 1)
 roughness = 0.85
@@ -71,9 +73,6 @@ albedo_color = Color(0.65, 0.42, 0.16, 1)
 [sub_resource type="BoxMesh" id="Hilt"]
 material = SubResource("HiltMaterial")
 size = Vector3(0.45, 0.14, 0.12)
-
-[sub_resource type="StyleBoxFlat" id="HealthFill"]
-bg_color = Color(0.5, 0.15, 0.13, 1)
 
 [sub_resource type="StandardMaterial3D" id="RefugeMaterial"]
 albedo_color = Color(0.39, 0.74, 0.58, 1)
@@ -262,30 +261,10 @@ theme_override_constants/margin_bottom = 12
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="WarriorName" type="Label" parent="HUD/CombatPanel/Margin/VBox"]
-layout_mode = 2
-text = "Warrior  60 / 60 HP"
+[node name="PlayerFrame" parent="HUD/CombatPanel/Margin/VBox" instance=ExtResource("HealthFrame")]
 
-[node name="WarriorHealth" type="ProgressBar" parent="HUD/CombatPanel/Margin/VBox"]
-custom_minimum_size = Vector2(0, 14)
-layout_mode = 2
-theme_override_styles/fill = SubResource("HealthFill")
-max_value = 60.0
-value = 60.0
-show_percentage = false
-
-[node name="EnemyName" type="Label" parent="HUD/CombatPanel/Margin/VBox"]
+[node name="TargetFrame" parent="HUD/CombatPanel/Margin/VBox" instance=ExtResource("HealthFrame")]
 visible = false
-layout_mode = 2
-
-[node name="EnemyHealth" type="ProgressBar" parent="HUD/CombatPanel/Margin/VBox"]
-visible = false
-custom_minimum_size = Vector2(0, 14)
-layout_mode = 2
-theme_override_styles/fill = SubResource("HealthFill")
-max_value = 40.0
-value = 40.0
-show_percentage = false
 
 [node name="Timing" type="Label" parent="HUD/CombatPanel/Margin/VBox"]
 layout_mode = 2

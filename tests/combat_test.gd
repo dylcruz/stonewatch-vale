@@ -69,6 +69,22 @@ func run() -> void:
 	warrior = world.get_node("Player")
 	wolf = world.get_node("Wolf")
 	var guard_slot: Button = world.ability_hud.slots_row.get_child(1)
+	await NAVIGATION.wait_for_spawn(world, warrior)
+	await frames(3)
+	check(not world.target_frame.visible and warrior.stats.portrait != null
+		and world.player_frame.portrait.texture == warrior.stats.portrait
+		and world.player_frame.bar.value == 60, "Spawn shows only the Warrior portrait at full health")
+	await dispatch_click(world.camera.unproject_position(wolf.global_position + Vector3.UP * 0.8))
+	await frames(2)
+	check(world.target_frame.visible and wolf.stats.portrait != null and world.target_frame.portrait.texture == wolf.stats.portrait,
+		"Selecting a wolf displays its portrait")
+	var captain: ValeRaider = world.get_node("RaiderCaptain")
+	await dispatch_click(world.camera.unproject_position(captain.global_position + Vector3.UP))
+	await frames(2)
+	check(world.target_frame.visible and captain.stats.portrait != null and world.target_frame.portrait.texture == captain.stats.portrait
+		and world.target_frame.bar.max_value == captain.health.maximum and world.target_frame.actor_name.text == captain.stats.display_name,
+		"Switching from the wolf to the Captain replaces the portrait and vitals")
+	reset_pair()
 	for enemy in world.enemies:
 		if enemy != wolf:
 			enemy.set_physics_process(false)
@@ -110,6 +126,9 @@ func run() -> void:
 	check(wolf.health.current == 32, "Sword applies exactly 8 damage")
 	check(await until(func(): return warrior.health.current < 60, 60), "Engaged wolf retaliates with a timed bite")
 	check(warrior.health.current == 54, "Wolf bite applies exactly 6 damage")
+	await frames(2)
+	check(world.player_frame.amount.text == "54 / 60 HP" and world.target_frame.bar.value == wolf.health.current,
+		"Both health frames show damage during combat")
 	var active_destination: Vector3 = warrior.destination
 	var hud_panel: PanelContainer = world.get_node("HUD/Panel")
 	await dispatch_click(hud_panel.get_global_rect().position + Vector2(12, 12))
@@ -118,6 +137,7 @@ func run() -> void:
 	wolf.health.died.connect(func(): wolf_deaths[0] += 1)
 	check(await until(func(): return not wolf.is_alive()), "Auto-attacks complete a fight and defeat the wolf")
 	await frames(2)
+	check(not world.target_frame.visible, "A defeated target clears its entire frame")
 	check(warrior.is_alive(), "Warrior survives the default first fight")
 	check(warrior.selected_target == null and not wolf.get_node("SelectionRing").visible, "Wolf death clears targeting and selection feedback")
 	check(wolf.collision_layer == 0 and not warrior.request_move(wolf.global_position, wolf), "Defeated wolf cannot be selected again")
@@ -129,6 +149,7 @@ func run() -> void:
 	await dispatch_click(world.camera.unproject_position(Vector3(-6, 0, 7)))
 	check(warrior.selected_target == null and not is_instance_valid(warrior.swing_target), "Ground click cancels target pursuit and a pending sword swing")
 	await frames(40)
+	check(not world.target_frame.visible, "Ground deselection clears the target frame")
 	check(wolf.health.current == 40, "Cancelled windup cannot deal delayed damage")
 	check(warrior.global_position.distance_to(wolf.global_position) > 2.0, "Ground cancellation lets the Warrior walk out of melee")
 
@@ -215,6 +236,7 @@ func run() -> void:
 		"Automatic recovery returns the Warrior to the watchpost at full health without a stale command")
 	await frames(20)
 	check(warrior.health.current == 60 and wolf.opponent == null, "The Warrior stays safe at the watchpost after recovery")
+	check(world.player_frame.bar.value == 60 and world.player_frame.amount.text == "60 / 60 HP", "Recovery restores the player frame to full health")
 	await test_cleave()
 	await test_raider_attacks()
 	print("Combat checks complete; assertions: ", assertions, "; failures: ", failures)
@@ -275,6 +297,9 @@ func test_raider_attacks() -> void:
 	warrior.global_position = captain.spawn_position + Vector3(0, 0, 1.6)
 	check(await until(func(): return captain.heavy_attacking and captain.telegraph.visible, 30),
 		"The Captain telegraphs the first heavy attack")
+	await frames(2)
+	check(not world.target_frame.visible and world.combat_hud.get_node("Timing").text.contains("Heavy attack"),
+		"The unselected Captain warns of the incoming heavy attack with the target frame hidden")
 	check(await until(func(): return warrior.health.current < 75, 100)
 		and warrior.health.current == 55, "An unguarded heavy attack deals 20 damage")
 	check(await until(func(): return warrior.health.current < 55, 145)

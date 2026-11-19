@@ -3,8 +3,11 @@
 [ext_resource type="Script" uid="uid://dlvy5jcy2sfqd" path="res://scripts/combat_stats.gd" id="1"]
 [ext_resource type="Resource" path="res://data/wardens_coat.tres" id="2"]
 
+[ext_resource type="Texture2D" path="res://art/portraits/raider_captain.png" id="Portrait"]
+
 [resource]
 script = ExtResource("1")
+portrait = ExtResource("Portrait")
 display_name = "Raider Captain"
 enemy_id = &"raider_captain"
 defeat_xp = 15

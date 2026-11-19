@@ -1,16 +1,14 @@
 extends "res://scripts/world_input.gd"
 
-@export var idle_preview_enemy: ValeEnemy
 @export var recovery_delay := 2.0
 @export var recovery_location := "the watchpost"
 @export var ready_text := "Ready"
 @onready var combat_hud: VBoxContainer = $HUD/CombatPanel/Margin/VBox
-@onready var enemy_name: Label = $HUD/CombatPanel/Margin/VBox/EnemyName
-@onready var enemy_health: ProgressBar = $HUD/CombatPanel/Margin/VBox/EnemyHealth
+@onready var player_frame: ValeHealthFrame = $HUD/CombatPanel/Margin/VBox/PlayerFrame
+@onready var target_frame: ValeHealthFrame = $HUD/CombatPanel/Margin/VBox/TargetFrame
 @onready var ability_hud: ValeAbilityHUD = $HUD/AbilityHUD
 @onready var last_hit: Label = $HUD/CombatPanel/Margin/VBox/LastHit
 var enemies: Array[ValeEnemy] = []
-var last_focused_enemy: ValeEnemy
 var recovery_remaining := 0.0
 
 func _ready() -> void:
@@ -27,18 +25,11 @@ func _ready() -> void:
 	status.text = ready_text
 
 func _process(_delta: float) -> void:
-	combat_hud.get_node("WarriorHealth").max_value = player.health.maximum
-	combat_hud.get_node("WarriorHealth").value = player.health.current
-	combat_hud.get_node("WarriorName").text = "Warrior Lv. %d   %d / %d HP" % [
-		player.level, player.health.current, player.health.maximum]
-	var enemy := _focused_enemy()
-	last_focused_enemy = enemy
-	enemy_name.visible = enemy != null
-	enemy_health.visible = enemy != null
-	if enemy:
-		enemy_health.max_value = enemy.health.maximum
-		enemy_health.value = enemy.health.current
-		enemy_name.text = "%s   %d / %d HP" % [enemy.stats.display_name, enemy.health.current, enemy.health.maximum]
+	player_frame.display(player.stats, player.health, "%s Lv. %d" % [player.stats.display_name, player.level])
+	var enemy := player.selected_target as ValeEnemy
+	target_frame.visible = is_instance_valid(enemy) and enemy.is_alive()
+	if target_frame.visible:
+		target_frame.display(enemy.stats, enemy.health, enemy.stats.display_name)
 	var sword_state := "Sword ready"
 	if is_instance_valid(player.swing_target):
 		sword_state = "Sword windup"
@@ -46,7 +37,7 @@ func _process(_delta: float) -> void:
 		sword_state = "Sword recovery %.1fs" % player.attack_cooldown
 	if not player.is_alive():
 		sword_state = "Warrior defeated"
-	if enemy:
+	if target_frame.visible:
 		sword_state += "  ·  " + _enemy_status(enemy)
 	var timing: Label = combat_hud.get_node("Timing")
 	var heavy_windup := false
@@ -56,19 +47,6 @@ func _process(_delta: float) -> void:
 			break
 	timing.text = "Heavy attack · move or Guard" if heavy_windup else sword_state
 	timing.modulate = Color(1.0, 0.52, 0.35) if heavy_windup else Color.WHITE
-
-func _focused_enemy() -> ValeEnemy:
-	if player.selected_target is ValeEnemy and player.selected_target.is_alive():
-		return player.selected_target
-	for enemy in enemies:
-		if enemy.attacking:
-			return enemy
-	for enemy in enemies:
-		if is_instance_valid(enemy.opponent) or enemy.returning:
-			return enemy
-	if is_instance_valid(last_focused_enemy):
-		return last_focused_enemy
-	return idle_preview_enemy
 
 func _enemy_status(enemy: ValeEnemy) -> String:
 	var display_name := enemy.stats.display_name

@@ -3,6 +3,7 @@ extends Resource
 ## Initial combat tuning shared by actors; timings are in seconds.
 
 @export var display_name := "Combatant"
+@export var portrait: Texture2D
 @export var enemy_id: StringName
 @export var defeat_xp := 0
 @export var defeat_item: ValeItem
