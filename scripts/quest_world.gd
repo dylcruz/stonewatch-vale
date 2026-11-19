@@ -2,6 +2,8 @@ extends "res://scripts/combat_world.gd"
 
 enum JournalView { CLOSED, DIALOGUE, QUEST_LOG, CHARACTER, BAG }
 
+const ITEM_CATALOG := preload("res://scripts/item_catalog.gd")
+
 @export var quest_definition: ValeQuestDefinition
 @export var follow_up_quests: Array[ValeQuestDefinition] = []
 @export var chain_completion_text := ""
@@ -102,11 +104,9 @@ func _save_checkpoint() -> void:
 		push_warning("Checkpoint save failed: " + error_string(error))
 
 func _restore_checkpoint(checkpoint: Dictionary) -> void:
-	var available_items: Array[ValeItem] = []
 	var quests: Dictionary = checkpoint.quests
 	for progress in quest_chain:
 		var definition := progress.definition
-		available_items.append(definition.reward_item)
 		var recorded: Variant = quests.get(definition.id)
 		if recorded is Dictionary:
 			var state: Variant = recorded.get("state")
@@ -119,26 +119,27 @@ func _restore_checkpoint(checkpoint: Dictionary) -> void:
 			tracked_quest = progress
 	var encounters: Dictionary = checkpoint.encounters
 	for enemy in enemies:
-		available_items.append(enemy.stats.defeat_item)
 		var recorded: Variant = encounters.get(enemy.encounter_id)
 		if enemy.encounter_id != &"" and recorded is Dictionary:
 			enemy.restore_encounter(recorded)
-	_restore_inventory(checkpoint, available_items)
+	_restore_inventory(checkpoint)
 	ability_hud.restore_layout(checkpoint.get("ability_bar"))
 	player.level = clampi(checkpoint.level, 1, 3)
 	player.award_experience(checkpoint.experience)
 	player.reset_combat()
 
-func _restore_inventory(checkpoint: Dictionary, available_items: Array[ValeItem]) -> void:
+func _restore_inventory(checkpoint: Dictionary) -> void:
 	var owned: PackedStringArray = checkpoint.owned_items
 	var waiting: Variant = checkpoint.get("waiting_rewards")
-	for item in available_items:
-		if not item:
-			continue
-		if String(item.id) in owned:
+	for id in owned:
+		var item := ITEM_CATALOG.ITEMS.get(id) as ValeItem
+		if item:
 			player.owned_items[item.id] = item
-		elif waiting is PackedStringArray and String(item.id) in waiting and not player.owned_items.has(item.id):
-			player.waiting_rewards[item.id] = item
+	if waiting is PackedStringArray:
+		for id: String in waiting:
+			var item := ITEM_CATALOG.ITEMS.get(id) as ValeItem
+			if item and not player.owned_items.has(item.id):
+				player.waiting_rewards[item.id] = item
 	var saved_weapon := player.owned_items.get(checkpoint.weapon) as ValeItem
 	var saved_armor := player.owned_items.get(checkpoint.armor) as ValeItem
 	var bag_id: Variant = checkpoint.get("bag")
