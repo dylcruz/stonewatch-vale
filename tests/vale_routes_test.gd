@@ -348,6 +348,8 @@ func check_delivery() -> void:
 	world.dialogue_action.pressed.emit()
 	world.dialogue_action.pressed.emit()
 	check(cargo.visible and player.experience == 85, "Delivery loads the cart and pays its XP once")
+	check(is_equal_approx(world.ability_hud.xp_bar.ratio, 0.85) and world.ability_hud.xp_label.text == "XP 85 / 100",
+		"Delivery fills the XP bar to 85 percent")
 	if timed:
 		print("Town square through quiet-bank delivery: %.1f s of simulation" % (
 			float(Engine.get_physics_frames() - started) / Engine.physics_ticks_per_second))
@@ -363,6 +365,8 @@ func check_delivery() -> void:
 	player = world.player
 	check(region.get_node("BirchwaterLoop/Cart/Cargo").visible and not region.get_node("BirchwaterLoop/LostBundle").visible
 		and player.experience == 85, "Continue restores the delivered bundle on the cart")
+	check(is_equal_approx(world.ability_hud.xp_bar.ratio, 0.85) and world.ability_hud.xp_label.text == "XP 85 / 100",
+		"Continue restores the XP bar in town")
 	wolf = region.get_node("BirchwaterLoop/BankWolf")
 	wolf.respawn_delay = 0.5
 	await place(wolf.spawn_position + Vector3(0, 0, 3))

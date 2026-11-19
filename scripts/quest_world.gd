@@ -9,7 +9,6 @@ const ITEM_CATALOG := preload("res://scripts/item_catalog.gd")
 @export var chain_completion_text := ""
 @onready var mara: ValeInteractable = get_node_or_null("CaptainMara")
 @onready var objective_label: Label = $HUD/Panel/Margin/VBox/QuestObjective
-@onready var progression_label: Label = $HUD/Panel/Margin/VBox/Progression
 @onready var loot_notice: Label = $HUD/Panel/Margin/VBox/LootNotice
 @onready var quest_marker: Label3D = get_node_or_null("CaptainMara/QuestMarker")
 @onready var journal: PanelContainer = $HUD/Journal
@@ -62,7 +61,7 @@ func _ready() -> void:
 				child.collect()
 	player.health.died.connect(_close_panel)
 	player.health.changed.connect(func(_current: int, _maximum: int): _refresh_character_stats())
-	player.progression_changed.connect(_on_progression_changed)
+	player.progression_changed.connect(_refresh_character_stats)
 	dialogue_action.pressed.connect(_perform_dialogue_action)
 	$HUD/Journal/Margin/Content/Close.pressed.connect(_close_panel)
 	player.equipment_changed.connect(_save_checkpoint)
@@ -313,7 +312,6 @@ func _refresh_progress() -> void:
 		objective_label.text = _objective_text(objective)
 		if objective == tracked_quest and objective.state == ValeQuestProgress.State.READY:
 			objective_label.text = "%s · %s" % [objective.definition.title, objective_label.text]
-	_refresh_xp()
 	for object in quest_objects:
 		object.set_objective_hint(quest_chain.any(func(progress: ValeQuestProgress):
 			return progress.state == ValeQuestProgress.State.ACTIVE and progress.definition.target_object == object.objective_id
@@ -330,17 +328,6 @@ func _refresh_progress() -> void:
 			elif offer and _can_accept_quest(offer):
 				marker.text = "!"
 	_refresh_panel()
-
-func _on_progression_changed() -> void:
-	_refresh_xp()
-	_refresh_character_stats()
-
-func _refresh_xp() -> void:
-	var next_xp: int = player.next_level_experience()
-	if next_xp > 0:
-		progression_label.text = "XP %d / %d" % [player.experience, next_xp]
-	else:
-		progression_label.text = "XP %d · Max level" % player.experience
 
 func _refresh_enemy_marker(enemy: ValeEnemy) -> void:
 	var marker := enemy.get_node_or_null("QuestMarker") as Label3D

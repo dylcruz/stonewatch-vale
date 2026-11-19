@@ -74,6 +74,9 @@ func run() -> void:
 	check(world.click_world(world.camera.unproject_position(Vector3(8, 0, 7))),
 		"Town accepts a movement command")
 	var destination := player.destination
+	click(hud.xp_bar)
+	check(player.destination == destination and not world.following_cursor,
+		"Clicking the XP bar preserves the movement command")
 	click(book_button)
 	await process_frame
 	check(hud.is_book_open() and player.destination == destination and not world.following_cursor,
@@ -87,7 +90,8 @@ func run() -> void:
 	check(player.guard_remaining > 0.0, "The shortcut follows Guard to its new slot")
 	press(KEY_2)
 	check(player.cleave_cooldown_remaining == 0.0, "Rearranging locked Cleave preserves its level restriction")
-	player.award_experience(100)
+	player.award_experience(115)
+	check(hud.xp_label.text == "XP 15 / 140", "XP above the level-up threshold carries into the new level")
 	check(not cleave_assignment.disabled, "Reaching level 2 unlocks Cleave in the open book")
 	click(third)
 	click(cleave_assignment)
@@ -121,6 +125,8 @@ func run() -> void:
 	world.configure_checkpoint(slot, checkpoint)
 	root.add_child(world)
 	hud = world.ability_hud
+	check(hud.xp_label.text == "XP 15 / 140" and is_equal_approx(hud.xp_bar.ratio, 15.0 / 140.0),
+		"Restoring a level 2 checkpoint shows progress within level 2")
 	check(hud.save_layout() == PackedStringArray(["", "", "cleave", ""])
 		and world.player.has_cleave(), "Restoring the checkpoint keeps custom slots and the ability unlock")
 	await process_frame

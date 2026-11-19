@@ -439,7 +439,8 @@ func run() -> void:
 	check(await talk_to_mara() and not world.dialogue_action.visible and warrior.experience == 240
 		and warrior.owned_items.size() == 6, "The final turn-in has no repeat reward")
 	await press_key(KEY_J)
-	check(world.journal_body.text.count("· Completed") == 3 and world.progression_label.text.contains("Max level"),
+	check(world.journal_body.text.count("· Completed") == 3 and world.ability_hud.xp_label.text.contains("Max level")
+		and world.ability_hud.xp_bar.ratio == 1.0,
 		"The log records all three completed quests and the HUD shows the level cap")
 	await press_key(KEY_J)
 	check(await equip_from_panel("Warden's Coat") and warrior.armor_value() == 2 and warrior.sword_damage() == 12

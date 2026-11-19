@@ -210,3 +210,11 @@ For hands-on verification, fight a road wolf and use Guard as it bites. Compare 
 For the Windows playtest, take a bite from the Birchwater wolf, click the ground to flee, and watch the Warrior’s health. It should hold steady during pursuit and rise by 2 HP per second once the wolf turns home. Approach again before reaching full health. Recovery should stop as soon as pursuit resumes, before the next bite.
 
 The user confirmed the Windows playtest passed at 2 HP per second. All nine Windows regression suites also passed. The combat suite verified recovery after two escapes, interruption by an unselected wolf, the maximum-health cap in the HUD, and defeat and respawn. [Issue #42](https://github.com/dylcruz/stonewatch-vale/issues/42)
+
+## XP progress above the ability bar
+
+For the Windows playtest, turn in the Birchwater delivery and check the gold bar above the abilities. A fresh Warrior who skipped the wolf should see **XP 85 / 100**. Relaunch and choose **Continue** to check the same fill in town. A Warrior who reaches level 2 at exactly 100 XP sees **XP 0 / 140**. Any excess XP counts toward those 140 points. At level 3 the bar stays full and reads **Max level**.
+
+All nine Windows regression suites passed. The route suite checked the turn-in and Continue. The inventory and quest suites checked the level-up and cap. A scripted Windows capture shows the bar at 85 XP. Hands-on verification is pending. [Issue #40](https://github.com/dylcruz/stonewatch-vale/issues/40)
+
+![XP at 85 of 100 above the ability and menu rows](playtest-images/xp-progress.png)
