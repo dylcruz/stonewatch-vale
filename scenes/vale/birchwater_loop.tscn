@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" path="res://scenes/captain_mara.tscn" id="NPC"]
 [ext_resource type="PackedScene" path="res://scenes/supply_crate.tscn" id="Bundle"]
 [ext_resource type="PackedScene" path="res://scenes/wolf.tscn" id="Wolf"]
+[ext_resource type="AudioStreamWAV" path="res://art/audio/birchwater_current.wav" id="RiverSound"]
+[ext_resource type="Script" path="res://scripts/river_current.gd" id="Current"]
 
 [sub_resource type="StandardMaterial3D" id="Cloth"]
 albedo_color = Color(0.88, 0.09, 0.04, 1)
@@ -48,6 +50,22 @@ roughness = 0.95
 size = Vector3(29.7, 0.88, 0.24)
 
 [node name="BirchwaterLoop" type="Node3D"]
+
+[node name="FordCurrent" type="AudioStreamPlayer3D" parent="."]
+position = Vector3(48, 0, -123)
+stream = ExtResource("RiverSound")
+script = ExtResource("Current")
+unit_size = 15.0
+max_distance = 47.0
+volume_db = -4.0
+
+[node name="BridgeCurrent" type="AudioStreamPlayer3D" parent="."]
+position = Vector3(49, 0, -202)
+stream = ExtResource("RiverSound")
+script = ExtResource("Current")
+unit_size = 15.0
+max_distance = 47.0
+volume_db = -4.0
 
 [node name="DeepWater" type="CSGPolygon3D" parent="." groups=["map_water"]]
 position = Vector3(0, -1.4, 0)

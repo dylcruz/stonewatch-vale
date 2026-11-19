@@ -173,6 +173,9 @@ func check_meadow() -> void:
 		"The north meadow junction can be walked in both directions")
 
 func check_river() -> void:
+	var ford_sound: AudioStreamPlayer3D = region.get_node("BirchwaterLoop/FordCurrent")
+	var bridge_sound: AudioStreamPlayer3D = region.get_node("BirchwaterLoop/BridgeCurrent")
+	check((ford_sound.stream as AudioStreamWAV).loop_mode == AudioStreamWAV.LOOP_FORWARD, "Running water loops at the crossings")
 	check(connected(mark("NorthRoad/FordConnection"), mark("BirchwaterLoop/Ford"))
 		and connected(mark("BirchwaterLoop/Ford"), mark("BirchwaterLoop/EastBank"))
 		and connected(mark("BirchwaterLoop/EastBank"), mark("BirchwaterLoop/Bridge"))
@@ -182,6 +185,8 @@ func check_river() -> void:
 		var west := Vector3(32, 0, crossing.z)
 		var east := Vector3(65, 0, crossing.z)
 		await place(west)
+		check(ford_sound.playing == (crossing.z == -123) and bridge_sound.playing == (crossing.z == -202),
+			"Only the nearby crossing plays its river loop")
 		check(await walk_steps([crossing, east, crossing, west]),
 			"Both banks can be reached on foot across Birchwater at z = %d" % int(crossing.z))
 	await place(Vector3(32, 0, -132))
@@ -409,6 +414,8 @@ func check_signal(town_first: bool) -> void:
 			"The town offer describes both approaches")
 		world.dialogue_action.pressed.emit()
 	var mast := mark("LookoutRidgeLoop/LightMast")
+	var bell: AudioStreamPlayer3D = region.get_node("LookoutRidgeLoop/MastBell")
+	check(not bell.playing, "The unlit mast is silent")
 	var approach := mast + Vector3.BACK * 2
 	var climb := mark("NorthRoad/SouthRidgeConnection" if town_first else "NorthRoad/NorthRidgeConnection")
 	check(connected(climb, approach), "The chosen climb reaches the unlit mast")
@@ -416,6 +423,7 @@ func check_signal(town_first: bool) -> void:
 	await place(mast + Vector3.BACK * 5)
 	check(camera_click(mark("LookoutRidgeLoop/SignalMast") + Vector3.UP), "Clicking the mast starts the approach")
 	await frames(120)
+	check(bell.playing, "Crediting the mast interaction rings the bell")
 	check(region.get_node("LookoutRidgeLoop/Beacon/Flame").visible and player.experience == 0,
 		"Lighting the mast records the discovery before turn-in")
 	await press_key(KEY_J)
@@ -424,12 +432,14 @@ func check_signal(town_first: bool) -> void:
 	await continue_in_town(slot)
 	check(region.get_node("StartingTown/TownHall/Lantern/Flame").visible and region.get_node("LookoutRidgeLoop/Beacon/Flame").visible,
 		"Continue restores the answering lantern and lit mast before turn-in")
+	check(not region.get_node("LookoutRidgeLoop/MastBell").playing, "Restoring the lit mast does not replay the bell")
 	await talk_to_keeper()
 	check(world.journal_body.text.contains("lantern in reply"), "The keeper explains the light on return")
 	world.dialogue_action.pressed.emit()
 	world.dialogue_action.pressed.emit()
 	await continue_in_town(slot)
 	await talk_to_keeper()
+	check(not region.get_node("LookoutRidgeLoop/MastBell").playing, "The bell stays silent after Continue following the keeper's turn-in")
 	check(player.experience == 70 and not world.dialogue_action.visible and world.journal_body.text.contains("keep the answering lantern")
 		and not region.get_node("LookoutRidgeLoop/LightMast").visible and region.get_node("StartingTown/TownHall/Lantern/Flame").visible,
 		"Continue preserves the keeper's response and exactly one reward")

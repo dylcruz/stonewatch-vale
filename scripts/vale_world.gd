@@ -5,6 +5,7 @@ extends "res://scripts/quest_world.gd"
 @onready var exploration_map: ValeExplorationMap = $HUD/WorldMap/Margin/Content/ExplorationMap
 
 func _ready() -> void:
+	$Player/AudioListener3D.make_current()
 	var landmarks: Dictionary[String, Vector3] = {}
 	for label in map_landmarks:
 		var marker := get_node(map_landmarks[label]) as Node3D

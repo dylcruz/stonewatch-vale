@@ -231,6 +231,7 @@ func _use_quest_object(object: ValeInteractable) -> void:
 						return
 		return
 	object.collect()
+	object.objective_credited.emit()
 	status.text = object.interaction_feedback if not object.interaction_feedback.is_empty() else "%s recovered" % object.display_name
 	_refresh_progress()
 	_save_checkpoint()
