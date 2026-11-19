@@ -6,7 +6,7 @@
 script = ExtResource("1")
 id = &"birchwater_delivery"
 title = "The Ferryman's Lost Bundle"
-briefing = "I lost a bundle unloading at the timber bridge upriver. Look for the red cloth on the rail. My bundle has the same wrap. The west bank is quicker, but a wolf hunts there. Cross here for the quiet east trail."
+briefing = "See the torn red cloth on my cart? My bundle is wrapped in the same stuff. I lost it unloading at the timber bridge upriver. The west bank is quicker, but a wolf hunts there. Cross here for the quiet east trail."
 objective = "Find the red-wrapped bundle near the timber bridge"
 return_objective = "Bring the bundle to the ferryman at Birchwater Ford"
 turn_in_dialogue = "That's the one! Set it on the cart. The ferry can make its delivery after all."

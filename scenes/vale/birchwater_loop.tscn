@@ -466,19 +466,25 @@ text = "LOST BUNDLE"
 position = Vector3(29, 0.02, -164)
 encounter_id = &"birchwater_bank_wolf"
 
-[node name="TornCloth" type="CSGPolygon3D" parent="."]
-position = Vector3(40.2, 1.03, -198.83)
-rotation_degrees = Vector3(-68, 8, 0)
-polygon = PackedVector2Array(-0.68, 0.14, 0.66, 0.14, 0.48, -1.42, 0.15, -1.16, -0.28, -2.1, -0.35, -1.38, -0.62, -1.61)
-depth = 0.035
-material = SubResource("Cloth")
-
 [node name="Cart" type="Node3D" parent="."]
 position = Vector3(32, 0.55, -125.7)
 
 [node name="Bed" type="CSGBox3D" parent="Cart"]
 size = Vector3(2.1, 0.22, 1.4)
 material = SubResource("CartWood")
+
+[node name="Sideboard" type="CSGBox3D" parent="Cart"]
+position = Vector3(0, 0.45, 0.64)
+size = Vector3(2.1, 0.7, 0.12)
+material = SubResource("CartWood")
+
+[node name="TornCloth" type="CSGPolygon3D" parent="Cart"]
+position = Vector3(0, 0.79, 0.72)
+rotation_degrees = Vector3(-38, 0, 0)
+scale = Vector3(0.85, 0.65, 1)
+polygon = PackedVector2Array(-0.68, 0.14, 0.66, 0.14, 0.48, -1.42, 0.15, -1.16, -0.28, -2.1, -0.35, -1.38, -0.62, -1.61)
+depth = 0.035
+material = SubResource("Cloth")
 
 [node name="Cargo" type="CSGBox3D" parent="Cart"]
 visible = false
