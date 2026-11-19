@@ -134,8 +134,7 @@ func run() -> void:
 	check(world.player_frame.amount.text == "54 / 60 HP" and world.target_frame.bar.value == wolf.health.current,
 		"Both health frames show damage during combat")
 	var active_destination: Vector3 = warrior.destination
-	var hud_panel: PanelContainer = world.get_node("HUD/Panel")
-	await dispatch_click(hud_panel.get_global_rect().position + Vector2(12, 12))
+	await dispatch_click(world.ability_hud.xp_bar.get_global_rect().get_center())
 	check(warrior.selected_target == wolf and warrior.destination == active_destination, "HUD input preserves the combat target and movement command")
 	var wolf_deaths := [0]
 	wolf.health.died.connect(func(): wolf_deaths[0] += 1)

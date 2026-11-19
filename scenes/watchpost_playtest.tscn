@@ -17,6 +17,8 @@
 albedo_color = Color(0.4, 0.46, 0.48, 1)
 roughness = 0.85
 
+[sub_resource type="StyleBoxEmpty" id="UnboxedFeedback"]
+
 [node name="WatchpostPlaytest" instance=ExtResource("World")]
 ready_text = "Watchpost"
 quest_definition = ExtResource("PineRoad")
@@ -44,8 +46,34 @@ collision_mask = 4
 
 [node name="WatchpostLandmarks" parent="NavigationRegion3D" instance=ExtResource("Landmarks")]
 
+[node name="Panel" parent="HUD"]
+mouse_filter = 2
+theme_override_styles/panel = SubResource("UnboxedFeedback")
+
+[node name="Margin" parent="HUD/Panel"]
+mouse_filter = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+
+[node name="VBox" parent="HUD/Panel/Margin"]
+mouse_filter = 2
+
 [node name="Title" parent="HUD/Panel/Margin/VBox"]
-text = "WATCHPOST PLAYTEST"
+visible = false
+
+[node name="Help" parent="HUD/Panel/Margin/VBox"]
+visible = false
+
+[node name="Status" parent="HUD/Panel/Margin/VBox"]
+theme_override_constants/outline_size = 4
+
+[node name="QuestObjective" parent="HUD/Panel/Margin/VBox"]
+theme_override_constants/outline_size = 4
+autowrap_mode = 3
+
+[node name="LootNotice" parent="HUD/Panel/Margin/VBox"]
+theme_override_constants/outline_size = 4
+autowrap_mode = 3
 
 [node name="Wolf" parent="." instance=ExtResource("Wolf")]
 position = Vector3(6, 0.02, 1)
