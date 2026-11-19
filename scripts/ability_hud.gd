@@ -56,9 +56,9 @@ func _refresh_xp() -> void:
 	xp_bar.min_value = ValeWarrior.LEVEL_TWO_XP if _player.level >= 2 else 0
 	xp_bar.value = _player.experience
 	if next_xp:
-		xp_label.text = "XP %d / %d" % [_player.experience, next_xp]
+		xp_label.text = "XP %d / %d" % [xp_bar.value - xp_bar.min_value, xp_bar.max_value - xp_bar.min_value]
 	else:
-		xp_label.text = "XP %d · Max level" % _player.experience
+		xp_label.text = "Max level"
 
 func add_menu_button(label: String, shortcut: String, toggle_menu: Callable) -> void:
 	var button := Button.new()

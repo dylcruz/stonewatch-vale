@@ -49,7 +49,7 @@ func run() -> void:
 	player.award_experience(100)
 	check(world.journal_body.text.contains("Level 2") and world.journal_body.text.contains("100 / 240 XP")
 		and world.journal_body.text.contains("Health   68 / 75") and world.journal_body.text.contains("Cleave 12")
-		and world.ability_hud.xp_label.text == "XP 100 / 240" and world.ability_hud.xp_bar.ratio == 0.0,
+		and world.ability_hud.xp_label.text == "XP 0 / 140" and world.ability_hud.xp_bar.ratio == 0.0,
 		"Leveling immediately updates XP, maximum health, and effective ability stats")
 
 	press_menu_key(KEY_B)

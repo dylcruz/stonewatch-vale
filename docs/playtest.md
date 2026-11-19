@@ -213,7 +213,7 @@ The user confirmed the Windows playtest passed at 2 HP per second. All nine Wind
 
 ## XP progress above the ability bar
 
-For the Windows playtest, turn in the Birchwater delivery and check the gold bar above the abilities. A fresh Warrior who skipped the wolf should see **XP 85 / 100**. Relaunch and choose **Continue** to check the same fill in town. At level 2 the fill starts over while the label shows lifetime XP toward 240. At level 3 the bar stays full and reads **Max level**.
+For the Windows playtest, turn in the Birchwater delivery and check the gold bar above the abilities. A fresh Warrior who skipped the wolf should see **XP 85 / 100**. Relaunch and choose **Continue** to check the same fill in town. A Warrior who reaches level 2 at exactly 100 XP sees **XP 0 / 140**. Any excess XP counts toward those 140 points. At level 3 the bar stays full and reads **Max level**.
 
 All nine Windows regression suites passed. The route suite checked the turn-in and Continue. The inventory and quest suites checked the level-up and cap. A scripted Windows capture shows the bar at 85 XP. Hands-on verification is pending. [Issue #40](https://github.com/dylcruz/stonewatch-vale/issues/40)
 

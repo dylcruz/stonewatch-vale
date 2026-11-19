@@ -90,7 +90,8 @@ func run() -> void:
 	check(player.guard_remaining > 0.0, "The shortcut follows Guard to its new slot")
 	press(KEY_2)
 	check(player.cleave_cooldown_remaining == 0.0, "Rearranging locked Cleave preserves its level restriction")
-	player.award_experience(100)
+	player.award_experience(115)
+	check(hud.xp_label.text == "XP 15 / 140", "XP above the level-up threshold carries into the new level")
 	check(not cleave_assignment.disabled, "Reaching level 2 unlocks Cleave in the open book")
 	click(third)
 	click(cleave_assignment)
@@ -124,6 +125,8 @@ func run() -> void:
 	world.configure_checkpoint(slot, checkpoint)
 	root.add_child(world)
 	hud = world.ability_hud
+	check(hud.xp_label.text == "XP 15 / 140" and is_equal_approx(hud.xp_bar.ratio, 15.0 / 140.0),
+		"Restoring a level 2 checkpoint shows progress within level 2")
 	check(hud.save_layout() == PackedStringArray(["", "", "cleave", ""])
 		and world.player.has_cleave(), "Restoring the checkpoint keeps custom slots and the ability unlock")
 	await process_frame
