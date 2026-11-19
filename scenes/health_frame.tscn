@@ -1,0 +1,51 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/health_frame.gd" id="Frame"]
+
+[sub_resource type="StyleBoxFlat" id="Track"]
+bg_color = Color(0.16, 0.11, 0.10, 1)
+
+[sub_resource type="StyleBoxFlat" id="Fill"]
+bg_color = Color(0.76, 0.32, 0.24, 1)
+
+[sub_resource type="StyleBoxFlat" id="Panel"]
+bg_color = Color(0.075, 0.10, 0.10, 0.94)
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+
+[node name="HealthFrame" type="PanelContainer"]
+theme_override_styles/panel = SubResource("Panel")
+script = ExtResource("Frame")
+
+[node name="Row" type="HBoxContainer" parent="."]
+theme_override_constants/separation = 10
+
+[node name="Portrait" type="TextureRect" parent="Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 44)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Vitals" type="VBoxContainer" parent="Row"]
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="Labels" type="HBoxContainer" parent="Row/Vitals"]
+layout_mode = 2
+
+[node name="ActorName" type="Label" parent="Row/Vitals/Labels"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
+[node name="Amount" type="Label" parent="Row/Vitals/Labels"]
+unique_name_in_owner = true
+theme_override_font_sizes/font_size = 14
+
+[node name="HealthBar" type="ProgressBar" parent="Row/Vitals"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 9)
+theme_override_styles/background = SubResource("Track")
+theme_override_styles/fill = SubResource("Fill")
+show_percentage = false

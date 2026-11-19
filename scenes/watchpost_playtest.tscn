@@ -17,8 +17,7 @@
 albedo_color = Color(0.4, 0.46, 0.48, 1)
 roughness = 0.85
 
-[node name="WatchpostPlaytest" node_paths=PackedStringArray("idle_preview_enemy") instance=ExtResource("World")]
-idle_preview_enemy = NodePath("Wolf")
+[node name="WatchpostPlaytest" instance=ExtResource("World")]
 ready_text = "Watchpost"
 quest_definition = ExtResource("PineRoad")
 follow_up_quests = Array[ExtResource("QuestDefinition")]([ExtResource("Supplies"), ExtResource("Blockade")])
@@ -47,9 +46,6 @@ collision_mask = 4
 
 [node name="Title" parent="HUD/Panel/Margin/VBox"]
 text = "WATCHPOST PLAYTEST"
-
-[node name="LastHit" parent="HUD/CombatPanel/Margin/VBox"]
-text = "Use Guard during a bite windup to reduce damage."
 
 [node name="Wolf" parent="." instance=ExtResource("Wolf")]
 position = Vector3(6, 0.02, 1)

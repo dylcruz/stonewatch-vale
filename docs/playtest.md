@@ -186,3 +186,11 @@ When authoring an item that can be saved, register its resource under its perman
 Press **M** while following North Road to Birchwater. Explored cells show woodland, trails, the river, and its crossings. Each new cell triggers a checkpoint. The Windows relaunch suite walks into Heather Rest without advancing a quest or changing equipment, quits, then checks that Continue reveals Heather Rest and keeps Signal Ridge concealed. It also checks that an older save opens in town and New Game resets discovery. [Issue #35](https://github.com/dylcruz/stonewatch-vale/issues/35)
 
 For the hands-on check, visit the ford and one bank, relaunch with **Continue**, and compare the map with the route walked. The player marker should return to town while the explored route stays visible.
+
+## Combat portraits and selected-target health
+
+The Warrior’s portrait and health sit in the lower left. Selecting a living enemy shows its portrait and health in the lower right. The Captain’s ground telegraph warns of an incoming heavy attack even after deselection. The current actors use health as their only resource. Portraits are rendered from their in-game models. [Issue #39](https://github.com/dylcruz/stonewatch-vale/issues/39)
+
+The Windows combat suite checked an empty target frame at spawn, switching from a wolf to the Raider Captain, damage to both actors, ground deselection, target death, and player recovery. It also checked the Captain’s heavy-attack warning with no target selected.
+
+For hands-on verification, approach the Birchwater wolf, select it, then click the ground during pursuit. The target row should disappear while the Warrior’s health stays visible. In the developer Watchpost, repeat with the Captain during a heavy windup and check that the warning stays visible.

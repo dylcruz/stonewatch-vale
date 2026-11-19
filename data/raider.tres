@@ -2,8 +2,11 @@
 
 [ext_resource type="Script" uid="uid://dlvy5jcy2sfqd" path="res://scripts/combat_stats.gd" id="1"]
 
+[ext_resource type="Texture2D" path="res://art/portraits/raider.png" id="Portrait"]
+
 [resource]
 script = ExtResource("1")
+portrait = ExtResource("Portrait")
 display_name = "Raider"
 enemy_id = &"raider"
 defeat_xp = 5
