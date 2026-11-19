@@ -165,8 +165,8 @@ The interactive run used Godot Standard 4.7.2 and the Compatibility renderer wit
 
 | Record during the session | First-time player observation |
 | --- | --- |
-| New Game to discovering the offer | Pending |
-| Time reading the offer and clues, whether the player noticed the cloth, and where they hesitated | Pending |
+| New Game to discovering the offer | The player went east first and wandered without finding an activity or a reason to head north. Time unreported. Revisit this when adding quests in the starting town. |
+| Time reading the offer and clues, whether the player noticed the cloth, and where they hesitated | The playtester flagged the red cloth on the old bridge rail beside the bundle. The revised offer points to a matching swatch on the ferryman’s cart at the ford. Reading time and first sighting unreported. |
 | Route chosen and time spent in combat | Pending |
 | Return and turn-in time, total adventure time, and what changed at the cart after Continue | Pending |
 | Full-zone crossing time on foot and route taken | Pending |
