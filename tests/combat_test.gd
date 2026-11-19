@@ -180,6 +180,8 @@ func run() -> void:
 	press_key(KEY_2)
 	check(warrior.guard_remaining == guard_time, "Pressing 2 again does not extend active Guard")
 	check(await until(func(): return warrior.health.current < 60, 40), "A bite lands during the Guard window")
+	check(warrior.get_node("DamageNumbers").get_child(-1).text == "3",
+		"The Warrior shows the bite damage that passed through Guard")
 	check(warrior.health.current == 57,
 		"Guard halves the bite damage during its active window")
 	check(await until(func(): return guard_slot.text.contains("s left"), 90)
@@ -263,6 +265,14 @@ func test_cleave() -> void:
 	await frames(2)
 	press_key(KEY_1)
 	check(raider.health.current == 16 and other_raider.health.current == 16, "Cleave hits both enemies in front for 12 damage")
+	var numbers := raider.get_node("DamageNumbers")
+	var hit := numbers.get_child(-1) as Label3D
+	check(hit.text == "12" and other_raider.get_node("DamageNumbers").get_child(-1).text == "12",
+		"Each enemy struck by Cleave displays its own damage")
+	raider.receive_hit(0, warrior)
+	check(numbers.get_child_count() == 1, "Zero damage creates no extra number")
+	await frames(5)
+	check(hit.position.y > 0, "Damage rises above the struck model")
 	check(wolf.health.current == 40, "Cleave skips enemies behind the Warrior")
 	check(warrior.cleave_arc.visible,
 		"Cleave displays its arc on activation")
@@ -272,6 +282,7 @@ func test_cleave() -> void:
 	check(await until(func(): return cleave_slot.text.ends_with("Ready"), 260)
 		and not warrior.cleave_arc.visible, "Cleave becomes ready and the arc clears")
 
+	check(numbers.get_child_count() == 0, "Finished damage numbers are removed")
 	warrior.global_position = Vector3(-1.7, 0.02, 3.7)
 	raider.global_position = Vector3(-3.1, 0.02, 2.1)
 	var toward_raider := raider.global_position - warrior.global_position
