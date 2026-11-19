@@ -51,7 +51,4 @@ visible = false
 [node name="Help" parent="HUD/Panel/Margin/VBox"]
 text = "Click to move.\nJ · Quest log     I · Character     M · Map"
 
-[node name="CombatPanel" parent="HUD"]
-offset_top = -120.0
-
 [node name="WorldMap" parent="HUD" instance=ExtResource("WorldMap")]

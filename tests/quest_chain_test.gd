@@ -399,8 +399,7 @@ func run() -> void:
 	await click_world(dodge_point)
 	check(captain.heavy_attacking and captain.telegraph.global_position == danger_center,
 		"The danger circle stays anchored while the Warrior moves")
-	check(await until(func(): return not captain.heavy_attacking, 90) and warrior.health.current == hp_before_dodge
-		and world.combat_hud.get_node("LastHit").text.contains("Heavy attack misses"), "Moving clear avoids the heavy attack")
+	check(await until(func(): return not captain.heavy_attacking, 90) and warrior.health.current == hp_before_dodge, "Moving clear avoids the heavy attack")
 
 	# Start a second attempt at full health to check mitigation independently.
 	warrior.receive_hit(999, null)
@@ -413,8 +412,7 @@ func run() -> void:
 	await frames(32)
 	var hp_before_guard: int = warrior.health.current
 	await press_key(KEY_2)
-	check(await until(func(): return not captain.heavy_attacking, 90) and warrior.health.current == hp_before_guard - 10
-		and world.combat_hud.get_node("LastHit").text.contains("Guard blocked 10"), "Guard halves the heavy hit to 10")
+	check(await until(func(): return not captain.heavy_attacking, 90) and warrior.health.current == hp_before_guard - 10, "Guard halves the heavy hit to 10")
 	await press_key(KEY_1)
 	check(await until(func(): return not captain.is_alive(), 420) and warrior.is_alive(),
 		"The Warrior can defeat the Captain with the earned sword and abilities")

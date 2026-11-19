@@ -84,6 +84,10 @@ func run() -> void:
 	check(world.target_frame.visible and captain.stats.portrait != null and world.target_frame.portrait.texture == captain.stats.portrait
 		and world.target_frame.bar.max_value == captain.health.maximum and world.target_frame.actor_name.text == captain.stats.display_name,
 		"Switching from the wolf to the Captain replaces the portrait and vitals")
+	var viewport_center := root.get_visible_rect().get_center()
+	check(world.player_frame.get_global_rect().end.x < viewport_center.x
+		and world.target_frame.get_global_rect().position.x > viewport_center.x,
+		"The Warrior and selected target frames occupy opposite sides of the HUD")
 	reset_pair()
 	for enemy in world.enemies:
 		if enemy != wolf:
@@ -176,8 +180,8 @@ func run() -> void:
 	press_key(KEY_2)
 	check(warrior.guard_remaining == guard_time, "Pressing 2 again does not extend active Guard")
 	check(await until(func(): return warrior.health.current < 60, 40), "A bite lands during the Guard window")
-	check(warrior.health.current == 57 and world.combat_hud.get_node("LastHit").text.contains("Guard blocked 3"),
-		"Guard halves the bite damage and reports the blocked amount")
+	check(warrior.health.current == 57,
+		"Guard halves the bite damage during its active window")
 	check(await until(func(): return guard_slot.text.contains("s left"), 90)
 		and not warrior.guard_ring.visible, "Guard expires and the HUD switches to its cooldown")
 	press_key(KEY_2)
@@ -260,8 +264,8 @@ func test_cleave() -> void:
 	press_key(KEY_1)
 	check(raider.health.current == 16 and other_raider.health.current == 16, "Cleave hits both enemies in front for 12 damage")
 	check(wolf.health.current == 40, "Cleave skips enemies behind the Warrior")
-	check(warrior.cleave_arc.visible and world.combat_hud.get_node("LastHit").text == "Cleave hits 2 enemies",
-		"Cleave displays its arc and reports targets hit")
+	check(warrior.cleave_arc.visible,
+		"Cleave displays its arc on activation")
 	press_key(KEY_1)
 	check(raider.health.current == 16 and other_raider.health.current == 16, "Cleave deals no damage during cooldown")
 	check(await until(func(): return cleave_slot.text.contains("s left"), 10), "Cleave shows cooldown")
@@ -274,7 +278,7 @@ func test_cleave() -> void:
 	warrior.visual.rotation.y = atan2(toward_raider.x, toward_raider.z)
 	await frames(2)
 	press_key(KEY_1)
-	check(raider.health.current == 16 and world.combat_hud.get_node("LastHit").text == "Cleave misses",
+	check(raider.health.current == 16,
 		"Cleave respects blocking scenery and its range")
 
 func test_raider_attacks() -> void:
@@ -298,7 +302,7 @@ func test_raider_attacks() -> void:
 	check(await until(func(): return captain.heavy_attacking and captain.telegraph.visible, 30),
 		"The Captain telegraphs the first heavy attack")
 	await frames(2)
-	check(not world.target_frame.visible and world.combat_hud.get_node("Timing").text.contains("Heavy attack"),
+	check(not world.target_frame.visible and captain.telegraph.is_visible_in_tree(),
 		"The unselected Captain warns of the incoming heavy attack with the target frame hidden")
 	check(await until(func(): return warrior.health.current < 75, 100)
 		and warrior.health.current == 55, "An unguarded heavy attack deals 20 damage")

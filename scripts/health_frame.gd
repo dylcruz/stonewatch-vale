@@ -1,5 +1,5 @@
 class_name ValeHealthFrame
-extends HBoxContainer
+extends PanelContainer
 
 @onready var portrait: TextureRect = %Portrait
 @onready var actor_name: Label = %ActorName

@@ -189,7 +189,7 @@ For the hands-on check, visit the ford and one bank, relaunch with **Continue**,
 
 ## Combat portraits and selected-target health
 
-The Warrior and selected enemy have separate portrait, numeric HP, and health bar rows. The current actors use health as their only resource. Portraits are rendered from their in-game models. [Issue #39](https://github.com/dylcruz/stonewatch-vale/issues/39)
+The Warrior’s portrait and health sit in the lower left. Selecting a living enemy shows its portrait and health in the lower right. The Captain’s ground telegraph warns of an incoming heavy attack even after deselection. The current actors use health as their only resource. Portraits are rendered from their in-game models. [Issue #39](https://github.com/dylcruz/stonewatch-vale/issues/39)
 
 The Windows combat suite checked an empty target frame at spawn, switching from a wolf to the Raider Captain, damage to both actors, ground deselection, target death, and player recovery. It also checked the Captain’s heavy-attack warning with no target selected.
 

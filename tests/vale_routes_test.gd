@@ -122,7 +122,7 @@ func check_starting_town() -> void:
 		and not region.has_node("WatchpostDressing/CartBed") and not region.has_node("WatchpostDressing/CampSignLabel"),
 		"Town buildings replace the campsite, supply cart, and Quarry Gate")
 	check(not world.target_frame.visible
-		and not world.objective_label.visible and not world.last_hit.visible,
+		and not world.objective_label.visible,
 		"The town HUD starts without enemy health, combat tips, or a Watchpost objective")
 	await press_key(KEY_J)
 	check(world.journal.visible and world.journal_body.text == "No quests accepted",
