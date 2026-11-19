@@ -36,7 +36,7 @@ func run() -> void:
 	var path := OS.get_temp_dir().path_join("stonewatch-test-%d.save" % OS.get_process_id())
 	for phase in ["fresh_town", "continue_town", "early_defeat", "resume_early",
 		"resume_mid_quest", "resume_credited", "resume_completed",
-		"bag_waiting", "resume_waiting", "resume_claimed"]:
+		"bag_waiting", "resume_waiting_town", "resume_claimed_town"]:
 		var output := []
 		var code := OS.execute(OS.get_executable_path(), [
 			"--headless", "--fixed-fps", "60", "--path", ProjectSettings.globalize_path("res://"),
@@ -136,7 +136,8 @@ func run_checkpoint(phase: String) -> void:
 			check(saved.bag == &"scout_pouch" and saved.waiting_rewards == PackedStringArray(["wardens_coat"])
 				and saved.encounters[&"watchpost_quarry_captain"].reward_claimed,
 				"The full-bag reward and Captain claim are written with the same checkpoint")
-		"resume_waiting":
+		"resume_waiting_town":
+			# Load the Watchpost inventory where neither the sword quest nor the coat encounter exists.
 			press_menu_key(KEY_B)
 			check(warrior.equipped_bag.id == &"scout_pouch" and warrior.sword_damage() == 12
 				and warrior.free_bag_slots() == 0 and warrior.waiting_rewards.has(&"wardens_coat")
@@ -154,7 +155,7 @@ func run_checkpoint(phase: String) -> void:
 			check(claimed.waiting_rewards.is_empty() and "wardens_coat" in claimed.owned_items,
 				"Claiming the reward autosaves the updated inventory")
 			await click_bag_action(world, "Equip Warden's Coat")
-		"resume_claimed":
+		"resume_claimed_town":
 			check(warrior.equipped_bag.id == &"trail_pack" and warrior.sword_damage() == 12
 				and warrior.armor_value() == 2 and warrior.waiting_rewards.is_empty()
 				and warrior.free_bag_slots() == 3, "Continue restores the claimed and equipped coat exactly once")

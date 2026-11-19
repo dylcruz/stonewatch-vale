@@ -174,3 +174,9 @@ The interactive run used Godot Standard 4.7.2 and the Compatibility renderer wit
 **Tester notes.** The ferryman at Birchwater Ford offers the delivery. The player can cross the ford, follow the east bank to the timber bridge, and collect the bundle with the west-bank wolf alive. The shorter west-bank approach passes the wolf. Turn-in awards 85 XP once and loads the cart.
 
 The Windows Godot 4.7.2 route regression walked from the town square through the quiet-bank delivery in 95.8 seconds of simulation. Heather Rest to Signal Ridge via North Road covered 623.1 meters in 127.3 seconds. The scripted run reads and accepts dialogue immediately. Compare first-time observations with the 10–15 minute adventure benchmark before tuning the clues or distances. [Birchwater delivery](https://github.com/dylcruz/stonewatch-vale/issues/44) · [Travel pacing](https://github.com/dylcruz/stonewatch-vale/issues/8)
+
+## Continue after an item’s reward source moves
+
+The Windows save regression earns the Iron Sword and a waiting Warden’s Coat in the Watchpost, then opens that temporary checkpoint in town through Continue. Town has neither reward source. The restored sword deals 12 damage and the Scout Pouch is full. Switching to the Trail Pack makes room to claim and equip the coat. A second relaunch restores 2 armor, three free slots, and an empty waiting-reward list. The suite also loads a checkpoint from before bags were introduced. [Issue #47](https://github.com/dylcruz/stonewatch-vale/issues/47)
+
+When authoring an item that can be saved, register its resource under its permanent item ID in `scripts/item_catalog.gd`. Keep that entry when retiring its original quest or encounter.
