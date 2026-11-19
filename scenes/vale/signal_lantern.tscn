@@ -1,0 +1,27 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="Iron"]
+albedo_color = Color(0.13, 0.16, 0.17, 1)
+
+[sub_resource type="CylinderMesh" id="Housing"]
+material = SubResource("Iron")
+top_radius = 0.44
+bottom_radius = 0.33
+height = 0.32
+
+[sub_resource type="StandardMaterial3D" id="Amber"]
+shading_mode = 0
+albedo_color = Color(1, 0.76, 0.18, 1)
+
+[sub_resource type="SphereMesh" id="Flame"]
+material = SubResource("Amber")
+radius = 0.35
+height = 1.1
+
+[node name="Lantern" type="MeshInstance3D"]
+mesh = SubResource("Housing")
+
+[node name="Flame" type="MeshInstance3D" parent="."]
+visible = false
+position = Vector3(0, 0.56, 0)
+mesh = SubResource("Flame")

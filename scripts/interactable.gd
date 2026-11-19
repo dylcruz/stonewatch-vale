@@ -7,6 +7,7 @@ signal interacted
 @export var interaction_range := 1.75
 @export var offered_quests: Array[StringName] = []
 @export var objective_id: StringName
+@export var interaction_feedback: String
 @onready var selection_ring: Node3D = $SelectionRing
 @onready var objective_marker: Label3D = get_node_or_null("QuestMarker")
 

@@ -58,3 +58,7 @@ func _refresh_progress() -> void:
 	for progress in quest_chain:
 		if progress.definition.id == &"birchwater_delivery":
 			$NavigationRegion3D/BirchwaterLoop/Cart/Cargo.visible = progress.state == ValeQuestProgress.State.COMPLETED
+		elif progress.definition.id == &"ridge_signal":
+			var lit := progress.state >= ValeQuestProgress.State.READY
+			$NavigationRegion3D/LookoutRidgeLoop/Beacon/Flame.visible = lit
+			$NavigationRegion3D/StartingTown/TownHall/Lantern/Flame.visible = lit

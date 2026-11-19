@@ -5,6 +5,15 @@
 [ext_resource type="PackedScene" path="res://scenes/vale/pine.tscn" id="Pine"]
 
 [ext_resource type="PackedScene" path="res://scenes/vale/outcrop.tscn" id="Rock"]
+[ext_resource type="PackedScene" path="res://scenes/vale/signal_lantern.tscn" id="Lantern"]
+[ext_resource type="Script" path="res://scripts/interactable.gd" id="Interactable"]
+
+[sub_resource type="BoxShape3D" id="MastPick"]
+size = Vector3(2.2, 6.2, 1.5)
+
+[sub_resource type="TorusMesh" id="SelectionRing"]
+inner_radius = 1.35
+outer_radius = 1.48
 
 [sub_resource type="StandardMaterial3D" id="RidgeGrass"]
 albedo_color = Color(0.33, 0.37, 0.28, 1)
@@ -194,6 +203,35 @@ collision_mask = 4
 position = Vector3(-183, 14.75, -349.5)
 size = Vector3(0.31, 4.5, 0.31)
 material = SubResource("Timber")
+
+[node name="Beacon" parent="." instance=ExtResource("Lantern")]
+position = Vector3(-183, 17.1, -349.5)
+scale = Vector3(1.5, 1.5, 1.5)
+
+[node name="LightMast" type="StaticBody3D" parent="." groups=["move_targets"]]
+position = Vector3(-183, 12, -347.5)
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("Interactable")
+display_name = "Signal mast"
+objective_id = &"ridge_signal_mast"
+interaction_feedback = "Signal mast lit"
+interaction_range = 2.6
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LightMast"]
+position = Vector3(0.35, 3.1, -2)
+shape = SubResource("MastPick")
+
+[node name="SelectionRing" type="MeshInstance3D" parent="LightMast"]
+visible = false
+position = Vector3(0, 0.95, -2)
+mesh = SubResource("SelectionRing")
+
+[node name="Nameplate" type="Label3D" parent="LightMast"]
+position = Vector3(0, 6.25, -2)
+billboard = 1
+pixel_size = 0.018
+text = "LIGHT SIGNAL MAST"
 
 [node name="SignalFlag" type="CSGBox3D" parent="."]
 position = Vector3(-182.15, 16.7, -349.5)

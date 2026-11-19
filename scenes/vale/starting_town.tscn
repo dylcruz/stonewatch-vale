@@ -1,6 +1,8 @@
 [gd_scene format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/vale/town_cottage.tscn" id="Cottage"]
+[ext_resource type="PackedScene" path="res://scenes/vale/signal_lantern.tscn" id="Lantern"]
+[ext_resource type="PackedScene" path="res://scenes/captain_mara.tscn" id="Keeper"]
 
 [sub_resource type="StandardMaterial3D" id="Paving"]
 albedo_color = Color(0.53, 0.5, 0.41, 1)
@@ -35,6 +37,17 @@ size = Vector3(2, 0.02, 1.6)
 material = SubResource("Paving")
 
 [node name="TownHall" type="Node3D" parent="."]
+
+[node name="Lantern" parent="TownHall" instance=ExtResource("Lantern")]
+position = Vector3(1.68, 1.45, 3.23)
+
+[node name="SignalKeeper" parent="." instance=ExtResource("Keeper")]
+position = Vector3(1.7, 0.02, 6.4)
+display_name = "Signal keeper"
+offered_quests = Array[StringName]([&"ridge_signal"])
+
+[node name="Nameplate" parent="SignalKeeper" index="5"]
+text = "SIGNAL KEEPER"
 
 [node name="Roof" type="CSGPolygon3D" parent="TownHall"]
 position = Vector3(0, 2.5, 3.24)

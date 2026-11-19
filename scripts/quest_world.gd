@@ -218,6 +218,8 @@ func _use_quest_object(object: ValeInteractable) -> void:
 		return
 	var credited := false
 	for progress in quest_chain:
+		if progress.definition.discover_at_objective and progress.definition.target_object == object.objective_id and _can_accept_quest(progress):
+			progress.accept()
 		if progress.record_interaction(object.objective_id):
 			credited = true
 	if not credited:
@@ -229,7 +231,7 @@ func _use_quest_object(object: ValeInteractable) -> void:
 						return
 		return
 	object.collect()
-	status.text = "%s recovered" % object.display_name
+	status.text = object.interaction_feedback if not object.interaction_feedback.is_empty() else "%s recovered" % object.display_name
 	_refresh_progress()
 	_save_checkpoint()
 
@@ -427,6 +429,8 @@ func _show_dialogue() -> void:
 			dialogue_action.show()
 		ValeQuestProgress.State.COMPLETED:
 			journal_body.text = "%s complete\n\nReward earned · %s" % [definition.title, reward]
+			if not definition.completed_dialogue.is_empty():
+				journal_body.text += "\n\n" + definition.completed_dialogue
 			if definition.reward_item:
 				journal_body.text += "\nOpen Bag (B) to manage your reward."
 	for progress in quest_chain:
