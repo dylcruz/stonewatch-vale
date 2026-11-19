@@ -78,6 +78,12 @@ func _ready() -> void:
 func _save_checkpoint() -> void:
 	if save_slot == null:
 		return
+	var error := save_slot.write(_build_checkpoint())
+	if error != OK:
+		status.text = "Could not save progress"
+		push_warning("Checkpoint save failed: " + error_string(error))
+
+func _build_checkpoint() -> Dictionary:
 	var quests := {}
 	for progress in quest_chain:
 		quests[progress.definition.id] = {"state": progress.state, "kills": progress.kills}
@@ -85,7 +91,7 @@ func _save_checkpoint() -> void:
 	for enemy in enemies:
 		if enemy.encounter_id != &"":
 			encounters[enemy.encounter_id] = enemy.encounter_checkpoint()
-	var checkpoint := {
+	return {
 		"level": player.level,
 		"experience": player.experience,
 		"owned_items": PackedStringArray(player.owned_items.keys()),
@@ -98,10 +104,6 @@ func _save_checkpoint() -> void:
 		"tracked_quest": tracked_quest.definition.id if tracked_quest else &"",
 		"encounters": encounters,
 	}
-	var error := save_slot.write(checkpoint)
-	if error != OK:
-		status.text = "Could not save progress"
-		push_warning("Checkpoint save failed: " + error_string(error))
 
 func _restore_checkpoint(checkpoint: Dictionary) -> void:
 	var quests: Dictionary = checkpoint.quests

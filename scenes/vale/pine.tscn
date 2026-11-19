@@ -37,7 +37,7 @@ radial_segments = 7
 radius = 0.23
 height = 1.9
 
-[node name="Pine" type="Node3D"]
+[node name="Pine" type="Node3D" groups=["map_pine"]]
 
 [node name="SolidTrunk" type="StaticBody3D" parent="."]
 collision_layer = 2

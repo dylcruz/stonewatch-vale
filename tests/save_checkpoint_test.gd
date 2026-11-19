@@ -34,7 +34,7 @@ func run() -> void:
 		return
 
 	var path := OS.get_temp_dir().path_join("stonewatch-test-%d.save" % OS.get_process_id())
-	for phase in ["fresh_town", "continue_town", "early_defeat", "resume_early",
+	for phase in ["fresh_town", "continue_town", "explored_town", "reset_town", "early_defeat", "resume_early",
 		"resume_mid_quest", "resume_credited", "resume_completed",
 		"bag_waiting", "resume_waiting_town", "resume_claimed_town"]:
 		var output := []
@@ -63,7 +63,7 @@ func run_checkpoint(phase: String) -> void:
 		check(menu.continue_game.disabled and menu.message.text.contains("could not be read"),
 			"Unreadable save gives feedback and leaves New Game available")
 		menu.new_game.pressed.emit()
-	elif phase == "early_defeat" or phase == "bag_waiting":
+	elif phase in ["reset_town", "early_defeat", "bag_waiting"]:
 		menu.new_game.pressed.emit()
 		check(menu.get_node("%ReplaceSave").visible and slot.exists(),
 			"New Game asks before replacing an existing checkpoint")
@@ -81,6 +81,7 @@ func run_checkpoint(phase: String) -> void:
 			check(warrior.level == 1 and warrior.experience == 0 and slot.exists(),
 				"New Game creates a fresh town checkpoint")
 			var legacy := slot.read()
+			legacy.erase("discovered_cells")
 			legacy.erase("bag")
 			legacy.erase("waiting_rewards")
 			legacy.erase("ability_bar")
@@ -93,6 +94,27 @@ func run_checkpoint(phase: String) -> void:
 				"Continuing a checkpoint from before bags were introduced gives the starter inventory")
 			check(world.ability_hud.save_layout() == PackedStringArray(["cleave", "guard", "", ""]),
 				"Continuing a checkpoint from before the ability bar gives the default shortcuts")
+			var meadow: Vector3 = world.get_node(world.map_landmarks["Heather Rest"]).global_position
+			check(world.exploration_map.discovered_cells().size() == 1, "Legacy saves reveal only the town spawn")
+			await preload("res://tests/navigation_test_support.gd").wait_for_spawn(world, warrior)
+			warrior.global_position = meadow + Vector3(0, 0.03, -4)
+			for frame in 5:
+				await physics_frame
+			check(not world.exploration_map.is_explored(meadow), "Heather Rest starts concealed")
+			check(world.click_world(world.camera.unproject_position(meadow)), "A ground click starts the exploration trip")
+			for frame in 120:
+				await physics_frame
+				if world.exploration_map.is_explored(meadow):
+					break
+			check(world.exploration_map.is_explored(meadow), "Walking discovers Heather Rest")
+		"explored_town":
+			var meadow: Vector3 = world.get_node(world.map_landmarks["Heather Rest"]).global_position
+			var ridge: Vector3 = world.get_node(world.map_landmarks["Signal Ridge"]).global_position
+			check(world.exploration_map.is_explored(meadow) and not world.exploration_map.is_explored(ridge),
+				"Continue in a new process restores exploration alone and keeps untouched cells concealed")
+		"reset_town":
+			check(world.exploration_map.discovered_cells().size() == 1 and world.exploration_map.is_explored(warrior.global_position),
+				"New Game resets previous discoveries to the town spawn")
 		"early_defeat":
 			var captain: ValeEnemy = world.get_node("RaiderCaptain")
 			captain.receive_hit(captain.health.current, warrior)
