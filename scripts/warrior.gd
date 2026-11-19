@@ -338,6 +338,7 @@ func receive_hit(amount: int, source: Node3D, attack_name := "") -> int:
 	var after_armor := maxi(0, amount - armor_value())
 	var damage := roundi(after_armor * (1.0 - guard_reduction)) if guard_remaining > 0.0 else after_armor
 	var applied := health.take_damage(damage)
+	$DamageNumbers.show_damage(applied)
 	if applied > 0:
 		if hit_tween:
 			hit_tween.kill()

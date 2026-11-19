@@ -194,3 +194,13 @@ The Warrior’s portrait and health sit in the lower left. Selecting a living en
 The Windows combat suite checked an empty target frame at spawn, switching from a wolf to the Raider Captain, damage to both actors, ground deselection, target death, and player recovery. It also checked the Captain’s heavy-attack warning with no target selected.
 
 For hands-on verification, approach the Birchwater wolf, select it, then click the ground during pursuit. The target row should disappear while the Warrior’s health stays visible. In the developer Watchpost, repeat with the Captain during a heavy windup and check that the warning stays visible.
+
+## Scrolling combat damage
+
+Hits show the health lost above the struck actor. Incoming damage appears in coral and damage to enemies appears in gold. Each number rises and fades while following the model. [Issue #55](https://github.com/dylcruz/stonewatch-vale/issues/55)
+
+All nine Windows regression suites passed. The combat suite checked a guarded bite, both targets of Cleave, zero damage, upward movement, and expiry. The scripted capture includes an extra hit on the wolf to show how consecutive numbers stack.
+
+For hands-on verification, fight a road wolf and use Guard as it bites. Compare the coral number with the change in the Warrior’s health. Click through a rising number to move, then try Cleave against both camp raiders at level 2.
+
+![Incoming and outgoing damage during a wolf fight](playtest-images/scrolling-damage.png)

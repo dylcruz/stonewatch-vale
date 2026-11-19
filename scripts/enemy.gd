@@ -159,6 +159,7 @@ func _cancel_attack() -> void:
 
 func receive_hit(amount: int, source: Node3D) -> int:
 	var applied := health.take_damage(amount)
+	$DamageNumbers.show_damage(applied)
 	if applied > 0 and is_alive():
 		engage(source)
 		if hit_tween:
