@@ -209,4 +209,4 @@ For hands-on verification, fight a road wolf and use Guard as it bites. Compare 
 
 For the Windows playtest, take a bite from the Birchwater wolf, click the ground to flee, and watch the Warrior’s health. It should hold steady during pursuit and rise by 2 HP per second once the wolf turns home. Approach again before reaching full health. Recovery should stop as soon as pursuit resumes, before the next bite.
 
-All nine Windows regression suites passed. The combat suite verified recovery after two escapes, interruption by an unselected wolf, the maximum-health cap in the HUD, and defeat and respawn. Hands-on tuning is pending. [Issue #42](https://github.com/dylcruz/stonewatch-vale/issues/42)
+The user confirmed the Windows playtest passed at 2 HP per second. All nine Windows regression suites also passed. The combat suite verified recovery after two escapes, interruption by an unselected wolf, the maximum-health cap in the HUD, and defeat and respawn. [Issue #42](https://github.com/dylcruz/stonewatch-vale/issues/42)
