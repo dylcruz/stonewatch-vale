@@ -51,7 +51,7 @@ use_collision = true
 collision_layer = 1
 collision_mask = 4
 
-[node name="SouthClimbTrail" type="CSGPolygon3D" parent="."]
+[node name="SouthClimbTrail" type="CSGPolygon3D" parent="." groups=["map_trail"]]
 transform = Transform3D(0.97038, 0, 0.24159, -0.24159, 0, 0.97038, 0, -1, 0, -19.8, 0.024, -256)
 polygon = PackedVector2Array(-49.98132, 2, 0.2, 2, 0.2, -2, -49.98132, -2)
 depth = 0.01
@@ -93,7 +93,7 @@ use_collision = true
 collision_layer = 1
 collision_mask = 4
 
-[node name="NorthClimbTrail" type="CSGPolygon3D" parent="."]
+[node name="NorthClimbTrail" type="CSGPolygon3D" parent="." groups=["map_trail"]]
 transform = Transform3D(0.9601, 0, 0.27964, -0.27964, 0, 0.9601, 0, -1, 0, -19.8, 0.024, -336)
 polygon = PackedVector2Array(-43.222, 2, 0.2, 2, 0.2, -2, -43.222, -2)
 depth = 0.01
@@ -126,7 +126,7 @@ use_collision = true
 collision_layer = 2
 collision_mask = 4
 
-[node name="RidgeCrestPath" type="CSGPolygon3D" parent="."]
+[node name="RidgeCrestPath" type="CSGPolygon3D" parent="." groups=["map_trail"]]
 position = Vector3(0, 12.025, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 polygon = PackedVector2Array(-67.9, 257.6, -82.90434, 257.6, -107.44803, 260.54524, -129.08916, 274.31687, -148.89681, 289.17261, -165.72047, 308.96515, -181.26779, 332.28612, -177.67152, 345.77215, -161.89592, 351.34, -139.42415, 346.45484, -118.39224, 339.4442, -95.13809, 335.4, -77.04964, 335.4, -60.99919, 334.40308, -60.80081, 337.59692, -76.95036, 338.6, -94.86191, 338.6, -117.60776, 342.5558, -138.57585, 349.54516, -162.10408, 354.66, -180.32848, 348.22785, -184.73221, 331.71388, -168.27953, 307.03485, -151.10319, 286.82739, -130.91084, 271.68313, -108.55197, 257.45476, -83.09566, 254.4, -67.9, 254.4)

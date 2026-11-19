@@ -180,3 +180,9 @@ The Windows Godot 4.7.2 route regression walked from the town square through the
 The Windows save regression earns the Iron Sword and a waiting Warden’s Coat in the Watchpost, then opens that temporary checkpoint in town through Continue. Town has neither reward source. The restored sword deals 12 damage and the Scout Pouch is full. Switching to the Trail Pack makes room to claim and equip the coat. A second relaunch restores 2 armor, three free slots, and an empty waiting-reward list. The suite also loads a checkpoint from before bags were introduced. [Issue #47](https://github.com/dylcruz/stonewatch-vale/issues/47)
 
 When authoring an item that can be saved, register its resource under its permanent item ID in `scripts/item_catalog.gd`. Keep that entry when retiring its original quest or encounter.
+
+## Vale map discovery through Continue
+
+Press **M** while following North Road to Birchwater. Explored cells show woodland, trails, the river, and its crossings. Each new cell triggers a checkpoint. The Windows relaunch suite walks into Heather Rest without advancing a quest or changing equipment, quits, then checks that Continue reveals Heather Rest and keeps Signal Ridge concealed. It also checks that an older save opens in town and New Game resets discovery. [Issue #35](https://github.com/dylcruz/stonewatch-vale/issues/35)
+
+For the hands-on check, visit the ford and one bank, relaunch with **Continue**, and compare the map with the route walked. The player marker should return to town while the explored route stays visible.

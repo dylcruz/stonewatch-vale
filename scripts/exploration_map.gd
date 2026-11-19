@@ -11,6 +11,10 @@ const INK := Color(0.92, 0.88, 0.74)
 const GOLD := Color(1.0, 0.71, 0.35)
 
 var _terrain: Dictionary[Vector2i, Array] = {}
+var _banks: Dictionary[Vector2i, Array] = {}
+var _water: Dictionary[Vector2i, Array] = {}
+var _trails: Dictionary[Vector2i, Array] = {}
+var _woodland: Dictionary[Vector2i, Array] = {}
 var _visited: Dictionary[Vector2i, bool] = {}
 var _landmarks: Dictionary[String, Vector2] = {}
 var _first_cell := Vector2i.ZERO
@@ -25,22 +29,60 @@ func configure(region: NavigationRegion3D, landmarks: Dictionary[String, Vector3
 		var polygon := PackedVector2Array()
 		for vertex in mesh.get_polygon(index):
 			polygon.append(_top_down(region.to_global(vertices[vertex])))
-		_store_terrain(polygon)
+		_store_polygon(polygon, _terrain)
+	for cell in _terrain:
+		if not _has_terrain:
+			_first_cell = cell
+			_last_cell = cell
+			_has_terrain = true
+		else:
+			_first_cell = _first_cell.min(cell)
+			_last_cell = _last_cell.max(cell)
+	for shape: CSGPolygon3D in region.find_children("*", "CSGPolygon3D", true, false):
+		var layer: Dictionary[Vector2i, Array]
+		if shape.is_in_group(&"map_water"):
+			layer = _water
+		elif shape.is_in_group(&"map_bank"):
+			layer = _banks
+		elif shape.is_in_group(&"map_trail"):
+			layer = _trails
+		else:
+			continue
+		var footprint := PackedVector2Array()
+		for point in shape.polygon:
+			footprint.append(_top_down(shape.to_global(Vector3(point.x, point.y, 0))))
+		_store_polygon(footprint, layer)
+	for pine: Node3D in region.get_tree().get_nodes_in_group(&"map_pine"):
+		if region.is_ancestor_of(pine):
+			var point := _top_down(pine.global_position)
+			_store_polygon(PackedVector2Array([point + Vector2(0, -2.5), point + Vector2(2, 1.5),
+				point + Vector2(-2, 1.5)]), _woodland)
 	for label in landmarks:
 		_landmarks[label] = _top_down(landmarks[label])
 	queue_redraw()
 
-func reveal(position_3d: Vector3) -> void:
+func discovered_cells() -> Array[Vector2i]:
+	return _visited.keys()
+
+func restore_cells(saved: Variant) -> void:
+	if saved is Array:
+		for cell: Variant in saved:
+			if cell is Vector2i and _terrain.has(cell):
+				_visited[cell] = true
+	queue_redraw()
+
+func reveal(position_3d: Vector3) -> bool:
 	var next_position := _top_down(position_3d)
 	var cell := _cell_at(next_position)
 	if not _terrain.has(cell):
-		return
+		return false
 	var moved := not next_position.is_equal_approx(_player_position)
 	var newly_visited := not _visited.has(cell)
 	_player_position = next_position
 	_visited[cell] = true
 	if moved or newly_visited:
 		queue_redraw()
+	return newly_visited
 
 func is_explored(position_3d: Vector3) -> bool:
 	return _visited.has(_cell_at(_top_down(position_3d)))
@@ -51,7 +93,7 @@ func _top_down(position_3d: Vector3) -> Vector2:
 func _cell_at(point: Vector2) -> Vector2i:
 	return Vector2i((point / CELL_SIZE).floor())
 
-func _store_terrain(polygon: PackedVector2Array) -> void:
+func _store_polygon(polygon: PackedVector2Array, layer: Dictionary[Vector2i, Array]) -> void:
 	if polygon.is_empty():
 		return
 	var bounds := Rect2(polygon[0], Vector2.ZERO)
@@ -70,16 +112,16 @@ func _store_terrain(polygon: PackedVector2Array) -> void:
 			var pieces := Geometry2D.intersect_polygons(polygon, corners)
 			if pieces.is_empty():
 				continue
-			if not _terrain.has(cell):
-				_terrain[cell] = []
-			_terrain[cell].append_array(pieces)
-			if not _has_terrain:
-				_first_cell = cell
-				_last_cell = cell
-				_has_terrain = true
-			else:
-				_first_cell = Vector2i(mini(_first_cell.x, column), mini(_first_cell.y, row))
-				_last_cell = Vector2i(maxi(_last_cell.x, column), maxi(_last_cell.y, row))
+			if not layer.has(cell):
+				layer[cell] = []
+			layer[cell].append_array(pieces)
+
+func _draw_layer(pieces: Array, color: Color, zoom: float, origin: Vector2) -> void:
+	for piece: PackedVector2Array in pieces:
+		var scaled := PackedVector2Array()
+		for point in piece:
+			scaled.append(point * zoom + origin)
+		draw_colored_polygon(scaled, color)
 
 func _draw() -> void:
 	if not _has_terrain:
@@ -97,11 +139,11 @@ func _draw() -> void:
 	for cell in _visited:
 		var rect := Rect2(Vector2(cell) * CELL_SIZE * zoom + origin, Vector2.ONE * CELL_SIZE * zoom)
 		draw_rect(rect, CLEARED)
-		for piece: PackedVector2Array in _terrain[cell]:
-			var scaled := PackedVector2Array()
-			for point in piece:
-				scaled.append(point * zoom + origin)
-			draw_colored_polygon(scaled, LAND)
+		_draw_layer(_terrain[cell], LAND, zoom, origin)
+		_draw_layer(_water.get(cell, []), Color(0.19, 0.43, 0.54), zoom, origin)
+		_draw_layer(_banks.get(cell, []), LAND, zoom, origin)
+		_draw_layer(_trails.get(cell, []), Color(0.84, 0.70, 0.47), zoom, origin)
+		_draw_layer(_woodland.get(cell, []), Color(0.12, 0.28, 0.20), zoom, origin)
 		draw_rect(rect, GRID, false, 1.0)
 	draw_rect(frame, GRID.lightened(0.18), false, 1.0)
 	_draw_landmarks(zoom, origin)

@@ -5,19 +5,26 @@ extends "res://scripts/quest_world.gd"
 @onready var exploration_map: ValeExplorationMap = $HUD/WorldMap/Margin/Content/ExplorationMap
 
 func _ready() -> void:
-	super._ready()
 	var landmarks: Dictionary[String, Vector3] = {}
 	for label in map_landmarks:
 		var marker := get_node(map_landmarks[label]) as Node3D
 		landmarks[label] = marker.global_position
 	exploration_map.configure($NavigationRegion3D, landmarks)
+	exploration_map.restore_cells(pending_checkpoint.get("discovered_cells"))
 	exploration_map.reveal(player.global_position)
+	super._ready()
 	$HUD/WorldMap/Margin/Content/Header/Close.pressed.connect(map_panel.hide)
 	ability_hud.add_menu_button("Map", "M", _toggle_map)
 
 func _process(delta: float) -> void:
 	super._process(delta)
-	exploration_map.reveal(player.global_position)
+	if exploration_map.reveal(player.global_position):
+		_save_checkpoint()
+
+func _build_checkpoint() -> Dictionary:
+	var checkpoint := super._build_checkpoint()
+	checkpoint.discovered_cells = exploration_map.discovered_cells()
+	return checkpoint
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"world_map"):

@@ -49,7 +49,7 @@ size = Vector3(29.7, 0.88, 0.24)
 
 [node name="BirchwaterLoop" type="Node3D"]
 
-[node name="DeepWater" type="CSGPolygon3D" parent="."]
+[node name="DeepWater" type="CSGPolygon3D" parent="." groups=["map_water"]]
 position = Vector3(0, -1.4, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 polygon = PackedVector2Array(33, 90, 62, 88, 72, 112, 67, 155, 69, 188, 64, 228, 55, 247, 39, 247, 28, 230, 30, 196, 29, 150, 32, 114)
@@ -59,7 +59,7 @@ use_collision = true
 collision_layer = 2
 collision_mask = 4
 
-[node name="WestBank" type="CSGPolygon3D" parent="." groups=["walkable"]]
+[node name="WestBank" type="CSGPolygon3D" parent="." groups=["walkable", "map_bank"]]
 position = Vector3(0, 0.012, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 polygon = PackedVector2Array(18, 98, 29, 94, 36, 102, 39, 121, 35, 141, 40, 157, 37, 179, 41, 199, 36, 222, 31, 237, 17, 234)
@@ -69,7 +69,7 @@ use_collision = true
 collision_layer = 1
 collision_mask = 4
 
-[node name="EastBankTerrain" type="CSGPolygon3D" parent="." groups=["walkable"]]
+[node name="EastBankTerrain" type="CSGPolygon3D" parent="." groups=["walkable", "map_bank"]]
 position = Vector3(0, 0.012, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 polygon = PackedVector2Array(62, 96, 88, 100, 101, 115, 97, 148, 104, 172, 92, 190, 97, 217, 78, 236, 62, 231, 57, 215, 61, 195, 56, 167, 61, 140, 58, 121)
@@ -79,14 +79,14 @@ use_collision = true
 collision_layer = 1
 collision_mask = 4
 
-[node name="FordWater" type="CSGPolygon3D" parent="."]
+[node name="FordWater" type="CSGPolygon3D" parent="." groups=["map_water"]]
 position = Vector3(0, -1.37, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 polygon = PackedVector2Array(37, 132, 61, 134, 62, 113, 39, 114)
 depth = 0.02
 material = SubResource("Shallows")
 
-[node name="StoneFord" type="CSGPolygon3D" parent="." groups=["walkable"]]
+[node name="StoneFord" type="CSGPolygon3D" parent="." groups=["walkable", "map_trail"]]
 position = Vector3(0, 0.034, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 polygon = PackedVector2Array(33, 126.5, 63, 126.5, 64, 119.5, 33, 119.5)
@@ -96,7 +96,7 @@ use_collision = true
 collision_layer = 1
 collision_mask = 4
 
-[node name="TimberBridge" type="CSGPolygon3D" parent="." groups=["walkable"]]
+[node name="TimberBridge" type="CSGPolygon3D" parent="." groups=["walkable", "map_trail"]]
 position = Vector3(0, 0.034, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 polygon = PackedVector2Array(35, 205.5, 65, 205.5, 65, 198.5, 35, 198.5)
@@ -276,21 +276,21 @@ rotation_degrees = Vector3(0, 4, 0)
 size = Vector3(2.9, 0.08, 4.4)
 material = SubResource("Paving")
 
-[node name="FordApproach" type="CSGPolygon3D" parent="."]
+[node name="FordApproach" type="CSGPolygon3D" parent="." groups=["map_trail"]]
 position = Vector3(0, 0.023, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 polygon = PackedVector2Array(6, 121.3, 20, 121.3, 34, 121.3, 34, 124.7, 20, 124.7, 6, 124.7)
 depth = 0.012
 material = SubResource("Trail")
 
-[node name="BridgeApproach" type="CSGPolygon3D" parent="."]
+[node name="BridgeApproach" type="CSGPolygon3D" parent="." groups=["map_trail"]]
 position = Vector3(0, 0.023, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 polygon = PackedVector2Array(8, 200.1, 23, 200.1, 36, 200.1, 36, 203.9, 23, 203.9, 8, 203.9)
 depth = 0.012
 material = SubResource("Trail")
 
-[node name="EastBankTrail" type="CSGPolygon3D" parent="."]
+[node name="EastBankTrail" type="CSGPolygon3D" parent="." groups=["map_trail"]]
 position = Vector3(0, 0.023, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 polygon = PackedVector2Array(62, 121.25, 74.93657, 121.25, 83.80969, 134.55968, 81.77662, 152.85731, 86.76596, 170.81891, 85.70625, 186.71457, 77.23502, 196.2447, 68.65754, 203.75, 64, 203.75, 64, 200.25, 67.34246, 200.25, 74.76498, 193.7553, 82.29375, 185.28543, 83.23404, 171.18109, 78.22338, 153.14269, 80.19031, 135.44032, 73.06343, 124.75, 62, 124.75)
