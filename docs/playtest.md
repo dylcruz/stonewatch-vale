@@ -223,6 +223,16 @@ All nine Windows regression suites passed. The route suite checked the turn-in a
 
 Open `scenes/watchpost_playtest.tscn` and press **F6**. Speak to Captain Mara, accept Clear Pine Road, and defeat a road wolf. The gold objective should update over the terrain. Status and loot messages use the same corner, and clicks through the text reach the world.
 
-All nine Windows suites passed. The movement suite checked that a press over the objective reaches the world and that pressing the XP bar still consumes input. The quest and combat suites exercised tracked objectives, loot notices, health frames, and the Captain’s attack warning. Hands-on verification is pending. [Issue #41](https://github.com/dylcruz/stonewatch-vale/issues/41)
+All nine Windows suites passed. The movement suite checked that a press over the objective reaches the world and that pressing the XP bar still consumes input. The quest and combat suites exercised tracked objectives, loot notices, health frames, and the Captain’s attack warning. The user completed the Windows playtest and approved the merge. [Issue #41](https://github.com/dylcruz/stonewatch-vale/issues/41)
 
 ![Watchpost with the opening objective displayed over the terrain](playtest-images/watchpost-feedback.png)
+
+## A Light on Signal Ridge
+
+For the first Windows run, leave town without speaking to the signal keeper. Take either signed climb from North Road and click the mast at the lookout. Check the journal, then return to town and look beside the hall doors. Speak to the keeper and claim the 70 XP. Relaunch and choose **Continue** to revisit the lantern and the keeper. For the other discovery order, speak to the keeper first on a fresh run and take the other climb.
+
+The timed Windows route suite passed 98 checks. It tested both discovery orders, both climb connections, a single ready journal entry, and Continue before and after turn-in. The following captures show the mast after lighting and the answering lantern before turn-in. Hands-on verification is pending. [Issue #45](https://github.com/dylcruz/stonewatch-vale/issues/45)
+
+![Lit mast at the Signal Ridge lookout](playtest-images/ridge-signal.png)
+
+![Answering lantern outside the town hall](playtest-images/town-signal.png)

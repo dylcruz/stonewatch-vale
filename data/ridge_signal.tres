@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ValeQuestDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/quest_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"ridge_signal"
+title = "A Light on Signal Ridge"
+briefing = "Our ridge light went dark. Follow North Road beyond Birchwater and take either signed climb. Light the mast at the lookout and I'll set the answering lantern here at the hall."
+objective = "Light the mast at the Signal Ridge lookout"
+return_objective = "Return to the signal keeper outside the town hall"
+turn_in_dialogue = "I saw your light and lit our lantern in reply. Now anyone on the ridge knows there's a warm hall waiting in the vale."
+completed_dialogue = "We'll keep the answering lantern burning as long as the ridge light shines."
+target_object = &"ridge_signal_mast"
+discover_at_objective = true
+reward_xp = 70

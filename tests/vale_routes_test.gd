@@ -112,7 +112,7 @@ func check_starting_town() -> void:
 		and region.has_node("StartingTown/EastCottage") and player.global_position.distance_to(square) < 0.05
 		and world.status.text == "Town square",
 		"A fresh game opens in the town square at the original spawn")
-	check(world.enemies.has(region.get_node("BirchwaterLoop/BankWolf")) and world.quest_chain.size() == 1
+	check(world.enemies.has(region.get_node("BirchwaterLoop/BankWolf")) and world.quest_chain.size() == 2
 		and world.quest_chain[0].definition.id == &"birchwater_delivery"
 		and not world.has_node("CaptainMara") and not world.has_node("SupplyCrate"),
 		"The main game has no Watchpost encounters or quest fixtures")
@@ -353,16 +353,7 @@ func check_delivery() -> void:
 	if timed:
 		print("Town square through quiet-bank delivery: %.1f s of simulation" % (
 			float(Engine.get_physics_frames() - started) / Engine.physics_ticks_per_second))
-	world.queue_free()
-	await process_frame
-	var menu := preload("res://scenes/checkpoint_menu.tscn").instantiate()
-	menu.slot = slot
-	root.add_child(menu)
-	menu.continue_game.pressed.emit()
-	await process_frame
-	world = current_scene
-	region = world.get_node("NavigationRegion3D")
-	player = world.player
+	await continue_in_town(slot)
 	check(region.get_node("BirchwaterLoop/Cart/Cargo").visible and not region.get_node("BirchwaterLoop/LostBundle").visible
 		and player.experience == 85, "Continue restores the delivered bundle on the cart")
 	check(is_equal_approx(world.ability_hud.xp_bar.ratio, 0.85) and world.ability_hud.xp_label.text == "XP 85 / 100",
@@ -385,6 +376,65 @@ func check_delivery() -> void:
 	check(wolf.is_alive() and wolf.health.current == wolf.health.maximum, "The zone wolf respawns on leaving the area")
 	check(DirAccess.remove_absolute(path) == OK, "Temporary delivery save was removed")
 
+func continue_in_town(slot: ValeSaveSlot) -> void:
+	world.queue_free()
+	await process_frame
+	var menu := preload("res://scenes/checkpoint_menu.tscn").instantiate()
+	menu.slot = slot
+	root.add_child(menu)
+	menu.continue_game.pressed.emit()
+	await process_frame
+	world = current_scene
+	region = world.get_node("NavigationRegion3D")
+	player = world.player
+	await frames(5)
+	await NAVIGATION.wait_for_spawn(world, player)
+
+func talk_to_keeper() -> void:
+	var keeper := mark("StartingTown/SignalKeeper")
+	await place(keeper + Vector3.BACK * 1.4)
+	check(camera_click(keeper + Vector3.UP), "The signal keeper accepts a click outside town hall")
+	await frames(15)
+
+func check_signal(town_first: bool) -> void:
+	world.queue_free()
+	await process_frame
+	await start()
+	var path := OS.get_temp_dir().path_join("ridge-%d.save" % OS.get_process_id())
+	var slot := ValeSaveSlot.new(path)
+	world.configure_checkpoint(slot, {})
+	if town_first:
+		await talk_to_keeper()
+		check(world.dialogue_action.text == "Accept quest" and world.journal_body.text.contains("either signed climb"),
+			"The town offer describes both approaches")
+		world.dialogue_action.pressed.emit()
+	var mast := mark("LookoutRidgeLoop/LightMast")
+	var approach := mast + Vector3.BACK * 2
+	var climb := mark("NorthRoad/SouthRidgeConnection" if town_first else "NorthRoad/NorthRidgeConnection")
+	check(connected(climb, approach), "The chosen climb reaches the unlit mast")
+	check(not region.get_node("StartingTown/TownHall/Lantern/Flame").visible, "The answering lantern starts dark")
+	await place(mast + Vector3.BACK * 5)
+	check(camera_click(mark("LookoutRidgeLoop/SignalMast") + Vector3.UP), "Clicking the mast starts the approach")
+	await frames(120)
+	check(region.get_node("LookoutRidgeLoop/Beacon/Flame").visible and player.experience == 0,
+		"Lighting the mast records the discovery before turn-in")
+	await press_key(KEY_J)
+	check(world.journal_body.text.count("A Light on Signal Ridge") == 1 and world.journal_body.text.contains("Ready to turn in"),
+		"Either discovery order creates one ready journal entry")
+	await continue_in_town(slot)
+	check(region.get_node("StartingTown/TownHall/Lantern/Flame").visible and region.get_node("LookoutRidgeLoop/Beacon/Flame").visible,
+		"Continue restores the answering lantern and lit mast before turn-in")
+	await talk_to_keeper()
+	check(world.journal_body.text.contains("lantern in reply"), "The keeper explains the light on return")
+	world.dialogue_action.pressed.emit()
+	world.dialogue_action.pressed.emit()
+	await continue_in_town(slot)
+	await talk_to_keeper()
+	check(player.experience == 70 and not world.dialogue_action.visible and world.journal_body.text.contains("keep the answering lantern")
+		and not region.get_node("LookoutRidgeLoop/LightMast").visible and region.get_node("StartingTown/TownHall/Lantern/Flame").visible,
+		"Continue preserves the keeper's response and exactly one reward")
+	check(DirAccess.remove_absolute(path) == OK, "Temporary Signal Ridge save was removed")
+
 func run() -> void:
 	await start()
 	var initial_layout := layout()
@@ -404,6 +454,8 @@ func run() -> void:
 	await start()
 	check(initial_layout == layout(), "Two fresh games load identical terrain and props")
 	await check_delivery()
+	await check_signal(false)
+	await check_signal(true)
 	world.queue_free()
 	await process_frame
 	await start(WATCHPOST_SCENE)

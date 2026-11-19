@@ -12,10 +12,13 @@
 [ext_resource type="Script" path="res://scripts/vale_world.gd" id="ValeWorld"]
 
 [ext_resource type="Resource" path="res://data/birchwater_delivery.tres" id="Delivery"]
+[ext_resource type="Resource" path="res://data/ridge_signal.tres" id="SignalQuest"]
+[ext_resource type="Script" path="res://scripts/quest_definition.gd" id="QuestDefinition"]
 
 [node name="StonewatchVale" instance=ExtResource("World")]
 script = ExtResource("ValeWorld")
 quest_definition = ExtResource("Delivery")
+follow_up_quests = Array[ExtResource("QuestDefinition")]([ExtResource("SignalQuest")])
 ready_text = "Town square"
 recovery_location = "the town square"
 map_landmarks = Dictionary[String, NodePath]({
