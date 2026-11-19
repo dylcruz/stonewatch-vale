@@ -65,6 +65,11 @@ func run() -> void:
 	await frames(5)
 	await NAVIGATION.wait_for_spawn(world, player)
 	check(world.get_node("NavigationRegion3D").navigation_mesh.get_polygon_count() > 0, "Scene contains saved baked navigation")
+	var feedback_point: Vector2 = world.objective_label.get_global_rect().get_center()
+	hold_button(feedback_point, true)
+	check(world.objective_label.is_visible_in_tree() and world.following_cursor,
+		"Watchpost objective text lets a world press through")
+	hold_button(feedback_point, false)
 	var far_road := Vector3(0, 0, -6.7)
 	await dispatch_click(world.camera.unproject_position(far_road))
 	check(player.moving and player.destination.distance_to(far_road) < 0.4, "Viewport ground click dispatches a movement command")
@@ -86,8 +91,7 @@ func run() -> void:
 	check(not click_at(Vector3(0, 2.5, 0)), "Obstacle top click is rejected")
 	check(player.destination == original and player.moving, "Invalid clicks preserve the current command")
 	# Exercise real viewport dispatch so Control input consumption is covered.
-	var panel: PanelContainer = world.get_node("HUD/Panel")
-	var hud_point := panel.get_global_rect().position + Vector2(12, 12)
+	var hud_point: Vector2 = world.ability_hud.xp_bar.get_global_rect().get_center()
 	await dispatch_click(hud_point)
 	await frames(2)
 	check(player.destination == original, "HUD click preserves movement destination")

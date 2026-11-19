@@ -215,6 +215,14 @@ The user confirmed the Windows playtest passed at 2 HP per second. All nine Wind
 
 For the Windows playtest, turn in the Birchwater delivery and check the gold bar above the abilities. A fresh Warrior who skipped the wolf should see **XP 85 / 100**. Relaunch and choose **Continue** to check the same fill in town. A Warrior who reaches level 2 at exactly 100 XP sees **XP 0 / 140**. Any excess XP counts toward those 140 points. At level 3 the bar stays full and reads **Max level**.
 
-All nine Windows regression suites passed. The route suite checked the turn-in and Continue. The inventory and quest suites checked the level-up and cap. A scripted Windows capture shows the bar at 85 XP. Hands-on verification is pending. [Issue #40](https://github.com/dylcruz/stonewatch-vale/issues/40)
+All nine Windows regression suites passed. The route suite checked the turn-in and Continue. The inventory and quest suites checked the level-up and cap. A scripted Windows capture shows the bar at 85 XP. The user accepted the revised per-level XP display. [Issue #40](https://github.com/dylcruz/stonewatch-vale/issues/40)
 
 ![XP at 85 of 100 above the ability and menu rows](playtest-images/xp-progress.png)
+
+## Watchpost feedback
+
+Open `scenes/watchpost_playtest.tscn` and press **F6**. Speak to Captain Mara, accept Clear Pine Road, and defeat a road wolf. The gold objective should update over the terrain. Status and loot messages use the same corner, and clicks through the text reach the world.
+
+All nine Windows suites passed. The movement suite checked that a press over the objective reaches the world and that pressing the XP bar still consumes input. The quest and combat suites exercised tracked objectives, loot notices, health frames, and the Captain’s attack warning. Hands-on verification is pending. [Issue #41](https://github.com/dylcruz/stonewatch-vale/issues/41)
+
+![Watchpost with the opening objective displayed over the terrain](playtest-images/watchpost-feedback.png)

@@ -410,7 +410,8 @@ func run() -> void:
 	check(not region.has_node("StartingTown") and world.status.text == "Watchpost"
 		and world.get_node("Watchpost/Label").visible and world.quest_chain.size() == 3
 		and world.enemies.size() == 7 and world.has_node("CaptainMara") and world.has_node("SupplyCrate")
-		and world.get_node("HUD/Panel/Margin/VBox/Title").text == "WATCHPOST PLAYTEST",
+		and not world.get_node("HUD/Panel/Margin/VBox/Title").is_visible_in_tree()
+		and world.status.is_visible_in_tree(),
 		"The separate developer scene opens the original watchpost and its quest and combat fixtures")
 	check(region.has_node("WatchpostLandmarks/AbandonedCampsite")
 		and region.has_node("WatchpostLandmarks/QuarryGate")
