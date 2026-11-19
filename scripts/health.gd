@@ -21,6 +21,11 @@ func increase_maximum(max_health: int) -> void:
 		current += increase
 	changed.emit(current, maximum)
 
+func heal(amount: int) -> void:
+	if current > 0 and current < maximum and amount > 0:
+		current = mini(current + amount, maximum)
+		changed.emit(current, maximum)
+
 func take_damage(amount: int) -> int:
 	if current <= 0:
 		return 0

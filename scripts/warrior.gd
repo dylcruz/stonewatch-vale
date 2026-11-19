@@ -16,6 +16,7 @@ const LEVEL_THREE_XP := 240
 @export var identity: ValePlayerIdentity
 @export var level := 1
 @export var health_per_level := 0
+@export_range(0.0, 60.0, 0.25, "or_greater", "suffix:HP/s") var recovery_rate := 2.0
 @export var starting_weapon: ValeItem
 @export var starting_armor: ValeItem
 @export var starting_bag: ValeItem
@@ -48,6 +49,7 @@ var body_material: StandardMaterial3D
 var blade_material: StandardMaterial3D
 var spawn_position: Vector3
 var experience := 0
+var recovery_fraction := 0.0
 var owned_items: Dictionary[StringName, ValeItem] = {}
 var equipped_weapon: ValeItem
 var equipped_armor: ValeItem
@@ -240,6 +242,7 @@ func _build_cleave_arc() -> void:
 func _physics_process(delta: float) -> void:
 	if not is_alive():
 		return
+	_recover_health(delta)
 	attack_cooldown = maxf(0.0, attack_cooldown - delta)
 	guard_remaining = maxf(0.0, guard_remaining - delta)
 	guard_cooldown_remaining = maxf(0.0, guard_cooldown_remaining - delta)
@@ -285,6 +288,20 @@ func _physics_process(delta: float) -> void:
 		target.engage(self)
 		command_changed.emit("Auto-attacking · ground click cancels")
 		_animate_swing()
+
+func _recover_health(delta: float) -> void:
+	if health.current == health.maximum or selected_target is ValeEnemy:
+		recovery_fraction = 0.0
+		return
+	for enemy: ValeEnemy in get_tree().get_nodes_in_group(&"combat_enemies"):
+		if enemy.opponent == self:
+			recovery_fraction = 0.0
+			return
+	recovery_fraction += recovery_rate * delta
+	var points := floori(recovery_fraction)
+	if points > 0:
+		health.heal(points)
+		recovery_fraction -= points
 
 func _is_target_in_range() -> bool:
 	if selected_target is ValeEnemy:
@@ -362,6 +379,7 @@ func _die() -> void:
 
 func reset_combat() -> void:
 	clear_combat_target()
+	recovery_fraction = 0.0
 	attack_cooldown = 0.0
 	guard_remaining = 0.0
 	guard_cooldown_remaining = 0.0

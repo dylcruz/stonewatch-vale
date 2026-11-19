@@ -206,6 +206,7 @@ func run() -> void:
 	check(await until(func(): return wolf.biting and wolf.global_position.x < -2.5, 180),
 		"Wolf reaches biting range on the far side of the ruin")
 	wolf.health.take_damage(8)
+	warrior.health.take_damage(20)
 	var health_before_leash: int = warrior.health.current
 	warrior.global_position = Vector3(-10, 0.02, 1)
 	check(await until(func(): return wolf.returning, 10) and wolf.opponent == null and not wolf.biting,
@@ -214,12 +215,23 @@ func run() -> void:
 		"Leashing starts a walk home from the current position")
 	check(await until(func(): return not wolf.returning and wolf.global_position.distance_to(wolf.spawn_position) <= 0.3, 360),
 		"Wolf navigates back to its authored spawn")
-	check(wolf.health.current == 40 and warrior.health.current == health_before_leash, "Returning restores wolf health without further attacks")
+	check(wolf.health.current == 40 and warrior.health.current > health_before_leash and warrior.health.current < 60,
+		"The wolf resets and the injured Warrior gradually recovers after breaking pursuit")
+	wolf.attack_cooldown = 5.0
 	warrior.global_position = Vector3(6, 0.02, 4.5)
 	check(await until(func(): return wolf.opponent == warrior, 15), "The wolf can aggro again after returning")
+	var health_on_reentry: int = warrior.health.current
+	await frames(65)
+	check(warrior.selected_target == null and wolf.opponent == warrior and warrior.health.current == health_on_reentry,
+		"Renewed pursuit stops healing before the first hit, even without a selected target")
 	warrior.global_position = warrior.recovery_point.global_position
 	check(warrior.global_position.distance_to(wolf.spawn_position) < wolf.leash_range
 		and await until(func(): return wolf.returning, 10), "The watchpost breaks pursuit even within the wolf's leash distance")
+	check(await until(func(): return warrior.health.current > health_on_reentry, 60),
+		"Health recovery resumes after the second escape")
+	await frames(660)
+	check(warrior.health.current == warrior.health.maximum and world.player_frame.bar.value == warrior.health.maximum,
+		"Healing caps at maximum health and updates the player frame")
 
 	reset_pair()
 	warrior.global_position = wolf.global_position + Vector3(0, 0, 1.4)
