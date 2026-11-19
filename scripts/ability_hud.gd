@@ -11,6 +11,8 @@ const COOLING := Color(0.94, 0.76, 0.48)
 const ACTIVE := Color(0.56, 0.85, 0.96)
 
 @onready var book: PanelContainer = %Book
+@onready var xp_bar: ProgressBar = %Experience
+@onready var xp_label: Label = %ExperienceText
 @onready var slots_row: HBoxContainer = %Slots
 @onready var menu_buttons: HBoxContainer = %MenuButtons
 @onready var entries: VBoxContainer = %Entries
@@ -28,6 +30,8 @@ func bind_player(player: ValeWarrior) -> void:
 	%CloseBook.pressed.connect(close_book)
 	clear_slot.pressed.connect(_clear_selected_slot)
 	_player.progression_changed.connect(_refresh_book)
+	_player.progression_changed.connect(_refresh_xp)
+	_refresh_xp()
 	_player.health.died.connect(close_book)
 	for index in SLOT_ACTIONS.size():
 		var button := Button.new()
@@ -45,6 +49,16 @@ func bind_player(player: ValeWarrior) -> void:
 		"Available at level 1  ·  %.1fs cooldown" % _player.guard_cooldown)
 	_refresh_book()
 	_update_slots()
+
+func _refresh_xp() -> void:
+	var next_xp := _player.next_level_experience()
+	xp_bar.max_value = next_xp if next_xp else ValeWarrior.LEVEL_THREE_XP
+	xp_bar.min_value = ValeWarrior.LEVEL_TWO_XP if _player.level >= 2 else 0
+	xp_bar.value = _player.experience
+	if next_xp:
+		xp_label.text = "XP %d / %d" % [_player.experience, next_xp]
+	else:
+		xp_label.text = "XP %d · Max level" % _player.experience
 
 func add_menu_button(label: String, shortcut: String, toggle_menu: Callable) -> void:
 	var button := Button.new()

@@ -74,6 +74,9 @@ func run() -> void:
 	check(world.click_world(world.camera.unproject_position(Vector3(8, 0, 7))),
 		"Town accepts a movement command")
 	var destination := player.destination
+	click(hud.xp_bar)
+	check(player.destination == destination and not world.following_cursor,
+		"Clicking the XP bar preserves the movement command")
 	click(book_button)
 	await process_frame
 	check(hud.is_book_open() and player.destination == destination and not world.following_cursor,
