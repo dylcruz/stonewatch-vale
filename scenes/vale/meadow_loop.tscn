@@ -5,6 +5,41 @@
 [ext_resource type="PackedScene" path="res://scenes/vale/pine.tscn" id="Pine"]
 
 [ext_resource type="PackedScene" path="res://scenes/vale/outcrop.tscn" id="Rock"]
+[ext_resource type="PackedScene" path="res://scenes/captain_mara.tscn" id="Dyer"]
+[ext_resource type="Script" path="res://scripts/interactable.gd" id="Interactable"]
+
+[sub_resource type="StandardMaterial3D" id="Wood"]
+albedo_color = Color(0.34, 0.21, 0.11, 1)
+
+[sub_resource type="StandardMaterial3D" id="GoldWool"]
+albedo_color = Color(0.94, 0.52, 0.08, 1)
+
+[sub_resource type="StandardMaterial3D" id="Petals"]
+albedo_color = Color(0.75, 0.28, 0.62, 1)
+
+[sub_resource type="SphereMesh" id="FlowerSpike"]
+material = SubResource("Petals")
+radius = 0.2
+height = 0.9
+radial_segments = 6
+rings = 3
+
+[sub_resource type="StandardMaterial3D" id="Leaves"]
+albedo_color = Color(0.18, 0.32, 0.14, 1)
+
+[sub_resource type="SphereMesh" id="Bush"]
+material = SubResource("Leaves")
+radius = 1.05
+height = 0.95
+radial_segments = 9
+rings = 4
+
+[sub_resource type="BoxShape3D" id="HeatherPick"]
+size = Vector3(2, 1.35, 1.7)
+
+[sub_resource type="TorusMesh" id="Ring"]
+inner_radius = 1.06
+outer_radius = 1.14
 
 [sub_resource type="StandardMaterial3D" id="Grass"]
 albedo_color = Color(0.29, 0.39, 0.25, 1)
@@ -23,6 +58,85 @@ albedo_color = Color(0.43, 0.37, 0.26, 1)
 roughness = 0.95
 
 [node name="MeadowLoop" type="Node3D"]
+
+[node name="Dyer" parent="." instance=ExtResource("Dyer")]
+position = Vector3(21, 0.02, 7)
+display_name = "Meadow dyer"
+offered_quests = Array[StringName]([&"meadow_dyepot"])
+
+[node name="Nameplate" parent="Dyer" index="5"]
+text = "MEADOW DYER"
+
+[node name="DryingRack" type="Node3D" parent="."]
+position = Vector3(24.6, 0, 5.8)
+
+[node name="LeftPost" type="CSGBox3D" parent="DryingRack"]
+position = Vector3(-1.35, 0.9, 0)
+size = Vector3(0.15, 1.8, 0.15)
+material = SubResource("Wood")
+
+[node name="RightPost" type="CSGBox3D" parent="DryingRack"]
+position = Vector3(1.35, 0.9, 0)
+size = Vector3(0.15, 1.8, 0.15)
+material = SubResource("Wood")
+
+[node name="Rail" type="CSGBox3D" parent="DryingRack"]
+position = Vector3(0, 1.65, 0)
+size = Vector3(3.0, 0.12, 0.15)
+material = SubResource("Wood")
+
+[node name="Wool" type="CSGBox3D" parent="DryingRack"]
+position = Vector3(0, 1.07, 0.08)
+size = Vector3(1.95, 1.2, 0.17)
+
+[node name="DyedWool" type="CSGBox3D" parent="DryingRack"]
+visible = false
+position = Vector3(0, 1.07, 0.08)
+size = Vector3(1.95, 1.2, 0.17)
+material = SubResource("GoldWool")
+
+[node name="HeatherBush" type="MeshInstance3D" parent="."]
+position = Vector3(209, 0.25, 19.6)
+mesh = SubResource("Bush")
+
+[node name="HeatherTips" type="StaticBody3D" parent="." groups=["move_targets"]]
+position = Vector3(209, 0.02, 19.6)
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("Interactable")
+display_name = "Flowering heather"
+objective_id = &"heather_tips"
+interaction_feedback = "Heather tips gathered"
+
+[node name="Pick" type="CollisionShape3D" parent="HeatherTips"]
+position = Vector3(0, 0.65, 0)
+shape = SubResource("HeatherPick")
+
+[node name="CentralSpike" type="MeshInstance3D" parent="HeatherTips"]
+position = Vector3(0, 0.86, -0.24)
+mesh = SubResource("FlowerSpike")
+
+[node name="LeftSpike" type="MeshInstance3D" parent="HeatherTips"]
+position = Vector3(-0.47, 0.72, 0.12)
+rotation_degrees = Vector3(12, 0, 22)
+mesh = SubResource("FlowerSpike")
+
+[node name="RightSpike" type="MeshInstance3D" parent="HeatherTips"]
+position = Vector3(0.46, 0.74, 0.08)
+rotation_degrees = Vector3(5, 0, -14)
+mesh = SubResource("FlowerSpike")
+
+[node name="SelectionRing" type="MeshInstance3D" parent="HeatherTips"]
+position = Vector3(0, 0.055, 0)
+visible = false
+mesh = SubResource("Ring")
+
+[node name="QuestMarker" type="Label3D" parent="HeatherTips"]
+position = Vector3(0, 1.7, 0)
+visible = false
+pixel_size = 0.016
+billboard = 1
+text = "FLOWERING HEATHER"
 
 [node name="MeadowApproach" type="CSGPolygon3D" parent="." groups=["map_trail"]]
 position = Vector3(0, 0.027, 0)

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ValeQuestDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/quest_definition.gd" id="Quest"]
+
+[resource]
+script = ExtResource("Quest")
+id = &"meadow_dyepot"
+title = "Gold from the Heather"
+briefing = "See that pale wool on my rack? Heather gives it a warm gold. Follow the meadow trail east past the standing stones. Bring me a handful of flowering tips from the rocks at Heather Rest."
+objective = "Gather flowering heather at Heather Rest in eastern Pine Meadow"
+return_objective = "Bring the heather to the dyer at the meadow entrance"
+turn_in_dialogue = "Those are the tips I need. Give the wool a dip, then stretch it back on the rack. There’s your meadow gold!"
+completed_dialogue = "That gold will keep a little of the meadow in someone's winter coat."
+target_object = &"heather_tips"
+reward_xp = 65

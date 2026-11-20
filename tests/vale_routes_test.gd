@@ -112,7 +112,7 @@ func check_starting_town() -> void:
 		and region.has_node("StartingTown/EastCottage") and player.global_position.distance_to(square) < 0.05
 		and world.status.text == "Town square",
 		"A fresh game opens in the town square at the original spawn")
-	check(world.enemies.has(region.get_node("BirchwaterLoop/BankWolf")) and world.quest_chain.size() == 2
+	check(world.enemies.has(region.get_node("BirchwaterLoop/BankWolf"))
 		and world.quest_chain[0].definition.id == &"birchwater_delivery"
 		and not world.has_node("CaptainMara") and not world.has_node("SupplyCrate"),
 		"The main game has no Watchpost encounters or quest fixtures")
@@ -445,6 +445,49 @@ func check_signal(town_first: bool) -> void:
 		"Continue preserves the keeper's response and exactly one reward")
 	check(DirAccess.remove_absolute(path) == OK, "Temporary Signal Ridge save was removed")
 
+func check_meadow_dyer() -> void:
+	world.queue_free()
+	await process_frame
+	await start()
+	var path := OS.get_temp_dir().path_join("meadow-dyer-%d.save" % OS.get_process_id())
+	var slot := ValeSaveSlot.new(path)
+	world.configure_checkpoint(slot, {})
+	var dyer := mark("MeadowLoop/Dyer")
+	var flowers := mark("MeadowLoop/HeatherTips")
+	await talk_to_keeper()
+	world.dialogue_action.pressed.emit()
+	await place(dyer + Vector3.BACK * 2)
+	check(camera_click(dyer + Vector3.UP), "The eastbound player can select the meadow dyer")
+	await frames(20)
+	check(world.dialogue_action.visible and world.journal_body.text.contains("Heather Rest"), "The dyer offers a lead to Heather Rest")
+	world.dialogue_action.pressed.emit()
+	await press_key(KEY_J)
+	check(world.journal_body.text.contains("Gold from the Heather") and world.journal_body.text.contains("A Light on Signal Ridge"),
+		"The dye quest runs alongside the ridge quest")
+	await press_key(KEY_ESCAPE)
+	check(connected(dyer, flowers), "The flowering heather is reachable from the dyer's rack")
+	await place(flowers + Vector3.BACK * 3)
+	check(camera_click(flowers + Vector3.UP * 0.8), "The flowering tips can be picked from the gameplay camera")
+	await frames(45)
+	check(not region.get_node("MeadowLoop/HeatherTips").visible and region.get_node("MeadowLoop/HeatherBush").visible
+		and player.experience == 0, "Gathering removes the blossoms and leaves the bush")
+	await continue_in_town(slot)
+	await place(dyer + Vector3.BACK * 2)
+	camera_click(dyer + Vector3.UP)
+	await frames(20)
+	check(world.dialogue_action.text == "Turn in quest" and region.get_node("MeadowLoop/DryingRack/Wool").visible,
+		"Continue preserves gathered tips before the wool is dyed")
+	world.dialogue_action.pressed.emit()
+	world.dialogue_action.pressed.emit()
+	await continue_in_town(slot)
+	check(player.experience == 65 and region.get_node("MeadowLoop/DryingRack/DyedWool").visible
+		and not region.get_node("MeadowLoop/DryingRack/Wool").visible and not region.get_node("MeadowLoop/HeatherTips").visible,
+		"Continue preserves the golden wool and the single 65 XP turn-in")
+	await press_key(KEY_J)
+	check(world.journal_body.text.contains("Gold from the Heather · Completed") and world.journal_body.text.contains("A Light on Signal Ridge · In progress"),
+		"Completing the meadow quest leaves the other quest active")
+	check(DirAccess.remove_absolute(path) == OK, "Temporary meadow quest save was removed")
+
 func run() -> void:
 	await start()
 	var initial_layout := layout()
@@ -464,6 +507,7 @@ func run() -> void:
 	await start()
 	check(initial_layout == layout(), "Two fresh games load identical terrain and props")
 	await check_delivery()
+	await check_meadow_dyer()
 	await check_signal(false)
 	await check_signal(true)
 	world.queue_free()
