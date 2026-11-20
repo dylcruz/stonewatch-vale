@@ -490,6 +490,49 @@ func check_meadow_dyer() -> void:
 		"Completing the meadow quest leaves the other quest active")
 	check(DirAccess.remove_absolute(path) == OK, "Temporary meadow quest save was removed")
 
+func check_hare_warren(scout_first: bool) -> void:
+	world.queue_free()
+	await process_frame
+	await start()
+	var path := OS.get_temp_dir().path_join("hare-warren-%d.save" % OS.get_process_id())
+	var slot := ValeSaveSlot.new(path)
+	world.configure_checkpoint(slot, {})
+	var scout := mark("MeadowLoop/MeadowScout")
+	var burrow := mark("MeadowLoop/Warren/Survey")
+	if scout_first:
+		await place(scout + Vector3.BACK * 2)
+		check(camera_click(scout + Vector3.UP), "The meadow scout accepts a click at the North Road junction")
+		await frames(20)
+		check(world.dialogue_action.visible and world.journal_body.text.contains("north meadow warren"),
+			"The scout offers an independent survey on a fresh run")
+		world.dialogue_action.pressed.emit()
+	check(connected(mark("MeadowLoop/NorthConnection"), burrow) and connected(burrow, scout),
+		"The meadow junction and warren remain connected on foot")
+	await place(burrow + Vector3.BACK * 2)
+	await frames(90)
+	check(player.health.current == player.health.maximum and player.selected_target == null and player.experience == 0
+		and world.enemies.all(func(enemy: ValeEnemy): return enemy.opponent != player),
+		"Passing the grazing hares starts no fight")
+	check(camera_click(burrow + Vector3.UP * 0.45), "Clicking the burrow records the sighting")
+	await frames(30)
+	await press_key(KEY_J)
+	check(world.journal_body.text.count("Signs of Spring") == 1 and world.journal_body.text.contains("Ready to turn in"),
+		"Inspecting the burrow creates one ready journal entry with either discovery order")
+	await continue_in_town(slot)
+	await place(scout + Vector3.BACK * 2)
+	camera_click(scout + Vector3.UP)
+	await frames(20)
+	check(world.dialogue_action.text == "Turn in quest" and world.journal_body.text.contains("pair grazing"),
+		"The meadow scout recognizes the sighting after Continue")
+	world.dialogue_action.pressed.emit()
+	world.dialogue_action.pressed.emit()
+	await continue_in_town(slot)
+	check(player.experience == 50 and not region.get_node("MeadowLoop/Warren/Survey").visible
+		and region.get_node("MeadowLoop/Warren/GrazingHare").is_visible_in_tree()
+		and region.get_node("MeadowLoop/Warren/YoungHare").is_visible_in_tree(),
+		"The single survey reward and both living hares survive Continue")
+	check(DirAccess.remove_absolute(path) == OK, "Temporary survey save was removed")
+
 func run() -> void:
 	await start()
 	var initial_layout := layout()
@@ -510,6 +553,8 @@ func run() -> void:
 	check(initial_layout == layout(), "Two fresh games load identical terrain and props")
 	await check_delivery()
 	await check_meadow_dyer()
+	await check_hare_warren(false)
+	await check_hare_warren(true)
 	await check_signal(false)
 	await check_signal(true)
 	world.queue_free()

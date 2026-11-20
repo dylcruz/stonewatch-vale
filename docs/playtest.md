@@ -247,8 +247,16 @@ A Windows gameplay run sampled the master audio output at both crossings, on the
 
 From town, take the east exit into Pine Meadow. Check whether the dyer and the rack catch your eye on the way out. Accept the quest, follow the dyer's directions to the standing stones, and gather the flowering tips. Return to see the wool change color and claim 65 XP. After Continue, revisit the rack and check the completed journal entry.
 
-All nine Windows regression suites passed for the original checkpoint. The revised standing stones route passed 121 timed checks, including accepting the dyer's quest first, collecting the flowers, using Continue before and after turn-in, and completing the meadow quest while Signal Ridge remains active. The following captures show the flowers and finished wool. Hands-on verification is pending. [Issue #33](https://github.com/dylcruz/stonewatch-vale/issues/33)
+All nine Windows regression suites passed for the original checkpoint. The revised standing stones route passed 121 timed checks, including accepting the dyer's quest first, collecting the flowers, using Continue before and after turn-in, and completing the meadow quest while Signal Ridge remains active. The user accepted the standing stones destination. [Issue #33](https://github.com/dylcruz/stonewatch-vale/issues/33)
 
 ![Flowering heather inside the standing stones](playtest-images/standing-stones-flowers.png)
 
 ![Golden wool at the Pine Meadow entrance](playtest-images/meadow-dyer.png)
+
+## Signs of Spring
+
+Follow the north side of the Pine Meadow loop and look for two hares grazing near a burrow. Walk past them, then inspect the burrow and open the journal. Report the sighting to the meadow scout at the North Road junction for 50 XP. On a separate run, try taking the scout’s offer before finding the hares.
+
+The Windows route suite checked both discovery orders, safe passage, a single journal entry, and Continue before and after turn-in. The graphical capture verified the grazing animation from the gameplay camera. Hands-on verification is pending. [Meadow quests #33](https://github.com/dylcruz/stonewatch-vale/issues/33) · [Vale wildlife #34](https://github.com/dylcruz/stonewatch-vale/issues/34)
+
+![Two meadow hares beside their burrow on the north trail](playtest-images/meadow-warren.png)

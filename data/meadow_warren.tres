@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ValeQuestDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/quest_definition.gd" id="Quest"]
+
+[resource]
+script = ExtResource("Quest")
+id = &"meadow_warren"
+title = "Signs of Spring"
+briefing = "Last winter the north meadow warren stood empty. Follow the meadow path east from this junction. If you see long ears in the grass, take a look at the burrow and tell me who's come back."
+objective = "Inspect the hare burrow beside the north meadow trail"
+return_objective = "Report the occupied warren to the scout at the North Road junction"
+turn_in_dialogue = "A pair grazing in daylight? Then the warren made it through the winter. I'll keep the supply carts on the path and give them room."
+completed_dialogue = "I've marked the warren in my trail notes. The cart drivers know to steer clear."
+target_object = &"meadow_hare_warren"
+discover_at_objective = true
+reward_xp = 50

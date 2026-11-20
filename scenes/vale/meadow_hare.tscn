@@ -1,0 +1,78 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="Fur"]
+albedo_color = Color(0.54, 0.36, 0.21, 1)
+
+[sub_resource type="StandardMaterial3D" id="Cream"]
+albedo_color = Color(0.85, 0.76, 0.6, 1)
+
+[sub_resource type="StandardMaterial3D" id="Dark"]
+albedo_color = Color(0.07, 0.05, 0.04, 1)
+
+[sub_resource type="SphereMesh" id="Oval"]
+material = SubResource("Fur")
+radial_segments = 10
+rings = 5
+
+[sub_resource type="Animation" id="Graze"]
+resource_name = "graze"
+length = 4.8
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/path = NodePath("Head:rotation:x")
+tracks/0/keys = {"times": PackedFloat32Array(0, 0.6, 1.5, 1.8, 2.1, 2.8, 3.4, 4.8), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [0.0, 0.62, 0.62, 0.43, 0.62, 0.62, 0.0, 0.0]}
+
+[sub_resource type="AnimationLibrary" id="Idle"]
+_data = {&"graze": SubResource("Graze")}
+
+[node name="MeadowHare" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.36, -0.13)
+scale = Vector3(0.67, 0.68, 1.12)
+mesh = SubResource("Oval")
+
+[node name="Tail" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.44, -0.68)
+scale = Vector3(0.3, 0.3, 0.33)
+mesh = SubResource("Oval")
+material_override = SubResource("Cream")
+
+[node name="Head" type="Node3D" parent="."]
+position = Vector3(0, 0.43, 0.27)
+
+[node name="Face" type="MeshInstance3D" parent="Head"]
+position = Vector3(0, 0.18, 0.22)
+scale = Vector3(0.48, 0.48, 0.57)
+mesh = SubResource("Oval")
+
+[node name="LeftEar" type="MeshInstance3D" parent="Head"]
+position = Vector3(-0.13, 0.65, 0.13)
+rotation_degrees = Vector3(-16, 0, 12)
+scale = Vector3(0.17, 0.73, 0.13)
+mesh = SubResource("Oval")
+
+[node name="RightEar" type="MeshInstance3D" parent="Head"]
+position = Vector3(0.13, 0.65, 0.13)
+rotation_degrees = Vector3(-24, 0, -12)
+scale = Vector3(0.17, 0.72, 0.13)
+mesh = SubResource("Oval")
+
+[node name="LeftEye" type="MeshInstance3D" parent="Head"]
+position = Vector3(-0.20, 0.24, 0.34)
+scale = Vector3(0.075, 0.085, 0.075)
+mesh = SubResource("Oval")
+material_override = SubResource("Dark")
+
+[node name="RightEye" type="MeshInstance3D" parent="Head"]
+position = Vector3(0.20, 0.24, 0.34)
+scale = Vector3(0.075, 0.085, 0.075)
+mesh = SubResource("Oval")
+material_override = SubResource("Dark")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries/ = SubResource("Idle")
+autoplay = "graze"
+
+[node name="VisibleOnScreenEnabler3D" type="VisibleOnScreenEnabler3D" parent="."]
+enable_node_path = NodePath("../AnimationPlayer")
