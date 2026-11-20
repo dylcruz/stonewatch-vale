@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ValeQuestDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/quest_definition.gd" id="Quest"]
+
+[resource]
+script = ExtResource("Quest")
+id = &"birchwater_towpath"
+title = "Room on the Towpath"
+briefing = "My towline's ready, but there's a wolf on the west bank between here and the ford. It drove my crew back to the bridge this morning. Give us a clear run down to the ferry and I'll pay you here."
+objective = "Defeat the wolf on Birchwater’s west bank"
+return_objective = "Report to the rope tender at the timber bridge"
+turn_in_dialogue = "Good. We'll take the line down to the ferry while the bank is quiet. Here's your share."
+completed_dialogue = "The crew got the towline through. Keep an eye on that bank if you head back."
+target_enemy = &"road_wolf"
+target_encounter = &"birchwater_bank_wolf"
+required_kills = 1
+reward_xp = 55

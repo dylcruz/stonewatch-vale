@@ -13,8 +13,12 @@ func _init(quest: ValeQuestDefinition) -> void:
 func is_in_progress() -> bool:
 	return state == State.ACTIVE or state == State.READY
 
-func record_defeat(enemy_id: StringName) -> bool:
-	if state != State.ACTIVE or enemy_id != definition.target_enemy or kills >= definition.required_kills:
+func needs_enemy(enemy_id: StringName, encounter_id: StringName) -> bool:
+	return state == State.ACTIVE and kills < definition.required_kills and enemy_id == definition.target_enemy \
+		and (definition.target_encounter == &"" or encounter_id == definition.target_encounter)
+
+func record_defeat(enemy_id: StringName, encounter_id: StringName = &"") -> bool:
+	if not needs_enemy(enemy_id, encounter_id):
 		return false
 	kills += 1
 	if kills == definition.required_kills:

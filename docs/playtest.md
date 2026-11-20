@@ -257,6 +257,14 @@ All nine Windows regression suites passed for the original checkpoint. The revis
 
 Follow the north side of the Pine Meadow loop and look for two hares grazing near a burrow. Walk past them, then inspect the burrow and open the journal. Report the sighting to the meadow scout at the North Road junction for 50 XP. On a separate run, try taking the scout’s offer before finding the hares.
 
-The Windows route suite checked both discovery orders, safe passage, a single journal entry, and Continue before and after turn-in. The graphical capture verified the grazing animation from the gameplay camera. Hands-on verification is pending. [Meadow quests #33](https://github.com/dylcruz/stonewatch-vale/issues/33) · [Vale wildlife #34](https://github.com/dylcruz/stonewatch-vale/issues/34)
+The Windows route suite checked both discovery orders, safe passage, a single journal entry, and Continue before and after turn-in. The graphical capture verified the grazing animation from the gameplay camera. The user approved the checkpoint for merge. [Meadow quests #33](https://github.com/dylcruz/stonewatch-vale/issues/33) · [Vale wildlife #34](https://github.com/dylcruz/stonewatch-vale/issues/34)
 
 ![Two meadow hares beside their burrow on the north trail](playtest-images/meadow-warren.png)
+
+## Room on the Towpath
+
+Meet the rope tender beside the coil at the east end of Birchwater’s timber bridge. Accept the job, cross to the west bank, and follow it toward the ford. Defeat the bank wolf, then return to the tender for 55 XP. The ferryman’s delivery can be completed independently along the east bank.
+
+All nine Windows regression suites passed. The timed route suite passed 145 checks, including a defeat before acceptance, a repeat defeat after respawn, and Continue on either side of the turn-in. Hands-on verification is pending. [Vale quests #33](https://github.com/dylcruz/stonewatch-vale/issues/33) · [Vale wildlife #34](https://github.com/dylcruz/stonewatch-vale/issues/34)
+
+![Rope tender offering the job at the timber bridge](playtest-images/birchwater-towpath.png)

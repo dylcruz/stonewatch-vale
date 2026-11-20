@@ -38,6 +38,16 @@ roughness = 0.95
 albedo_color = Color(0.43, 0.48, 0.44, 1)
 roughness = 0.95
 
+[sub_resource type="StandardMaterial3D" id="Hemp"]
+albedo_color = Color(0.7, 0.51, 0.26, 1)
+
+[sub_resource type="TorusMesh" id="Towline"]
+material = SubResource("Hemp")
+inner_radius = 0.57
+outer_radius = 0.79
+rings = 16
+ring_segments = 6
+
 [sub_resource type="StandardMaterial3D" id="Planks"]
 albedo_color = Color(0.54, 0.38, 0.23, 1)
 roughness = 0.95
@@ -473,6 +483,23 @@ text = "BIRCHWATER FERRYMAN"
 position = Vector3(34, 0.02, -200)
 display_name = "Lost bundle"
 objective_id = &"birchwater_bundle"
+
+[node name="RopeTender" parent="." instance=ExtResource("NPC")]
+position = Vector3(67, 0.02, -199)
+display_name = "Birchwater rope tender"
+offered_quests = Array[StringName]([&"birchwater_towpath"])
+
+[node name="Nameplate" parent="RopeTender" index="5"]
+text = "ROPE TENDER"
+
+[node name="TowlineCoil" type="MeshInstance3D" parent="."]
+position = Vector3(69.4, 0.15, -199.5)
+mesh = SubResource("Towline")
+
+[node name="UpperTurn" type="MeshInstance3D" parent="TowlineCoil"]
+position = Vector3(-0.06, 0.17, 0.04)
+scale = Vector3(0.96, 1, 0.96)
+mesh = SubResource("Towline")
 
 [node name="Crate" parent="LostBundle" index="1"]
 material_override = SubResource("Cloth")
