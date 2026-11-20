@@ -231,8 +231,14 @@ All nine Windows suites passed. The movement suite checked that a press over the
 
 For the first Windows run, leave town without speaking to the signal keeper. Take either signed climb from North Road and click the mast at the lookout. Check the journal, then return to town and look beside the hall doors. Speak to the keeper and claim the 70 XP. Relaunch and choose **Continue** to revisit the lantern and the keeper. For the other discovery order, speak to the keeper first on a fresh run and take the other climb.
 
-The timed Windows route suite passed 98 checks. It tested both discovery orders, both climb connections, a single ready journal entry, and Continue before and after turn-in. The following captures show the mast after lighting and the answering lantern before turn-in. Hands-on verification is pending. [Issue #45](https://github.com/dylcruz/stonewatch-vale/issues/45)
+The timed Windows route suite passed 98 checks. It tested both discovery orders, both climb connections, a single ready journal entry, and Continue before and after turn-in. During hands-on playtesting, the player found that the ridge quest naturally led them to the ferryman. The following captures show the mast after lighting and the answering lantern before turn-in. [Issue #45](https://github.com/dylcruz/stonewatch-vale/issues/45)
 
 ![Lit mast at the Signal Ridge lookout](playtest-images/ridge-signal.png)
 
 ![Answering lantern outside the town hall](playtest-images/town-signal.png)
+
+## Birchwater current and Signal Ridge bell
+
+Start a run with an unlit mast. Walk from North Road toward the ford, cross the river, then visit the timber bridge. Listen for the current getting louder near the water and fading on the road. Light the Signal Ridge mast, let the bell decay, and relaunch with **Continue**. Returning to the mast should be quiet.
+
+A Windows gameplay run sampled the master audio output at both crossings, on the bank, in town and at the mast. The river was louder at each crossing than on the bank, and the bell decayed to silence. The route suite verified silent restores before and after turn-in for both discovery orders. Hands-on listening is pending. [Issue #46](https://github.com/dylcruz/stonewatch-vale/issues/46)

@@ -33,6 +33,9 @@ map_landmarks = Dictionary[String, NodePath]({
 [node name="NavigationRegion3D" parent="."]
 navigation_mesh = ExtResource("TownNav")
 
+[node name="AudioListener3D" type="AudioListener3D" parent="Player"]
+position = Vector3(0, 1.5, 0)
+
 [node name="NorthRoad" parent="NavigationRegion3D" unique_id=1940482134 instance=ExtResource("NorthRoad")]
 
 [node name="MeadowLoop" parent="NavigationRegion3D" unique_id=119685581 instance=ExtResource("MeadowLoop")]

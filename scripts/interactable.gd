@@ -2,6 +2,7 @@ class_name ValeInteractable
 extends StaticBody3D
 
 signal interacted
+signal objective_credited
 
 @export var display_name: String
 @export var interaction_range := 1.75

@@ -100,3 +100,5 @@ GitHub Actions runs the Godot regression suites on pull requests to `dev` and `m
 ## Assets
 
 All arena visuals use Godot primitive meshes, materials, labels, and the built-in font. No external art or models were added.
+
+The Birchwater current and Signal Ridge bell are original synthesized audio. The river layers filtered noise with short bubbling tones. The bell combines decaying metallic overtones.

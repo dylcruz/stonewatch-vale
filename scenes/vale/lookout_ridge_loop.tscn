@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/vale/outcrop.tscn" id="Rock"]
 [ext_resource type="PackedScene" path="res://scenes/vale/signal_lantern.tscn" id="Lantern"]
 [ext_resource type="Script" path="res://scripts/interactable.gd" id="Interactable"]
+[ext_resource type="AudioStreamWAV" path="res://art/audio/ridge_bell.wav" id="BellSound"]
 
 [sub_resource type="BoxShape3D" id="MastPick"]
 size = Vector3(2.2, 6.2, 1.5)
@@ -207,6 +208,13 @@ material = SubResource("Timber")
 [node name="Beacon" parent="." instance=ExtResource("Lantern")]
 position = Vector3(-183, 17.1, -349.5)
 scale = Vector3(1.5, 1.5, 1.5)
+
+[node name="MastBell" type="AudioStreamPlayer3D" parent="."]
+position = Vector3(-183, 16, -349.5)
+stream = ExtResource("BellSound")
+unit_size = 8.0
+max_distance = 50.0
+volume_db = -5.0
 
 [node name="LightMast" type="StaticBody3D" parent="." groups=["move_targets"]]
 position = Vector3(-183, 12, -347.5)
@@ -410,3 +418,5 @@ position = Vector3(-179, 12, -344)
 
 [node name="CliffFace" type="Marker3D" parent="."]
 position = Vector3(-95, 5, -227.3)
+
+[connection signal="objective_credited" from="LightMast" to="MastBell" method="play"]
