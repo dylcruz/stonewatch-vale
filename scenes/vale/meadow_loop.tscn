@@ -96,11 +96,11 @@ size = Vector3(1.95, 1.2, 0.17)
 material = SubResource("GoldWool")
 
 [node name="HeatherBush" type="MeshInstance3D" parent="."]
-position = Vector3(209, 0.25, 19.6)
+position = Vector3(106, 0.25, -2)
 mesh = SubResource("Bush")
 
 [node name="HeatherTips" type="StaticBody3D" parent="." groups=["move_targets"]]
-position = Vector3(209, 0.02, 19.6)
+position = Vector3(106, 0.02, -2)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("Interactable")
@@ -136,7 +136,7 @@ position = Vector3(0, 1.7, 0)
 visible = false
 pixel_size = 0.016
 billboard = 1
-text = "FLOWERING HEATHER"
+text = "HEATHER TIPS"
 
 [node name="MeadowApproach" type="CSGPolygon3D" parent="." groups=["map_trail"]]
 position = Vector3(0, 0.027, 0)

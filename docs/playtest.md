@@ -245,10 +245,10 @@ A Windows gameplay run sampled the master audio output at both crossings, on the
 
 ## Gold from the Heather
 
-From town, take the east exit into Pine Meadow. Check whether the dyer and the rack catch your eye on the way out. Accept the quest, follow the dyer's directions to Heather Rest, and gather the flowering tips. Return to see the wool change color and claim 65 XP. After Continue, revisit the rack and check the completed journal entry.
+From town, take the east exit into Pine Meadow. Check whether the dyer and the rack catch your eye on the way out. Accept the quest, follow the dyer's directions to the standing stones, and gather the flowering tips. Return to see the wool change color and claim 65 XP. After Continue, revisit the rack and check the completed journal entry.
 
-All nine Windows regression suites passed. The timed route suite passed 120 checks, including collection by world click, Continue before and after turn-in, and completing the meadow quest while Signal Ridge remains active. The following captures show the flowers and finished wool. Hands-on verification is pending. [Issue #33](https://github.com/dylcruz/stonewatch-vale/issues/33)
+All nine Windows regression suites passed for the original checkpoint. The revised standing stones route passed 121 timed checks, including accepting the dyer's quest first, collecting the flowers, using Continue before and after turn-in, and completing the meadow quest while Signal Ridge remains active. The following captures show the flowers and finished wool. Hands-on verification is pending. [Issue #33](https://github.com/dylcruz/stonewatch-vale/issues/33)
 
-![Flowering heather beside the Heather Rest trail](playtest-images/heather-rest-flowers.png)
+![Flowering heather inside the standing stones](playtest-images/standing-stones-flowers.png)
 
 ![Golden wool at the Pine Meadow entrance](playtest-images/meadow-dyer.png)
