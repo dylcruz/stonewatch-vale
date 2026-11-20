@@ -15,12 +15,13 @@
 [ext_resource type="Resource" path="res://data/ridge_signal.tres" id="SignalQuest"]
 [ext_resource type="Resource" path="res://data/meadow_dyepot.tres" id="MeadowQuest"]
 [ext_resource type="Resource" path="res://data/meadow_warren.tres" id="WarrenQuest"]
+[ext_resource type="Resource" path="res://data/birchwater_towpath.tres" id="TowpathQuest"]
 [ext_resource type="Script" path="res://scripts/quest_definition.gd" id="QuestDefinition"]
 
 [node name="StonewatchVale" instance=ExtResource("World")]
 script = ExtResource("ValeWorld")
 quest_definition = ExtResource("Delivery")
-follow_up_quests = Array[ExtResource("QuestDefinition")]([ExtResource("SignalQuest"), ExtResource("MeadowQuest"), ExtResource("WarrenQuest")])
+follow_up_quests = Array[ExtResource("QuestDefinition")]([ExtResource("SignalQuest"), ExtResource("MeadowQuest"), ExtResource("WarrenQuest"), ExtResource("TowpathQuest")])
 ready_text = "Town square"
 recovery_location = "the town square"
 map_landmarks = Dictionary[String, NodePath]({

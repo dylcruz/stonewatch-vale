@@ -315,6 +315,14 @@ func check_delivery() -> void:
 	world.configure_checkpoint(slot, {})
 	check(connected(player.spawn_position, giver.global_position) and connected(giver.global_position, bundle.global_position),
 		"The ford offer and bridge bundle connect to town")
+	var tender := mark("BirchwaterLoop/RopeTender")
+	await place(tender + Vector3.BACK * 1.4)
+	check(camera_click(tender + Vector3.UP), "The rope tender can be reached at the bridge")
+	await frames(15)
+	check(world.dialogue_action.visible and world.journal_body.text.contains("Room on the Towpath"),
+		"The bridge job is available before the ferryman's delivery")
+	await press_key(KEY_ESCAPE)
+	await place(player.spawn_position)
 	check(giver.global_position.distance_to(mark("BirchwaterLoop/Ford")) < 20.0
 		and bundle.global_position.distance_to(mark("BirchwaterLoop/Bridge")) < 20.0,
 		"The first crossing offers the delivery and the second holds the bundle")
@@ -379,6 +387,35 @@ func check_delivery() -> void:
 	await place(giver_approach)
 	await frames(40)
 	check(wolf.is_alive() and wolf.health.current == wolf.health.maximum, "The zone wolf respawns on leaving the area")
+	await place(tender + Vector3.BACK * 1.4)
+	camera_click(tender + Vector3.UP)
+	await frames(15)
+	world.dialogue_action.pressed.emit()
+	var job: ValeQuestProgress = world.tracked_quest
+	check(job.definition.id == &"birchwater_towpath" and job.kills == 0 and world.objective_label.text.contains("0 / 1"),
+		"The earlier wolf defeat does not count toward the newly accepted job")
+	check(not job.record_defeat(wolf.stats.enemy_id, &"other_encounter"), "Another road wolf cannot clear the Birchwater towpath")
+	await place(wolf.spawn_position + Vector3.BACK * 3)
+	check(camera_click(wolf.global_position + Vector3.UP * 0.85), "The marked bank wolf accepts a combat click")
+	for frame in 400:
+		await physics_frame
+		if not wolf.is_alive():
+			break
+	check(job.kills == 1 and job.state == ValeQuestProgress.State.READY and player.experience == 95,
+		"The active job credits the bank wolf and pays only encounter XP on defeat")
+	await continue_in_town(slot)
+	await place(tender + Vector3.BACK * 1.4)
+	camera_click(tender + Vector3.UP)
+	await frames(15)
+	check(world.dialogue_action.text == "Turn in quest" and world.journal_body.text.contains("55 XP"),
+		"Continue restores the rope tender's ready reward")
+	world.dialogue_action.pressed.emit()
+	world.dialogue_action.pressed.emit()
+	await continue_in_town(slot)
+	await press_key(KEY_J)
+	check(player.experience == 150 and world.journal_body.text.contains("Room on the Towpath · Completed")
+		and world.journal_body.text.contains("The Ferryman's Lost Bundle · Completed"),
+		"The rope tender pays 55 XP once and both Birchwater completions survive Continue")
 	check(DirAccess.remove_absolute(path) == OK, "Temporary delivery save was removed")
 
 func continue_in_town(slot: ValeSaveSlot) -> void:

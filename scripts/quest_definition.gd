@@ -10,6 +10,7 @@ extends Resource
 @export_multiline var turn_in_dialogue: String
 @export_multiline var completed_dialogue: String
 @export var target_enemy: StringName
+@export var target_encounter: StringName
 @export var required_kills: int
 @export var target_object: StringName
 @export var discover_at_objective := false

@@ -189,7 +189,7 @@ func _open_ability_book() -> void:
 func _record_defeat(enemy: ValeEnemy) -> void:
 	var stats := enemy.stats
 	for progress in quest_chain:
-		progress.record_defeat(stats.enemy_id)
+		progress.record_defeat(stats.enemy_id, enemy.encounter_id)
 	player.award_experience(stats.defeat_xp)
 	if stats.defeat_item and not enemy.defeat_reward_claimed:
 		enemy.defeat_reward_claimed = true
@@ -336,7 +336,7 @@ func _refresh_enemy_marker(enemy: ValeEnemy) -> void:
 	var marker := enemy.get_node_or_null("QuestMarker") as Label3D
 	if marker:
 		marker.visible = enemy.is_alive() and quest_chain.any(func(progress: ValeQuestProgress):
-			return progress.state == ValeQuestProgress.State.ACTIVE and progress.definition.target_enemy == enemy.stats.enemy_id
+			return progress.needs_enemy(enemy.stats.enemy_id, enemy.encounter_id)
 		)
 
 func _toggle_panel(mode: JournalView) -> void:
