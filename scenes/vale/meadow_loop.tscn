@@ -5,7 +5,8 @@
 [ext_resource type="PackedScene" path="res://scenes/vale/pine.tscn" id="Pine"]
 
 [ext_resource type="PackedScene" path="res://scenes/vale/outcrop.tscn" id="Rock"]
-[ext_resource type="PackedScene" path="res://scenes/captain_mara.tscn" id="Dyer"]
+[ext_resource type="PackedScene" path="res://scenes/captain_mara.tscn" id="NPC"]
+[ext_resource type="PackedScene" path="res://scenes/vale/meadow_hare.tscn" id="Hare"]
 [ext_resource type="Script" path="res://scripts/interactable.gd" id="Interactable"]
 
 [sub_resource type="StandardMaterial3D" id="Wood"]
@@ -59,7 +60,7 @@ roughness = 0.95
 
 [node name="MeadowLoop" type="Node3D"]
 
-[node name="Dyer" parent="." instance=ExtResource("Dyer")]
+[node name="Dyer" parent="." instance=ExtResource("NPC")]
 position = Vector3(21, 0.02, 7)
 display_name = "Meadow dyer"
 offered_quests = Array[StringName]([&"meadow_dyepot"])
@@ -222,6 +223,61 @@ text = "HEATHER REST"
 
 [node name="NorthTrailSign" parent="." instance=ExtResource("Sign")]
 position = Vector3(29, 0, -70)
+
+[node name="MeadowScout" parent="." instance=ExtResource("NPC")]
+position = Vector3(27, 0.02, -68)
+display_name = "Meadow scout"
+offered_quests = Array[StringName]([&"meadow_warren"])
+
+[node name="Nameplate" parent="MeadowScout" index="5"]
+text = "MEADOW SCOUT"
+
+[node name="Warren" type="Node3D" parent="."]
+position = Vector3(82, 0.02, -59)
+
+[node name="Earth" type="CSGSphere3D" parent="Warren"]
+scale = Vector3(2.4, 0.85, 1.8)
+material = SubResource("Wood")
+
+[node name="Opening" type="CSGSphere3D" parent="Warren/Earth"]
+operation = 2
+position = Vector3(0, 0.02, 0.36)
+scale = Vector3(0.5, 0.8, 0.64)
+
+[node name="GrazingHare" parent="Warren" instance=ExtResource("Hare")]
+position = Vector3(-1.7, 0, 0.6)
+rotation_degrees = Vector3(0, -46, 0)
+
+[node name="YoungHare" parent="Warren" instance=ExtResource("Hare")]
+position = Vector3(1.6, 0, 0.9)
+rotation_degrees = Vector3(0, 58, 0)
+scale = Vector3(0.78, 0.78, 0.78)
+
+[node name="AnimationPlayer" parent="Warren/YoungHare" index="3"]
+speed_scale = 0.72
+
+[node name="Survey" type="StaticBody3D" parent="Warren" groups=["move_targets"]]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("Interactable")
+display_name = "Hare burrow"
+objective_id = &"meadow_hare_warren"
+interaction_feedback = "Two hares spotted at the warren"
+
+[node name="Pick" type="CollisionShape3D" parent="Warren/Survey"]
+position = Vector3(0, 0.42, 0)
+shape = SubResource("HeatherPick")
+
+[node name="SelectionRing" type="MeshInstance3D" parent="Warren/Survey"]
+position = Vector3(0, 0.055, 0)
+visible = false
+mesh = SubResource("Ring")
+
+[node name="Nameplate" type="Label3D" parent="Warren/Survey"]
+position = Vector3(0, 1.6, 0)
+billboard = 1
+pixel_size = 0.016
+text = "INSPECT BURROW"
 
 [node name="NorthTrailSignLabel" type="Label3D" parent="."]
 position = Vector3(29, 2.4, -70)
