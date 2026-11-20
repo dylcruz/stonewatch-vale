@@ -63,3 +63,7 @@ func _refresh_progress() -> void:
 			var lit := progress.state >= ValeQuestProgress.State.READY
 			$NavigationRegion3D/LookoutRidgeLoop/Beacon/Flame.visible = lit
 			$NavigationRegion3D/StartingTown/TownHall/Lantern/Flame.visible = lit
+		elif progress.definition.id == &"meadow_dyepot":
+			var dyed := progress.state == ValeQuestProgress.State.COMPLETED
+			$NavigationRegion3D/MeadowLoop/DryingRack/Wool.visible = not dyed
+			$NavigationRegion3D/MeadowLoop/DryingRack/DyedWool.visible = dyed

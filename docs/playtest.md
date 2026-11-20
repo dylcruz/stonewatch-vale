@@ -241,4 +241,14 @@ The timed Windows route suite passed 98 checks. It tested both discovery orders,
 
 Start a run with an unlit mast. Walk from North Road toward the ford, cross the river, then visit the timber bridge. Listen for the current getting louder near the water and fading on the road. Light the Signal Ridge mast, let the bell decay, and relaunch with **Continue**. Returning to the mast should be quiet.
 
-A Windows gameplay run sampled the master audio output at both crossings, on the bank, in town and at the mast. The river was louder at each crossing than on the bank, and the bell decayed to silence. The route suite verified silent restores before and after turn-in for both discovery orders. Hands-on listening is pending. [Issue #46](https://github.com/dylcruz/stonewatch-vale/issues/46)
+A Windows gameplay run sampled the master audio output at both crossings, on the bank, in town and at the mast. The river was louder at each crossing than on the bank, and the bell decayed to silence. The route suite verified silent restores before and after turn-in for both discovery orders. The user accepted the audio checkpoint. [Issue #46](https://github.com/dylcruz/stonewatch-vale/issues/46)
+
+## Gold from the Heather
+
+From town, take the east exit into Pine Meadow. Check whether the dyer and the rack catch your eye on the way out. Accept the quest, follow the dyer's directions to the standing stones, and gather the flowering tips. Return to see the wool change color and claim 65 XP. After Continue, revisit the rack and check the completed journal entry.
+
+All nine Windows regression suites passed for the original checkpoint. The revised standing stones route passed 121 timed checks, including accepting the dyer's quest first, collecting the flowers, using Continue before and after turn-in, and completing the meadow quest while Signal Ridge remains active. The following captures show the flowers and finished wool. Hands-on verification is pending. [Issue #33](https://github.com/dylcruz/stonewatch-vale/issues/33)
+
+![Flowering heather inside the standing stones](playtest-images/standing-stones-flowers.png)
+
+![Golden wool at the Pine Meadow entrance](playtest-images/meadow-dyer.png)
